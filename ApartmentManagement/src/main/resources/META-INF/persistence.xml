@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+  <persistence-unit name="com.mhp_btn_ApartmentManagement_war_1.0-SNAPSHOTPU" transaction-type="RESOURCE_LOCAL">
+    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+    <class>com.mhp_btn.pojo.ApartmentReportPicture</class>
+    <class>com.mhp_btn.pojo.ApartmentDetailResponse</class>
+    <class>com.mhp_btn.pojo.ApartmentDetailReport</class>
+    <class>com.mhp_btn.pojo.ApartmentSmartCabinet</class>
+    <class>com.mhp_btn.pojo.ApartmentReport</class>
+    <class>com.mhp_btn.pojo.ApartmentDetailReceipt</class>
+    <class>com.mhp_btn.pojo.ApartmentRelativeRegistry</class>
+    <class>com.mhp_btn.pojo.ApartmentService</class>
+    <class>com.mhp_btn.pojo.ApartmentDetailRequest</class>
+    <class>com.mhp_btn.pojo.ApartmentServiceConstract</class>
+    <class>com.mhp_btn.pojo.ApartmentRentalConstract</class>
+    <class>com.mhp_btn.pojo.ApartmentReceipt</class>
+    <class>com.mhp_btn.pojo.ApartmentResident</class>
+    <class>com.mhp_btn.pojo.ApartmentAdmin</class>
+    <class>com.mhp_btn.pojo.ApartmentOtherMember</class>
+    <class>com.mhp_btn.pojo.ApartmentRoom</class>
+    <class>com.mhp_btn.pojo.ApartmentUser</class>
+    <class>com.mhp_btn.pojo.ApartmentSurveyResponse</class>
+    <class>com.mhp_btn.pojo.ApartmentSurveyRequest</class>
+    <class>com.mhp_btn.pojo.ApartmentFloor</class>
+    <exclude-unlisted-classes>false</exclude-unlisted-classes>
+    <properties>
+      <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/apartment_db?zeroDateTimeBehavior=CONVERT_TO_NULL"/>
+      <property name="javax.persistence.jdbc.user" value="root"/>
+      <property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
+      <property name="javax.persistence.jdbc.password" value="PandaPhat2003@"/>
+    </properties>
+  </persistence-unit>
+</persistence>
