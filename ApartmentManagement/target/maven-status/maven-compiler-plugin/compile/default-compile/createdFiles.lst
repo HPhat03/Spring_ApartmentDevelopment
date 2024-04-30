@@ -43,7 +43,6 @@ com\mhp_btn\pojo\ApartmentReceipt_.class
 com\mhp_btn\pojo\ApartmentResident.class
 com\mhp_btn\pojo\ApartmentResident_.class
 com\mhp_btn\pojo\ApartmentSurveyResponse_.class
-.netbeans_automatic_build
 com\mhp_btn\pojo\ApartmentDetailReceipt_.class
 com\mhp_btn\pojo\ApartmentDetailResponse_.class
 com\mhp_btn\services\implement\UserServiceImpl.class

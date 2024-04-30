@@ -11,6 +11,8 @@ import com.mhp_btn.pojo.ApartmentAdmin;
 import com.mhp_btn.pojo.ApartmentResident;
 import com.mhp_btn.pojo.ApartmentUser;
 import com.mhp_btn.serializers.UserSerializer;
+import com.mhp_btn.services.AdminService;
+import com.mhp_btn.services.ResidentService;
 import com.mhp_btn.services.UserService;
 import com.mhp_btn.utils.ErrorHandle;
 import com.mhp_btn.utils.StringUtil;
@@ -25,7 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.json.MappingJacksonValue;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,6 +48,10 @@ public class ApiUserController {
     @Autowired
     private UserService us;
     @Autowired
+    private AdminService as;
+    @Autowired
+    private ResidentService rs;
+    @Autowired
     private Cloudinary cloudinary;
     
     @GetMapping(path = "/test/", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -60,18 +66,18 @@ public class ApiUserController {
     }, produces = MediaType.APPLICATION_JSON_VALUE)
 
     public ResponseEntity<Object> create(@RequestParam Map<String, String> data, @RequestPart MultipartFile[] file) throws ParseException, IOException {
-//        TwilioUtils.SendSMS("+18777804236", String.format("[PN APARTMENT THÔNG BÁO]\nQuý khách {0} vừa tham gia hệ thống!\nQuy khach vui long dang nhap de hoan thanh thong tin\nUsername của Quý Khách là: {1}", "MHP","mhp"));
         ApartmentUser u = new ApartmentUser();
         String firstname = data.get("firstname");
         String lastname = data.get("lastname");
         String phone = data.get("phone");
-
+        Date today = new Date();
+        
         u.setFirstName(firstname);
         u.setLastName(lastname);
         u.setPhone(phone);
         u.setGender((short) Integer.parseInt(data.get("gender")));
         u.setEmail(data.get("email"));
-        u.setCreatedDate(new Date());
+        u.setCreatedDate(today);
         u.setIsActive((short) 1);
 
         String role = data.get("role");
@@ -98,15 +104,26 @@ public class ApiUserController {
             String username = String.join("", lastnameArr) + firstname;
             u.setUsername(StringUtil.removeAccent(username).toLowerCase());
             u.setPassword(ApartmentUser.RESIDENT_DEFAULT_PASSWORD);
-//            ApartmentResident resident = new ApartmentResident();
-//            resident.setApartmentUser(u);
-//            u.setApartmentResident(resident);
         }
         Date birthdate = this.dateFormatter.parse(data.get("birthdate"));
         u.setBirthdate(birthdate);
 
         try {
-            us.addUser(u);
+            us.save(u);
+            if (u.getRole().equals(ApartmentUser.ADMIN)){
+                ApartmentAdmin admin = new ApartmentAdmin(u.getId());
+                admin.setApartmentUser(u);
+                as.save(admin);
+                u.setApartmentAdmin(admin);
+            }else if (u.getRole().equals(ApartmentUser.RESIDENT)){
+                ApartmentResident resident = new ApartmentResident(u.getId());
+                resident.setApartmentUser(u);
+                Date actualJoin = data.get("joineddate") == null ? new Date() : this.dateFormatter.parse(data.get("joineddate"));
+                resident.setJoinedDate(actualJoin);
+                rs.save(resident);
+                u.setApartmentResident(resident);
+            }
+            us.save(u);
             
         } catch (Exception e) {
             ErrorHandle error = new ErrorHandle("Tạo không thành công", HttpStatus.BAD_REQUEST, e.toString());

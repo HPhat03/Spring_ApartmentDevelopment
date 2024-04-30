@@ -32,13 +32,6 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     
-
-    @Override
-    public void addUser(ApartmentUser user) {
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        up.addUser(user);
-    }
-
     @Override
     public List<ApartmentUser> getUsers() {
         return up.getUsers();
@@ -65,7 +58,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void save(ApartmentUser user) {
-        up.addUser(user);
+        if (user.getId() == null)
+             user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        up.save(user);
     }
 
 }

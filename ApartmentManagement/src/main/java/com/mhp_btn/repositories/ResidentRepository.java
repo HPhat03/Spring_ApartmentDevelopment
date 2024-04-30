@@ -4,15 +4,12 @@
  */
 package com.mhp_btn.repositories;
 
-import com.mhp_btn.pojo.ApartmentUser;
-import java.util.List;
+import com.mhp_btn.pojo.ApartmentResident;
 
 /**
  *
  * @author Admin
  */
-public interface UserRepository {
-    void save(ApartmentUser user);
-    List<ApartmentUser> getUsers();
-    ApartmentUser getUserByUsername(String username);
+public interface ResidentRepository {
+    void save(ApartmentResident resident);
 }

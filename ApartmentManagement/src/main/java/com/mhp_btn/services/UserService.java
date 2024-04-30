@@ -13,7 +13,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
  * @author Admin
  */
 public interface UserService extends UserDetailsService {
-    void addUser(ApartmentUser user);
     List<ApartmentUser> getUsers();
     ApartmentUser getUsersByUsername(String username);
     void save(ApartmentUser user);
