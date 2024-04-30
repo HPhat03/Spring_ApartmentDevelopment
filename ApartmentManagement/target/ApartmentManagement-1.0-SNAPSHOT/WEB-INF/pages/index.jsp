@@ -12,13 +12,16 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>JSP Page</title>
     </head>
-    <body>
+    
         <h1>Hello Wd!</h1>
        
             <c:forEach items="${services}" var="c">
                 <h1>${c.name}</h1>
             </c:forEach>
+            <a href="<c:url value="/login"/>">DANG NHAP</a>
+          
+               
+            
         
-        
-    </body>
+    
 </html>

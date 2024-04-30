@@ -4,6 +4,7 @@
  */
 package com.mhp_btn.controllers;
 
+import com.cloudinary.Cloudinary;
 import com.mhp_btn.pojo.ApartmentService;
 import com.mhp_btn.services.implement.ServiceServiceImpl;
 import java.util.List;
@@ -20,6 +21,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class HomeController {
     @Autowired
     private ServiceServiceImpl ss;
+    @Autowired
+    private Cloudinary cloudinary;
+    
     
     @RequestMapping("/")
     public String Index(Model model){

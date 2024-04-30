@@ -4,6 +4,7 @@
  */
 package com.mhp_btn.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.Set;
 import javax.persistence.Basic;
@@ -56,7 +57,9 @@ public class ApartmentService implements Serializable {
     @NotNull
     @Column(name = "is_active")
     private short isActive;
+    
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "serviceId")
+    @JsonIgnore
     private Set<ApartmentServiceConstract> apartmentServiceConstractSet;
 
     public ApartmentService() {

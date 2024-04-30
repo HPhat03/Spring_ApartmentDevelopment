@@ -4,6 +4,9 @@
  */
 package com.mhp_btn.pojo;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Basic;
@@ -19,15 +22,18 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
  * @author Admin
  */
 @Entity
+@JsonFilter("USER_FILTER")
 @Table(name = "apartment_user")
 @XmlRootElement
 @NamedQueries({
@@ -46,7 +52,9 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "ApartmentUser.findByUsername", query = "SELECT a FROM ApartmentUser a WHERE a.username = :username"),
     @NamedQuery(name = "ApartmentUser.findByPassword", query = "SELECT a FROM ApartmentUser a WHERE a.password = :password")})
 public class ApartmentUser implements Serializable {
-
+    public static String RESIDENT = "RESIDENT";
+    public static String ADMIN = "ADMIN";
+    public static String RESIDENT_DEFAULT_PASSWORD = "NO_LOGIN";
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -57,16 +65,21 @@ public class ApartmentUser implements Serializable {
     @NotNull
     @Size(min = 1, max = 20)
     @Column(name = "last_name")
+    @JsonIgnore
     private String lastName;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 10)
     @Column(name = "first_name")
+    @JsonIgnore 
     private String firstName;
+    @Transient
+    private String name;
     @Basic(optional = false)
     @NotNull
     @Column(name = "birthdate")
     @Temporal(TemporalType.DATE)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private Date birthdate;
     @Basic(optional = false)
     @NotNull
@@ -78,6 +91,7 @@ public class ApartmentUser implements Serializable {
     private String email;
     // @Pattern(regexp="^\\(?(\\d{3})\\)?[- ]?(\\d{3})[- ]?(\\d{4})$", message="Invalid phone/fax format, should be as xxx-xxx-xxxx")//if the field contains phone or fax number consider using this annotation to enforce field validation
     @Size(max = 11)
+    @NotNull
     @Column(name = "phone")
     private String phone;
     @Size(max = 255)
@@ -101,17 +115,24 @@ public class ApartmentUser implements Serializable {
     @Column(name = "username")
     private String username;
     @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 45)
+    @Size(min = 1, max = 100)
     @Column(name = "password")
     private String password;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "apartmentUser")
+    @JsonIgnore
     private ApartmentAdmin apartmentAdmin;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "apartmentUser")
+    @JsonIgnore
     private ApartmentResident apartmentResident;
-
+    
+    
+    
+    @Transient
+    @JsonIgnore
+    private String confirmPassword;
     public ApartmentUser() {
     }
+    
 
     public ApartmentUser(Integer id) {
         this.id = id;
@@ -136,7 +157,9 @@ public class ApartmentUser implements Serializable {
     public void setId(Integer id) {
         this.id = id;
     }
-
+    public String getName(){
+        return this.lastName + " " + this.firstName;
+    }
     public String getLastName() {
         return lastName;
     }
@@ -152,8 +175,9 @@ public class ApartmentUser implements Serializable {
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
-
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     public Date getBirthdate() {
+        this.birthdate.setDate(this.birthdate.getDate() + 1);
         return birthdate;
     }
 
@@ -161,8 +185,8 @@ public class ApartmentUser implements Serializable {
         this.birthdate = birthdate;
     }
 
-    public short getGender() {
-        return gender;
+    public String getGender() {
+        return this.gender==1 ? "Nam" : "Nữ";
     }
 
     public void setGender(short gender) {
@@ -200,7 +224,7 @@ public class ApartmentUser implements Serializable {
     public void setIsActive(short isActive) {
         this.isActive = isActive;
     }
-
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     public Date getCreatedDate() {
         return createdDate;
     }
@@ -272,6 +296,22 @@ public class ApartmentUser implements Serializable {
     @Override
     public String toString() {
         return "com.mhp_btn.pojo.ApartmentUser[ id=" + id + " ]";
+    }
+
+    
+
+    /**
+     * @return the confirmPassword
+     */
+    public String getConfirmPassword() {
+        return confirmPassword;
+    }
+
+    /**
+     * @param confirmPassword the confirmPassword to set
+     */
+    public void setConfirmPassword(String confirmPassword) {
+        this.confirmPassword = confirmPassword;
     }
     
 }
