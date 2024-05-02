@@ -4,6 +4,8 @@
  */
 package com.mhp_btn.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -51,6 +53,7 @@ public class ApartmentDetailReceipt implements Serializable {
     @Column(name = "price")
     private String price;
     @JoinColumn(name = "receipt_id", referencedColumnName = "id")
+    @JsonIgnore
     @ManyToOne(optional = false)
     private ApartmentReceipt receiptId;
 
