@@ -1,6 +1,7 @@
 package com.mhp_btn.repositories.implement;
 
 import com.mhp_btn.pojo.ApartmentRentalConstract;
+import com.mhp_btn.pojo.ApartmentResident;
 import com.mhp_btn.repositories.RentalConstractRepository;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,8 @@ public class RentalConstractRepositoryImpl implements RentalConstractRepository 
         Session s = this.factoryBean.getObject().getCurrentSession();
         Query q = s.createNamedQuery("ApartmentRentalConstract.findById");
         q.setParameter("id", id); // Bind giá trị của tham số id vào câu truy vấn
-        return (ApartmentRentalConstract) q.getSingleResult();
+        List<ApartmentRentalConstract> result = q.getResultList();
+        return result.isEmpty() ? null : result.get(0);
     }
 
     @Override

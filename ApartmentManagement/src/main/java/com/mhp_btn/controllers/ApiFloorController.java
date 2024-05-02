@@ -49,7 +49,7 @@ public class ApiFloorController {
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping(value = "/floors/update/{id}", produces = "application/json")
+    @PatchMapping(value = "/floors/{id}", produces = "application/json")
     public ResponseEntity<ApartmentFloor> updateFloorById(@PathVariable int id, @RequestBody Map<String, String> updates) {
         // Lấy thông tin tầng từ ID
         ApartmentFloor floor = floorService.getFloorById(id);
