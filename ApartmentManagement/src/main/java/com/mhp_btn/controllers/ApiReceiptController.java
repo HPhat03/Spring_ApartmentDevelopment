@@ -56,6 +56,7 @@ public class ApiReceiptController {
             } catch (ParseException e) {
                 throw new RuntimeException(e);
             }
+
             ApartmentReceipt receipt = new ApartmentReceipt();
             receipt.setMonth(month);
             receipt.setCreatedDate(createdDate);
@@ -73,7 +74,7 @@ public class ApiReceiptController {
             receiptService.addReceipt(receipt);
             return ResponseEntity.status(HttpStatus.CREATED).build();
         } else {
-            throw new IllegalArgumentException("Thiếu thông tin bắt buộc");
+            throw new IllegalArgumentException("missing required information");
         }
     }
 

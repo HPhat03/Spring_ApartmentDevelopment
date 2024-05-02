@@ -1,10 +1,9 @@
 package com.mhp_btn.repositories.implement;
 
-import com.mhp_btn.pojo.ApartmentFloor;
 import com.mhp_btn.pojo.ApartmentReceipt;
 import com.mhp_btn.pojo.ApartmentRelativeRegistry;
-import com.mhp_btn.pojo.ApartmentResident;
-import com.mhp_btn.repositories.ReceiptRepository;
+import com.mhp_btn.pojo.ApartmentRentalConstract;
+import com.mhp_btn.repositories.RelativeRegistryRepository;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
@@ -16,43 +15,46 @@ import java.util.List;
 
 @Transactional
 @Repository
-public class ReceiptRepositoryImpl implements ReceiptRepository {
+public class RelativeRegistryRepositoryImpl implements RelativeRegistryRepository {
     @Autowired
-    private  LocalSessionFactoryBean factoryBean;
+    private LocalSessionFactoryBean factoryBean;
     @Override
-    public List<ApartmentReceipt> getAllReceipt() {
+    public List<ApartmentRelativeRegistry> getAllRelativeRegistry() {
         Session s = this.factoryBean.getObject().getCurrentSession();
-        Query q = s.createNamedQuery("ApartmentReceipt.findAll");
+        Query q = s.createNamedQuery("ApartmentRelativeRegistry.findAll");
         return q.getResultList();
     }
 
     @Override
-    public ApartmentReceipt getReceiptById(int id) {
+    public ApartmentRelativeRegistry getRelativeRegistryById(int id) {
         Session s = this.factoryBean.getObject().getCurrentSession();
-        Query q = s.createNamedQuery("ApartmentReceipt.findById");
+        Query q = s.createNamedQuery("ApartmentRelativeRegistry.findById");
         q.setParameter("id", id); // Đặt tên tham số là 'userId'
-        List<ApartmentReceipt> result = q.getResultList();
+        List<ApartmentRelativeRegistry> result = q.getResultList();
         return result.isEmpty() ? null : result.get(0);
     }
 
     @Override
-    public void deleteReceiptById(int id) {
+    public void deleteRelativeRegistryById(int id) {
         Session session = factoryBean.getObject().getCurrentSession();
         ApartmentRelativeRegistry relativeRegistry = session.get(ApartmentRelativeRegistry.class, id);
         if (relativeRegistry != null) {
-            session.delete(relativeRegistry);
+            relativeRegistry.setActive((short) 0); // Đặt isActive = 0
+            session.update(relativeRegistry); // Cập nhật thay đổi vào cơ sở dữ liệu
         }
     }
 
     @Override
-    public void addReceipt(ApartmentReceipt receipt) {
+    public void addRelativeRegistry(ApartmentRelativeRegistry relativeRegistry) {
         Session session = factoryBean.getObject().getCurrentSession();
-        session.save(receipt);
+        session.save(relativeRegistry);
     }
 
     @Override
-    public void updateReceipt(ApartmentReceipt receipt) {
+    public void updateRelativeRegistry(ApartmentRelativeRegistry relativeRegistry) {
         Session session = this.factoryBean.getObject().getCurrentSession();
-        session.update(receipt);
+        session.update(relativeRegistry);
     }
+
+
 }

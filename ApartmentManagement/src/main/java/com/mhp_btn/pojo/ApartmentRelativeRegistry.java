@@ -4,6 +4,9 @@
  */
 package com.mhp_btn.pojo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Basic;
@@ -52,11 +55,13 @@ public class ApartmentRelativeRegistry implements Serializable {
     private String name;
     @Basic(optional = false)
     @NotNull
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     @Column(name = "start_date")
     @Temporal(TemporalType.DATE)
     private Date startDate;
     @Basic(optional = false)
     @NotNull
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     @Column(name = "end_date")
     @Temporal(TemporalType.DATE)
     private Date endDate;
@@ -65,6 +70,7 @@ public class ApartmentRelativeRegistry implements Serializable {
     @Column(name = "active")
     private short active;
     @JoinColumn(name = "apartment_id", referencedColumnName = "id")
+    @JsonIgnore
     @ManyToOne(optional = false)
     private ApartmentRentalConstract apartmentId;
 
