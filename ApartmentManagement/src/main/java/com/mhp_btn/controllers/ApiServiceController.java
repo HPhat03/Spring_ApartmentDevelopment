@@ -34,7 +34,7 @@ public class ApiServiceController {
         return new ResponseEntity<>(this.ss.getServices(), HttpStatus.OK);
     }
 
-    @PostMapping(path = "/service/add")
+    @PostMapping(path = "/service/")
     @ResponseStatus(HttpStatus.CREATED)
     public void addService(@RequestBody ApartmentService request) {
 
@@ -50,7 +50,7 @@ public class ApiServiceController {
         ss.addService(newService);
     }
 
-    @DeleteMapping("/service/delete/{id}")
+    @DeleteMapping("/service/{id}")
     public ResponseEntity<String> deleteServiceById(@PathVariable int id) {
 
         ApartmentService service = ss.getServiceById(id);
@@ -63,7 +63,7 @@ public class ApiServiceController {
         return new ResponseEntity<>("Đã xóa phòng có ID " + id, HttpStatus.OK);
     }
 
-    @PatchMapping(value = "/service/update/{id}", consumes = "application/json", produces = "application/json")
+    @PatchMapping(value = "/service/{id}", consumes = "application/json", produces = "application/json")
     public ResponseEntity<ApartmentService> updateServiceById(@PathVariable int id, @RequestBody Map<String, Object> updates) {
         ApartmentService service = ss.getServiceById(id);
         if (service == null) {

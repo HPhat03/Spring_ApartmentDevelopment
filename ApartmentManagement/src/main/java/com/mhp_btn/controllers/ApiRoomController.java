@@ -36,7 +36,7 @@ public class ApiRoomController {
         return new ResponseEntity<>(emptyRooms, HttpStatus.OK);
     }
 
-    @PostMapping("/room/add")
+    @PostMapping("/room/")
     @ResponseStatus(HttpStatus.CREATED)
     public void addRoom(@RequestBody Map<String, String> params) {
 
@@ -62,7 +62,7 @@ public class ApiRoomController {
         }
     }
 
-    @DeleteMapping("/room/delete/{id}")
+    @DeleteMapping("/room/{id}")
     public ResponseEntity<String> deleteRoomById(@PathVariable int id) {
         // Kiểm tra xem phòng có tồn tại không trước khi xóa
         ApartmentRoom room = rs.getRoomById(id);

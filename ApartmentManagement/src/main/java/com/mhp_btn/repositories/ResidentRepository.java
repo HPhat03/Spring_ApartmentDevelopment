@@ -12,4 +12,6 @@ import com.mhp_btn.pojo.ApartmentResident;
  */
 public interface ResidentRepository {
     void save(ApartmentResident resident);
+
+    ApartmentResident getResidentById(int id);
 }
