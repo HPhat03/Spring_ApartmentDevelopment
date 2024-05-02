@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.Query;
+import java.util.List;
 
 /**
  *
@@ -37,7 +38,9 @@ public class ResidentRepositoryImpl implements ResidentRepository{
         Session s = this.factory.getObject().getCurrentSession();
         Query q = s.createNamedQuery("ApartmentResident.findByUserId");
         q.setParameter("userId", id); // Đặt tên tham số là 'userId'
-        return (ApartmentResident) q.getSingleResult();
+        List<ApartmentResident> result = q.getResultList();
+        return result.isEmpty() ? null : result.get(0);
     }
+
 
 }

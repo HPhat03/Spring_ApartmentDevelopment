@@ -1,5 +1,6 @@
 package com.mhp_btn.controllers;
 
+import com.mhp_btn.pojo.ApartmentFloor;
 import com.mhp_btn.pojo.ApartmentRentalConstract;
 import com.mhp_btn.pojo.ApartmentResident;
 import com.mhp_btn.pojo.ApartmentRoom;
@@ -85,8 +86,60 @@ public class ApiRentalConstractController {
     }
 
 
+    @PatchMapping(value = "/constract/{id}", produces = "application/json")
+    public ResponseEntity<ApartmentRentalConstract> updateConstractById(@PathVariable int id, @RequestBody Map<String, String> updates) {
+        // Lấy thông tin
+        ApartmentRentalConstract constract = constractService.getConstractById(id);
 
+        if (constract == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
 
+        for (Map.Entry<String, String> entry : updates.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+
+            switch (key) {
+                case "status":
+                    constract.setStatus(value);
+                    break;
+                case "createdDate":
+                    // Cần xử lý chuyển đổi từ string sang định dạng ngày tháng nếu cần
+                    constract.setCreatedDate(new Date());
+                    break;
+                case "isActive":
+                    // Cần chuyển đổi từ string sang kiểu boolean nếu cần
+                    constract.setIsActive(Short.parseShort(value));
+                    break;
+                case "finalPrice":
+                    // Cần chuyển đổi từ string sang kiểu số nếu cần
+                    constract.setFinalPrice(Integer.parseInt(value));
+                    break;
+                case "roomId":
+
+                        ApartmentRoom room = roomService.getRoomById(Integer.parseInt(value));
+                        if (room != null) {
+                            constract.setRoomId(room);
+                        } else {
+                            throw new IllegalArgumentException("Room with ID " + value + " not found");
+                        }
+
+                    break;
+                case "residentId":
+                        ApartmentResident resident = residentService.getResidentById(Integer.parseInt(value));
+                        if (resident != null) {
+                            constract.setResidentId(resident);
+                        } else {
+                            throw new IllegalArgumentException("Resident with ID " + value + " not found");
+                        }
+
+                    break;
+
+            }
+        }
+        constractService.updateConstract(constract);
+        return new ResponseEntity<>(constract, HttpStatus.OK);
+    }
 
 
 }

@@ -1,6 +1,5 @@
 package com.mhp_btn.repositories.implement;
 
-import com.mhp_btn.pojo.ApartmentFloor;
 import com.mhp_btn.pojo.ApartmentRentalConstract;
 import com.mhp_btn.repositories.RentalConstractRepository;
 import org.hibernate.Session;
@@ -48,6 +47,26 @@ public class RentalConstractRepositoryImpl implements RentalConstractRepository 
     public void addRentalConstract(ApartmentRentalConstract constract) {
         Session session = factoryBean.getObject().getCurrentSession();
         session.save(constract);
+    }
+
+    @Override
+    public ApartmentRentalConstract getConstractById(int id) {
+        Session s = this.factoryBean.getObject().getCurrentSession();
+        Query q = s.createNamedQuery("ApartmentRentalConstract.findById");
+        q.setParameter("id", id);
+        List<ApartmentRentalConstract> resultList = q.getResultList();
+        if (resultList.isEmpty()) {
+            return null;
+        } else {
+            return resultList.get(0);
+        }
+    }
+
+
+    @Override
+    public void updateConstract(ApartmentRentalConstract constract) {
+        Session session = this.factoryBean.getObject().getCurrentSession();
+        session.update(constract);
     }
 
 

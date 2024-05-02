@@ -13,4 +13,8 @@ public interface RentalConstractRepository {
     ApartmentRentalConstract getRentalConstractById(int id);
 
     void addRentalConstract(ApartmentRentalConstract constract);
+
+    ApartmentRentalConstract getConstractById(int id);
+
+    void updateConstract(ApartmentRentalConstract constract);
 }

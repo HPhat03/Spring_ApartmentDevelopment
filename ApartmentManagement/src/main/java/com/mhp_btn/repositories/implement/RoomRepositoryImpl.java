@@ -36,8 +36,10 @@ public class RoomRepositoryImpl implements RoomRepository {
         Session s = this.factoryBean.getObject().getCurrentSession();
         Query q = s.createNamedQuery("ApartmentRoom.findById");
         q.setParameter("id", id); // Thiết lập giá trị của tham số ID
-        return (ApartmentRoom) q.getSingleResult();
+        List<ApartmentRoom> resultList = q.getResultList();
+        return resultList.isEmpty() ? null : resultList.get(0);
     }
+
 
     @Override
     public void deleteRoomById(int id) {
@@ -66,6 +68,12 @@ public class RoomRepositoryImpl implements RoomRepository {
         Query q = s.createNamedQuery("ApartmentRoom.findByIsBlank");
         q.setParameter("isBlank", (short) 0);
         return q.getResultList();
+    }
+
+    @Override
+    public void updateRoom(ApartmentRoom room) {
+        Session session = this.factoryBean.getObject().getCurrentSession();
+        session.update(room);
     }
 
 

@@ -44,7 +44,9 @@ public class ServiceRepositoryImpl implements ServiceRepository{
         Session s = this.f.getObject().getCurrentSession();
         Query q = s.createNamedQuery("ApartmentService.findById");
         q.setParameter("id", id); // Thiết lập giá trị của tham số ID
-        return (ApartmentService) q.getSingleResult();
+        List<ApartmentService> result = q.getResultList();
+        return result.isEmpty() ? null :result.get(0);
+
     }
 
     @Override

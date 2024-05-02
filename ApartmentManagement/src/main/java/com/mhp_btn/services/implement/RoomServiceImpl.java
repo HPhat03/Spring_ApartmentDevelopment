@@ -42,5 +42,10 @@ public class RoomServiceImpl implements RoomService {
         return this.roomRepo.getEmptyRoom();
     }
 
+    @Override
+    public void updateRoom(ApartmentRoom room) {
+        this.roomRepo.updateRoom(room);
+    }
+
 
 }

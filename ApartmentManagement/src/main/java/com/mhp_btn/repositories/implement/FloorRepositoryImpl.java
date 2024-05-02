@@ -20,6 +20,7 @@ public class FloorRepositoryImpl implements FloorRepository {
     public ApartmentFloor getFloorById(int id) {
         Session s = this.factoryBean.getObject().getCurrentSession();
         return  s.get(ApartmentFloor.class, id);
+
     }
 
     @Override

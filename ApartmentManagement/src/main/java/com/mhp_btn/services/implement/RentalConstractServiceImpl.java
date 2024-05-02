@@ -32,5 +32,15 @@ public class RentalConstractServiceImpl implements RentalConstractService {
         this.rentalConstractRepo.addRentalConstract(constract);
     }
 
+    @Override
+    public ApartmentRentalConstract getConstractById(int id) {
+        return this.rentalConstractRepo.getConstractById(id);
+    }
+
+    @Override
+    public void updateConstract(ApartmentRentalConstract constract) {
+        this.rentalConstractRepo.updateConstract(constract);
+    }
+
 
 }

@@ -51,6 +51,7 @@ public class ApartmentResident implements Serializable {
     @Temporal(TemporalType.DATE)
     private Date joinedDate;
     @JoinColumn(name = "user_id", referencedColumnName = "id", insertable = false, updatable = false)
+    @JsonIgnore
     @OneToOne(optional = false)
     private ApartmentUser apartmentUser;
     @JsonIgnore

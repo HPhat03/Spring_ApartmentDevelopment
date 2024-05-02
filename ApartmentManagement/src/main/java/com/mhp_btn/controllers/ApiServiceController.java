@@ -58,7 +58,6 @@ public class ApiServiceController {
             return new ResponseEntity<>("Không tìm thấy dịch vụ với ID " + id, HttpStatus.NOT_FOUND);
         }
 
-
         ss.deleteServiceById(id);
         return new ResponseEntity<>("Đã xóa phòng có ID " + id, HttpStatus.OK);
     }

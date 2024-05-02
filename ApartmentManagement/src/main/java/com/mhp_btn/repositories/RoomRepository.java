@@ -13,4 +13,6 @@ public interface RoomRepository {
     List<ApartmentRoom> getActiveRooms();
     List<ApartmentRoom> getEmptyRoom();
 
+    void updateRoom(ApartmentRoom room);
+
 }

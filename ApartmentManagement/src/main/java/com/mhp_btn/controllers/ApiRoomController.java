@@ -1,6 +1,7 @@
 package com.mhp_btn.controllers;
 
 import com.mhp_btn.pojo.ApartmentFloor;
+import com.mhp_btn.pojo.ApartmentResident;
 import com.mhp_btn.pojo.ApartmentRoom;
 import com.mhp_btn.repositories.FloorRepository;
 import com.mhp_btn.services.FloorService;
@@ -74,4 +75,50 @@ public class ApiRoomController {
         rs.deleteRoomById(id);
         return new ResponseEntity<>("Đã xóa phòng có ID " + id, HttpStatus.OK);
     }
+
+    @PatchMapping(value = "/room/{id}", produces = "application/json")
+    public ResponseEntity<ApartmentRoom> updateRoomById(@PathVariable int id, @RequestBody Map<String, String> updates) {
+        ApartmentRoom room = rs.getRoomById(id);
+        if (room == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        // Cập nhật thông tin phòng nếu có
+        for (Map.Entry<String, String> entry : updates.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+
+            switch (key) {
+                case "roomNumber":
+                    room.setRoomNumber(value);
+                    break;
+                case "isBlank":
+                    room.setIsBlank(Short.parseShort(value));
+                    break;
+                case "price":
+                    room.setPrice(Integer.parseInt(value));
+                    break;
+                case "isActive":
+                    room.setIsActive(Short.parseShort(value));
+                    break;
+                case "floor":
+                    ApartmentFloor floor = floorSer.getFloorById(Integer.parseInt(value));
+                    if (floor != null) {
+                        room.setFloor(floor);
+                    } else {
+                        throw new IllegalArgumentException("Floor with ID " + value + " not found");
+                    }
+
+                    break;
+                default:
+                    // Nếu trường không hợp lệ, ném ra ngoại lệ hoặc trả về lỗi 400 Bad Request
+                    throw new IllegalArgumentException("Trường " + key + " không hợp lệ");
+            }
+        }
+
+        // Lưu cập nhật vào cơ sở dữ liệu
+        rs.updateRoom(room);
+        return new ResponseEntity<>(room, HttpStatus.OK);
+    }
+
 }
