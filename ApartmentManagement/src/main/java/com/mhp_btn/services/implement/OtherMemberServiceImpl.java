@@ -35,4 +35,9 @@ public class OtherMemberServiceImpl implements OtherMemberService {
     public void updateOthMember(ApartmentOtherMember member) {
         this.memberRepo.updateOthMember(member);
     }
+
+    @Override
+    public ApartmentOtherMember getOtherMemberById(int id) {
+        return this.memberRepo.getOtherMemberById(id);
+    }
 }

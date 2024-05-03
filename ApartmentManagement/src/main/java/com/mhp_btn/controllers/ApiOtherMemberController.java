@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
@@ -78,10 +79,10 @@ public class ApiOtherMemberController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @PatchMapping(value="/apartment/{apartmentId}/members/{memberId}" , produces = "application/json")
+    @PatchMapping(value="/apartment/{apartmentId}/members/{memberId}", produces = "application/json")
     public ResponseEntity<?> updateOtherMemberByMemberId(@PathVariable("apartmentId") int apartmentId,
                                                          @PathVariable("memberId") int memberId,
-                                                         @RequestBody ApartmentOtherMember updateMember) {
+                                                         @RequestBody Map<String, Object> updateMember) {
         // Kiểm tra xem căn hộ có tồn tại không
         ApartmentRentalConstract apartment = apartmentService.getConstractById(apartmentId);
         if (apartment == null) {
@@ -89,26 +90,25 @@ public class ApiOtherMemberController {
         }
 
         // Kiểm tra xem thành viên có tồn tại trong căn hộ không
-        List<ApartmentOtherMember> members = memberService.getOtherMembersByApartmentId(apartmentId);
-        boolean memberExists = false;
-        for (ApartmentOtherMember member : members) {
-            if (member.getId() == memberId) {
-                memberExists = true;
-                break;
-            }
-        }
-        if (!memberExists) {
+        ApartmentOtherMember existingMember = memberService.getOtherMemberById(memberId);
+        if (existingMember == null || existingMember.getApartmentId().getId() != apartmentId) {
             return new ResponseEntity<>("Member not found with ID: " + memberId + " in apartment with ID: " + apartmentId, HttpStatus.NOT_FOUND);
         }
 
-        // Cập nhật thông tin thành viên
-        updateMember.setId(memberId);
-        updateMember.setApartmentId(apartment);
-        updateMember.setRelationship(updateMember.getRelationship());
-        memberService.updateOthMember(updateMember);
+        // Cập nhật thông tin thành viên từ dữ liệu được gửi lên
+        if (updateMember.containsKey("relationship")) {
+            existingMember.setRelationship((String) updateMember.get("relationship"));
+        }
+        if (updateMember.containsKey("name")) {
+            existingMember.setName((String) updateMember.get("name"));
+        }
 
-        return new ResponseEntity<>(updateMember, HttpStatus.OK);
+        // Lưu cập nhật vào cơ sở dữ liệu
+        memberService.updateOthMember(existingMember);
+
+        return new ResponseEntity<>(existingMember, HttpStatus.OK);
     }
+
 
 
 }

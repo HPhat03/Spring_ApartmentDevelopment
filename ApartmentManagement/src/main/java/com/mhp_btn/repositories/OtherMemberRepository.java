@@ -12,4 +12,6 @@ public interface OtherMemberRepository {
     void addOtherMemberByApartmentId(ApartmentOtherMember member);
 
     void updateOthMember(ApartmentOtherMember member);
+
+    ApartmentOtherMember getOtherMemberById(int id);
 }

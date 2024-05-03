@@ -2,6 +2,7 @@ package com.mhp_btn.repositories.implement;
 
 import com.mhp_btn.pojo.ApartmentDetailReceipt;
 import com.mhp_btn.pojo.ApartmentOtherMember;
+import com.mhp_btn.pojo.ApartmentReceipt;
 import com.mhp_btn.repositories.OtherMemberRepository;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
@@ -46,6 +47,15 @@ public class OtherMemberRepositoryImpl implements OtherMemberRepository {
     public void updateOthMember(ApartmentOtherMember member) {
         Session session = this.factoryBean.getObject().getCurrentSession();
         session.update(member);
+    }
+
+    @Override
+    public ApartmentOtherMember getOtherMemberById(int id) {
+        Session s = this.factoryBean.getObject().getCurrentSession();
+        javax.persistence.Query q = s.createNamedQuery("ApartmentOtherMember.findById");
+        q.setParameter("id", id); // Đặt tên tham số là 'userId'
+        List<ApartmentOtherMember> result = q.getResultList();
+        return result.isEmpty() ? null : result.get(0);
     }
 
 }
