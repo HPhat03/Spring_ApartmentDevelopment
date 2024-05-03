@@ -4,6 +4,8 @@
  */
 package com.mhp_btn.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -46,6 +48,7 @@ public class ApartmentOtherMember implements Serializable {
     @Column(name = "relationship")
     private String relationship;
     @JoinColumn(name = "apartment_id", referencedColumnName = "id")
+    @JsonIgnore
     @ManyToOne(optional = false)
     private ApartmentRentalConstract apartmentId;
 
