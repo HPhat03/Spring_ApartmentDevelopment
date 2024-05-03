@@ -104,6 +104,7 @@ public class ApiOtherMemberController {
         // Cập nhật thông tin thành viên
         updateMember.setId(memberId);
         updateMember.setApartmentId(apartment);
+        updateMember.setRelationship(updateMember.getRelationship());
         memberService.updateOthMember(updateMember);
 
         return new ResponseEntity<>(updateMember, HttpStatus.OK);

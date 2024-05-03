@@ -4,24 +4,13 @@
  */
 package com.mhp_btn.pojo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -52,12 +41,15 @@ public class ApartmentReport implements Serializable {
     private String title;
     @Basic(optional = false)
     @NotNull
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     @Column(name = "created_date")
     @Temporal(TemporalType.DATE)
     private Date createdDate;
     @OneToMany(mappedBy = "reportId")
+    @JsonIgnore
     private Set<ApartmentDetailReport> apartmentDetailReportSet;
     @JoinColumn(name = "apartment_id", referencedColumnName = "id")
+    @JsonIgnore
     @ManyToOne
     private ApartmentRentalConstract apartmentId;
 
@@ -90,6 +82,7 @@ public class ApartmentReport implements Serializable {
     }
 
     public Date getCreatedDate() {
+        this.createdDate.setDate(this.createdDate.getDate() + 1);
         return createdDate;
     }
 
