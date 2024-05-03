@@ -9,4 +9,10 @@ public interface DetailReceiptService {
     List<ApartmentDetailReceipt> getDetailReceiptsByReceiptId(int id);
 
     void createDetailByReceiptId( ApartmentDetailReceipt detailReceipt);
+
+    void deleteDetailReceiptById(int id) ;
+
+    public ApartmentDetailReceipt getDetailReceiptById(int id) ;
+
+    void updateDetailReceipt(ApartmentDetailReceipt detailReceipt);
 }

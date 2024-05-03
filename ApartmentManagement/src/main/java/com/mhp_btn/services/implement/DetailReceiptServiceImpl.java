@@ -24,5 +24,20 @@ public class DetailReceiptServiceImpl implements DetailReceiptService {
         detailRepo.saveDetailReceipt(detailReceipt);
     }
 
+    @Override
+    public void deleteDetailReceiptById(int id) {
+        this.detailRepo.deleteDetailReceiptById(id);
+    }
+
+    @Override
+    public ApartmentDetailReceipt getDetailReceiptById(int id) {
+        return this.detailRepo.getDetailReceiptById(id);
+    }
+
+    @Override
+    public void updateDetailReceipt(ApartmentDetailReceipt detailReceipt) {
+        this.detailRepo.updateDetailReceipt(detailReceipt);
+    }
+
 
 }

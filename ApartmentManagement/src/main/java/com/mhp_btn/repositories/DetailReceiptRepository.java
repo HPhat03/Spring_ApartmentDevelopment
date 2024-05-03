@@ -12,4 +12,11 @@ public interface DetailReceiptRepository {
 
     //tao detail receipt theo id receipt
     void saveDetailReceipt(ApartmentDetailReceipt detailReceipt);
+
+    void deleteDetailReceiptById(int id) ;
+
+    // lay detail receipt theo id
+    ApartmentDetailReceipt getDetailReceiptById(int id);
+
+    void updateDetailReceipt(ApartmentDetailReceipt detailReceipt);
 }
