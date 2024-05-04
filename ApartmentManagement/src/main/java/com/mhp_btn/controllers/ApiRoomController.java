@@ -27,15 +27,39 @@ public class ApiRoomController {
 
     @GetMapping(path = "/room/", produces = "application/json")
     public ResponseEntity<List<ApartmentRoom>> list() {
-        List<ApartmentRoom> activeRooms = this.rs.getActiveRooms();
+        List<ApartmentRoom> activeRooms = this.rs.getRooms();
         return new ResponseEntity<>(activeRooms, HttpStatus.OK);
     }
-    // Endpoint để lấy danh sách các phòng trống
-    @GetMapping(path = "/room/empty", produces = "application/json")
-    public ResponseEntity<List<ApartmentRoom>> listEmptyRooms() {
-        List<ApartmentRoom> emptyRooms = this.rs.getEmptyRoom();
-        return new ResponseEntity<>(emptyRooms, HttpStatus.OK);
+    // Loc phong
+    @GetMapping(path = "/room/{key}", produces = "application/json")
+    public ResponseEntity<?> selectRoom(@PathVariable String key) {
+        List<ApartmentRoom> roomList;
+
+        switch (key) {
+            case "active":
+                roomList = rs.getActiveRooms();
+                break;
+            case "inactive":
+                roomList = rs.getInactiveRooms();
+                break;
+            case "empty":
+                roomList = rs.getEmptyRoom();
+                break;
+            case "rented":
+                roomList = rs.getRentedRoom();
+                break;
+            default:
+                return ResponseEntity.badRequest().body("Key không hợp lệ");
+        }
+
+        if (!roomList.isEmpty()) {
+            return ResponseEntity.ok(roomList); // Trả về toàn bộ danh sách phòng
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
+
+
 
     @PostMapping("/room/")
     @ResponseStatus(HttpStatus.CREATED)

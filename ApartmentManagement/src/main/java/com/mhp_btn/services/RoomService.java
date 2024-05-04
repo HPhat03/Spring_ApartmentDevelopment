@@ -13,6 +13,9 @@ public interface RoomService {
 
     List<ApartmentRoom> getActiveRooms();
     List<ApartmentRoom> getEmptyRoom();
+    List<ApartmentRoom> getRentedRoom() ;
+    List<ApartmentRoom> getInactiveRooms() ;
+    List<ApartmentRoom> getRoomByFloorId(int id) ;
 
     void updateRoom(ApartmentRoom room);
 }

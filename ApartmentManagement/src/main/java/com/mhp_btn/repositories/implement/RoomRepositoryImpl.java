@@ -63,12 +63,40 @@ public class RoomRepositoryImpl implements RoomRepository {
     }
 
     @Override
+    public List<ApartmentRoom> getInactiveRooms() {
+        Session s = this.factoryBean.getObject().getCurrentSession();
+        Query q = s.createNamedQuery("ApartmentRoom.findByIsActive");
+        q.setParameter("isActive", (short) 0);
+        return q.getResultList();
+    }
+
+    @Override
     public List<ApartmentRoom> getEmptyRoom() {
         Session s = this.factoryBean.getObject().getCurrentSession();
         Query q = s.createNamedQuery("ApartmentRoom.findByIsBlank");
         q.setParameter("isBlank", (short) 0);
         return q.getResultList();
     }
+
+    @Override
+    public List<ApartmentRoom> getRentedRoom() {
+        Session s = this.factoryBean.getObject().getCurrentSession();
+        Query q = s.createNamedQuery("ApartmentRoom.findByIsBlank");
+        q.setParameter("isBlank", (short) 1);
+        return q.getResultList();
+    }
+
+    @Override
+    public List<ApartmentRoom> getRoomByFloorId(int floorId) {
+        Session session = factoryBean.getObject().getCurrentSession();
+        Query query = session.createQuery("SELECT r FROM ApartmentRoom r WHERE r.floor.id = :floorId");
+        query.setParameter("floorId", floorId);
+        return query.getResultList();
+    }
+
+
+
+
 
     @Override
     public void updateRoom(ApartmentRoom room) {
