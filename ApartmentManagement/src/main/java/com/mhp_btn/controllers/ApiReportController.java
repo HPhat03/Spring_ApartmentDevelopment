@@ -119,6 +119,7 @@ public class ApiReportController {
         }
         existingReport.setApartmentId(apartment);
         reportService.updateReport(existingReport);
+
         return new ResponseEntity<>(existingReport, HttpStatus.OK);
     }
 

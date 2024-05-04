@@ -22,7 +22,7 @@ public class ApiRelativeRegistryController {
     @Autowired
     private RelativeRegistryService registryService;
     @Autowired
-    private RentalConstractService constractService;
+    private RentalConstractService apartmentService;
 
     @GetMapping(path = "/relative_registries/", produces = "application/json")
     public ResponseEntity<List<ApartmentRelativeRegistry>> list() {
@@ -71,7 +71,7 @@ public class ApiRelativeRegistryController {
             apartmentRelativeRegistry.setStartDate(startDate);
             apartmentRelativeRegistry.setEndDate(endDate);
 
-            ApartmentRentalConstract apartmentRental = constractService.getRentalConstractById(apartmentId);
+            ApartmentRentalConstract apartmentRental = apartmentService.getRentalConstractById(apartmentId);
 
             if(apartmentRental != null){
                 apartmentRelativeRegistry.setApartmentId(apartmentRental);
@@ -105,7 +105,7 @@ public class ApiRelativeRegistryController {
                     relativeRegistry.setName(value);
                     break;
                 case "apartmentId":
-                    ApartmentRentalConstract constract = constractService.getConstractById(Integer.parseInt(value));
+                    ApartmentRentalConstract constract = apartmentService.getConstractById(Integer.parseInt(value));
                     if (constract != null) {
                         relativeRegistry.setApartmentId(constract);
                     } else {
