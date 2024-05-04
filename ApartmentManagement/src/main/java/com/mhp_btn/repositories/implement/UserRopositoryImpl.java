@@ -4,6 +4,7 @@
  */
 package com.mhp_btn.repositories.implement;
 
+import com.mhp_btn.pojo.ApartmentResident;
 import com.mhp_btn.pojo.ApartmentUser;
 import com.mhp_btn.repositories.UserRepository;
 import java.util.List;
@@ -38,6 +39,15 @@ public class UserRopositoryImpl implements UserRepository{
         Query q = s.createQuery("FROM ApartmentUser U WHERE U.username=:un");
         q.setParameter("un", username);
         return (ApartmentUser) q.getSingleResult();
+    }
+
+    @Override
+    public ApartmentUser getUserById(int id) {
+        Session s = this.factory.getObject().getCurrentSession();
+        Query q = s.createNamedQuery("ApartmentUser.findById");
+        q.setParameter("id", id); // Đặt tên tham số là 'userId'
+        List<ApartmentUser> result = q.getResultList();
+        return result.isEmpty() ? null : result.get(0);
     }
 
     @Override

@@ -63,4 +63,9 @@ public class UserServiceImpl implements UserService {
         up.save(user);
     }
 
+    @Override
+    public ApartmentUser getUserById(int id) {
+        return this.up.getUserById(id);
+    }
+
 }

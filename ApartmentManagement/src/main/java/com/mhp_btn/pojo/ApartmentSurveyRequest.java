@@ -4,6 +4,9 @@
  */
 package com.mhp_btn.pojo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
@@ -50,10 +53,12 @@ public class ApartmentSurveyRequest implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Column(name = "start_date")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     @Temporal(TemporalType.DATE)
     private Date startDate;
     @Basic(optional = false)
     @NotNull
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     @Column(name = "end_date")
     @Temporal(TemporalType.DATE)
     private Date endDate;
@@ -62,11 +67,14 @@ public class ApartmentSurveyRequest implements Serializable {
     @Column(name = "is_active")
     private short isActive;
     @JoinColumn(name = "admin_id", referencedColumnName = "user_id")
+    @JsonIgnore
     @ManyToOne
     private ApartmentAdmin adminId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "requestId")
+    @JsonIgnore
     private Set<ApartmentDetailRequest> apartmentDetailRequestSet;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "surveyId")
+    @JsonIgnore
     private Set<ApartmentSurveyResponse> apartmentSurveyResponseSet;
 
     public ApartmentSurveyRequest() {
@@ -92,6 +100,7 @@ public class ApartmentSurveyRequest implements Serializable {
     }
 
     public Date getStartDate() {
+        this.startDate.setDate(this.startDate.getDate() + 1);
         return startDate;
     }
 
@@ -100,6 +109,7 @@ public class ApartmentSurveyRequest implements Serializable {
     }
 
     public Date getEndDate() {
+        this.endDate.setDate(this.endDate.getDate() + 1);
         return endDate;
     }
 

@@ -15,4 +15,6 @@ public interface UserRepository {
     void save(ApartmentUser user);
     List<ApartmentUser> getUsers();
     ApartmentUser getUserByUsername(String username);
+
+    ApartmentUser getUserById(int id);
 }
