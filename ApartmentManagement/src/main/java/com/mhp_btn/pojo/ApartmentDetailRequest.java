@@ -4,6 +4,8 @@
  */
 package com.mhp_btn.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 import java.util.Set;
 import javax.persistence.Basic;
@@ -58,6 +60,7 @@ public class ApartmentDetailRequest implements Serializable {
     @ManyToOne(optional = false)
     private ApartmentSurveyRequest requestId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "questionId")
+    @JsonIgnore
     private Set<ApartmentDetailResponse> apartmentDetailResponseSet;
 
     public ApartmentDetailRequest() {
