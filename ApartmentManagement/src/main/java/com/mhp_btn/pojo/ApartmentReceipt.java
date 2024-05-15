@@ -4,6 +4,9 @@
  */
 package com.mhp_btn.pojo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
@@ -52,15 +55,18 @@ public class ApartmentReceipt implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Column(name = "created_date")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     @Temporal(TemporalType.DATE)
     private Date createdDate;
     @Basic(optional = false)
     @NotNull
     @Column(name = "total")
     private int total;
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "receiptId")
     private Set<ApartmentDetailReceipt> apartmentDetailReceiptSet;
     @JoinColumn(name = "apartment_id", referencedColumnName = "id")
+    @JsonIgnore
     @ManyToOne(optional = false)
     private ApartmentRentalConstract apartmentId;
 

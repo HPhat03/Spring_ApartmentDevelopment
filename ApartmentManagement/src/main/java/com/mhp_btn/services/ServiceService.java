@@ -13,4 +13,11 @@ import java.util.List;
  */
 public interface ServiceService {
     List<ApartmentService> getServices();
+    void addService(ApartmentService service);
+
+    public ApartmentService getServiceById(int id);
+
+    void deleteServiceById(int id);
+
+    void updateervice(ApartmentService service);
 }

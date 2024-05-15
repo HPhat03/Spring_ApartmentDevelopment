@@ -4,20 +4,12 @@
  */
 package com.mhp_btn.pojo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 import java.util.Date;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -40,6 +32,7 @@ public class ApartmentSmartCabinet implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @NotNull
     @Column(name = "id")
     private Integer id;
@@ -56,16 +49,19 @@ public class ApartmentSmartCabinet implements Serializable {
     private String status;
     @Basic(optional = false)
     @NotNull
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern ="dd/MM/yyyy")
     @Column(name = "created_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdDate;
     @Basic(optional = false)
     @NotNull
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern ="dd/MM/yyyy")
     @Column(name = "updated_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedDate;
     @JoinColumn(name = "apartment_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
+    @JsonIgnore
     private ApartmentRentalConstract apartmentId;
 
     public ApartmentSmartCabinet() {
@@ -108,6 +104,7 @@ public class ApartmentSmartCabinet implements Serializable {
     }
 
     public Date getCreatedDate() {
+        this.createdDate.setDate(this.createdDate.getDate() + 1);
         return createdDate;
     }
 
@@ -116,6 +113,7 @@ public class ApartmentSmartCabinet implements Serializable {
     }
 
     public Date getUpdatedDate() {
+        this.updatedDate.setDate(this.updatedDate.getDate() );
         return updatedDate;
     }
 

@@ -24,5 +24,26 @@ public class ServiceServiceImpl implements  ServiceService{
     public List<ApartmentService> getServices() {
         return this.repo.getService();
     }
-    
+
+    @Override
+    public void addService(ApartmentService service) {
+        this.repo.addService(service);
+    }
+
+    @Override
+    public ApartmentService getServiceById(int id) {
+        return this.repo.getServiceById(id);
+    }
+
+    @Override
+    public void deleteServiceById(int id) {
+        this.repo.deleteServiceById(id);
+    }
+
+    @Override
+    public void updateervice(ApartmentService service) {
+        this.repo.updateService(service);
+    }
+
+
 }

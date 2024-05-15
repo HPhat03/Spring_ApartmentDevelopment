@@ -4,6 +4,9 @@
  */
 package com.mhp_btn.pojo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
@@ -64,19 +67,25 @@ public class ApartmentRoom implements Serializable {
     private int price;
     @Column(name = "is_active")
     private Short isActive;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     @Basic(optional = false)
     @NotNull
     @Column(name = "created_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdDate;
+    @JsonIgnore
     @OneToMany(mappedBy = "roomId")
     private Set<ApartmentRentalConstract> apartmentRentalConstractSet;
+    @JsonIgnore
     @JoinColumn(name = "floor", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private ApartmentFloor floor;
 
     public ApartmentRoom() {
     }
+
+
+
 
     public ApartmentRoom(Integer id) {
         this.id = id;

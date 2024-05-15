@@ -4,6 +4,9 @@
  */
 package com.mhp_btn.pojo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
@@ -56,6 +59,7 @@ public class ApartmentRentalConstract implements Serializable {
     private String status;
     @Basic(optional = false)
     @NotNull
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     @Column(name = "created_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdDate;
@@ -67,24 +71,33 @@ public class ApartmentRentalConstract implements Serializable {
     @NotNull
     @Column(name = "final_price")
     private int finalPrice;
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "apartmentId")
     private Set<ApartmentOtherMember> apartmentOtherMemberSet;
+    @JsonIgnore
     @OneToMany(mappedBy = "apartmentId")
     private Set<ApartmentReport> apartmentReportSet;
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "apartmentId")
     private Set<ApartmentServiceConstract> apartmentServiceConstractSet;
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "apartmentId")
     private Set<ApartmentSmartCabinet> apartmentSmartCabinetSet;
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "apartmentId")
     private Set<ApartmentRelativeRegistry> apartmentRelativeRegistrySet;
     @JoinColumn(name = "resident_id", referencedColumnName = "user_id")
+    @JsonIgnore
     @ManyToOne(optional = false)
     private ApartmentResident residentId;
     @JoinColumn(name = "room_id", referencedColumnName = "id")
+    @JsonIgnore
     @ManyToOne
     private ApartmentRoom roomId;
     @OneToMany(mappedBy = "apartmentId")
+    @JsonIgnore
     private Set<ApartmentSurveyResponse> apartmentSurveyResponseSet;
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "apartmentId")
     private Set<ApartmentReceipt> apartmentReceiptSet;
 

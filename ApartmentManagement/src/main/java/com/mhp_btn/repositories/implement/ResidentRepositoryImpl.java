@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.mhp_btn.repositories.implement;
+import com.mhp_btn.pojo.ApartmentRentalConstract;
 import com.mhp_btn.pojo.ApartmentResident;
 import com.mhp_btn.repositories.ResidentRepository;
 import org.hibernate.Session;
@@ -11,6 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.Query;
+import java.util.List;
 
 /**
  *
@@ -28,5 +32,15 @@ public class ResidentRepositoryImpl implements ResidentRepository{
         Session s = this.factory.getObject().getCurrentSession();
         s.save(resident);
     }
-    
+
+    @Override
+    public ApartmentResident getResidentById(int id) {
+        Session s = this.factory.getObject().getCurrentSession();
+        Query q = s.createNamedQuery("ApartmentResident.findByUserId");
+        q.setParameter("userId", id); // Đặt tên tham số là 'userId'
+        List<ApartmentResident> result = q.getResultList();
+        return result.isEmpty() ? null : result.get(0);
+    }
+
+
 }
