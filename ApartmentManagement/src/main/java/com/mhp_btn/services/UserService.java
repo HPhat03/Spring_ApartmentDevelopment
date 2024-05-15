@@ -6,7 +6,9 @@ package com.mhp_btn.services;
 
 import com.mhp_btn.pojo.ApartmentUser;
 import java.util.List;
+import java.util.Map;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
@@ -14,6 +16,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
  */
 public interface UserService extends UserDetailsService {
     List<ApartmentUser> getUsers();
+    ApartmentUser getUserByID(int id);
     ApartmentUser getUsersByUsername(String username);
-    void save(ApartmentUser user);
+    void save(ApartmentUser user, boolean resetPassword);
+    ApartmentUser ChangeOrInitialize(ApartmentUser user, Map<String, String> data, boolean isInit);
 }

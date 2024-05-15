@@ -6,6 +6,9 @@ package com.mhp_btn.controllers;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.JsonPatchException;
 
 import com.mhp_btn.pojo.ApartmentAdmin;
 import com.mhp_btn.pojo.ApartmentResident;
@@ -16,20 +19,26 @@ import com.mhp_btn.services.ResidentService;
 import com.mhp_btn.services.UserService;
 import com.mhp_btn.utils.ErrorHandle;
 import com.mhp_btn.utils.StringUtil;
-import com.mhp_btn.utils.TwilioUtil;
-//import com.mhp_btn.utils.TwilioUtils;
+//import com.mhp_btn.utils.TwilioUtil;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.MappingJacksonValue;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -54,10 +63,11 @@ public class ApiUserController {
     @Autowired
     private Cloudinary cloudinary;
     
-    @GetMapping(path = "/test/", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> sendSMS(){
+    @GetMapping(path = "/user/", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<MappingJacksonValue> list(){
+        List<ApartmentUser> users = this.us.getUsers();
+        return new ResponseEntity<>(UserSerializer.UserList(users),HttpStatus.OK);
         
-        return ResponseEntity.ok("it worked! check it out");
     }
 
     @PostMapping(path = "/user/", consumes = {
@@ -67,49 +77,17 @@ public class ApiUserController {
 
     public ResponseEntity<Object> create(@RequestParam Map<String, String> data, @RequestPart MultipartFile[] file) throws ParseException, IOException {
         ApartmentUser u = new ApartmentUser();
-        String firstname = data.get("firstname");
-        String lastname = data.get("lastname");
-        String phone = data.get("phone");
-        Date today = new Date();
-        
-        u.setFirstName(firstname);
-        u.setLastName(lastname);
-        u.setPhone(phone);
-        u.setGender((short) Integer.parseInt(data.get("gender")));
-        u.setEmail(data.get("email"));
-        u.setCreatedDate(today);
-        u.setIsActive((short) 1);
-
-        String role = data.get("role");
-        if (role != null && role.equals(ApartmentUser.ADMIN)) {
-            u.setRole(ApartmentUser.ADMIN);
-            u.setUsername(data.get("username"));
-            u.setPassword(data.get("password"));
-            try {
-                if (file.length > 0) {
-                    Map res = cloudinary.uploader().upload(file[0].getBytes(), ObjectUtils.asMap("resource_type", "auto"));
-                    u.setAvatar(res.get("secure_url").toString());
-                }
-            } catch (IOException e) {
-                ErrorHandle error = new ErrorHandle("Không thể tải ảnh lên", HttpStatus.BAD_REQUEST, e.toString());
-                return new ResponseEntity<>(error, error.getStatus());
-            }
-
-        } else {
-            u.setRole(ApartmentUser.RESIDENT);
-            String[] lastnameArr = lastname.split(" ");
-            for (int i = 0; i < lastnameArr.length; i++) {
-                lastnameArr[i] = lastnameArr[i].substring(0, 1);
-            }
-            String username = String.join("", lastnameArr) + firstname;
-            u.setUsername(StringUtil.removeAccent(username).toLowerCase());
-            u.setPassword(ApartmentUser.RESIDENT_DEFAULT_PASSWORD);
+        if (file.length>0){
+            u.setFile(file[0]);
         }
-        Date birthdate = this.dateFormatter.parse(data.get("birthdate"));
-        u.setBirthdate(birthdate);
-
+        u = us.ChangeOrInitialize(u, data, true);
+        if (u.getFirstName()== null)
+        {
+            ErrorHandle error = new ErrorHandle("Không thể upload hình ảnh", HttpStatus.BAD_REQUEST,"ERROR UPLOADING TO CLOUDINARY");
+            return new ResponseEntity<>(error, error.getStatus());
+        }
         try {
-            us.save(u);
+            us.save(u, true);
             if (u.getRole().equals(ApartmentUser.ADMIN)){
                 ApartmentAdmin admin = new ApartmentAdmin(u.getId());
                 admin.setApartmentUser(u);
@@ -123,7 +101,7 @@ public class ApiUserController {
                 rs.save(resident);
                 u.setApartmentResident(resident);
             }
-            us.save(u);
+            us.save(u, false);
             
         } catch (Exception e) {
             ErrorHandle error = new ErrorHandle("Tạo không thành công", HttpStatus.BAD_REQUEST, e.toString());
@@ -136,4 +114,64 @@ public class ApiUserController {
         return new ResponseEntity<>(UserSerializer.UserDetail(u), HttpStatus.CREATED);
 
     }
+    
+    @PatchMapping(path = "/user/{id}", consumes = {
+        MediaType.APPLICATION_JSON_VALUE
+    },
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> update(@PathVariable int id, @RequestBody Map<String,String> data){
+        ApartmentUser u = this.us.getUserByID(id);
+        System.out.println(data.get("firstname"));
+        if (u==null)
+        {
+            ErrorHandle error = new ErrorHandle("Không tìm thấy người dùng", HttpStatus.NOT_FOUND, "USER IS NULL");
+            return new ResponseEntity<>(error, error.getStatus());
+        }
+        u = us.ChangeOrInitialize(u, data, false);
+        if (u.getFirstName()== null)
+        {
+            ErrorHandle error = new ErrorHandle("Không thể upload hình ảnh", HttpStatus.BAD_REQUEST,"ERROR UPLOADING TO CLOUDINARY");
+            return new ResponseEntity<>(error, error.getStatus());
+        }
+        
+        try{
+           us.save(u, false); 
+        }catch (Exception e)
+        {
+            ErrorHandle error = new ErrorHandle("Tạo không thành công", HttpStatus.BAD_REQUEST, e.toString());
+            return new ResponseEntity<>(error, error.getStatus());
+        }
+        return new ResponseEntity<>(UserSerializer.UserDetail(u), HttpStatus.OK);
+        
+    }
+    
+    @PostMapping(path = "/user/{id}/add_avatar/", consumes = {
+        MediaType.APPLICATION_JSON_VALUE,
+        MediaType.MULTIPART_FORM_DATA_VALUE
+    }, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> AddAvatar(@PathVariable int id, @RequestPart MultipartFile file){
+        ApartmentUser u = this.us.getUserByID(id);
+        if (u==null)
+        {
+            ErrorHandle error = new ErrorHandle("Không tìm thấy người dùng", HttpStatus.NOT_FOUND, "USER IS NULL");
+            return new ResponseEntity<>(error, error.getStatus());
+        }
+        u.setFile(file);
+        u = us.ChangeOrInitialize(u, new HashMap<>(), false);
+        if (u.getAvatar()== null)
+        {
+            ErrorHandle error = new ErrorHandle("Không thể upload hình ảnh", HttpStatus.BAD_REQUEST,"ERROR UPLOADING TO CLOUDINARY");
+            return new ResponseEntity<>(error, error.getStatus());
+        }
+        try{
+           us.save(u, false); 
+        }catch (Exception e)
+        {
+            ErrorHandle error = new ErrorHandle("Tạo không thành công", HttpStatus.BAD_REQUEST, e.toString());
+            return new ResponseEntity<>(error, error.getStatus());
+        }
+        return new ResponseEntity<>(UserSerializer.UserDetail(u), HttpStatus.OK);
+    }
+    
+    
 }

@@ -9,7 +9,6 @@ com\mhp_btn\pojo\ApartmentSurveyRequest.class
 com\mhp_btn\pojo\ApartmentAdmin_.class
 com\mhp_btn\utils\StringUtil.class
 com\mhp_btn\configs\SecurityWebApplicationInitializer.class
-com\mhp_btn\repositories\implement\UserRopositoryImpl.class
 com\mhp_btn\pojo\ApartmentDetailResponse.class
 com\mhp_btn\pojo\ApartmentFloor.class
 com\mhp_btn\pojo\ApartmentSmartCabinet.class

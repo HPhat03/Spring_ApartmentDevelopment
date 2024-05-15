@@ -9,6 +9,7 @@ import com.mhp_btn.repositories.UserRepository;
 import com.mhp_btn.services.UserService;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,6 +19,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
@@ -57,10 +59,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void save(ApartmentUser user) {
-        if (user.getId() == null)
+    public void save(ApartmentUser user, boolean resetPassword) {
+        if (user.getId() == null || resetPassword)
              user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         up.save(user);
+    }
+
+    @Override
+    public ApartmentUser getUserByID(int id) {
+        return up.getUsersByID(id);
+    }
+
+    @Override
+    public ApartmentUser ChangeOrInitialize(ApartmentUser user, Map<String, String> data, boolean isInit) {
+        return up.ChangeOrInitialize(user, data, isInit);
     }
 
 }

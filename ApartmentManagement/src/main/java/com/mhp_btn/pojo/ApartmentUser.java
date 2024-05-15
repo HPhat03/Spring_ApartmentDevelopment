@@ -79,7 +79,6 @@ public class ApartmentUser implements Serializable {
     @NotNull
     @Column(name = "birthdate")
     @Temporal(TemporalType.DATE)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private Date birthdate;
     @Basic(optional = false)
     @NotNull
@@ -125,6 +124,10 @@ public class ApartmentUser implements Serializable {
     @JsonIgnore
     private ApartmentResident apartmentResident;
     
+    
+    @Transient
+    @JsonIgnore
+    private MultipartFile file;
     
     
     @Transient
@@ -312,6 +315,20 @@ public class ApartmentUser implements Serializable {
      */
     public void setConfirmPassword(String confirmPassword) {
         this.confirmPassword = confirmPassword;
+    }
+
+    /**
+     * @return the file
+     */
+    public MultipartFile getFile() {
+        return file;
+    }
+
+    /**
+     * @param file the file to set
+     */
+    public void setFile(MultipartFile file) {
+        this.file = file;
     }
     
 }
