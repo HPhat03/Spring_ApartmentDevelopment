@@ -18,10 +18,5 @@ public interface UserRepository {
     List<ApartmentUser> getUsers();
     ApartmentUser getUsersByID(int id);
     ApartmentUser getUserByUsername(String username);
-<<<<<<< HEAD
     ApartmentUser ChangeOrInitialize(ApartmentUser user, Map<String,String> data, boolean isInit);
-=======
-
-    ApartmentUser getUserById(int id);
->>>>>>> 8562484f7a349d165b5babbbbdd81b142e5c6cbc
 }

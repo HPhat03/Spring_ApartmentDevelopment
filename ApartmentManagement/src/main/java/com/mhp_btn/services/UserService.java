@@ -18,11 +18,6 @@ public interface UserService extends UserDetailsService {
     List<ApartmentUser> getUsers();
     ApartmentUser getUserByID(int id);
     ApartmentUser getUsersByUsername(String username);
-<<<<<<< HEAD
     void save(ApartmentUser user, boolean resetPassword);
     ApartmentUser ChangeOrInitialize(ApartmentUser user, Map<String, String> data, boolean isInit);
-=======
-    void save(ApartmentUser user);
-    ApartmentUser getUserById(int id) ;
->>>>>>> 8562484f7a349d165b5babbbbdd81b142e5c6cbc
 }

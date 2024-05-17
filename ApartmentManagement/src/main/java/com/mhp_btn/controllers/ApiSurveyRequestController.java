@@ -56,7 +56,7 @@ public class ApiSurveyRequestController {
             }
 
             int adminId = Integer.parseInt(adminIdStr);
-            ApartmentUser user = userService.getUserById(adminId);
+            ApartmentUser user = userService.getUserByID(adminId);
             if (user == null) {
                 return new ResponseEntity<>("Can not find admin with Id: " + adminId, HttpStatus.NOT_FOUND);
             }
@@ -104,7 +104,7 @@ public class ApiSurveyRequestController {
                     break;
                 case "adminId":
                     int adminId = Integer.parseInt(value);
-                    ApartmentUser user = userService.getUserById(adminId);
+                    ApartmentUser user = userService.getUserByID(adminId);
                     if (user == null) {
                         return new ResponseEntity<>("Can not find admin with Id: " + adminId, HttpStatus.NOT_FOUND);
                     }
