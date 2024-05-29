@@ -4,6 +4,7 @@
  */
 package com.mhp_btn.pojo;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -34,6 +35,7 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author Admin
  */
 @Entity
+@JsonFilter("ROOM_FILTER")
 @Table(name = "apartment_room")
 @XmlRootElement
 @NamedQueries({

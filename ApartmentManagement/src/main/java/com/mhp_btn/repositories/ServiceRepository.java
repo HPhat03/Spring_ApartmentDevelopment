@@ -20,4 +20,5 @@ public interface ServiceRepository {
 
     void deleteServiceById(int id);
     void updateService(ApartmentService service);
+    long countService();
 }

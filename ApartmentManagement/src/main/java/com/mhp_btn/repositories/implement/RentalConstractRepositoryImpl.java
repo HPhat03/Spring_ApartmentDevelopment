@@ -1,8 +1,12 @@
 package com.mhp_btn.repositories.implement;
 
 import com.mhp_btn.pojo.ApartmentRentalConstract;
+import com.mhp_btn.pojo.ApartmentRentalConstract_;
 import com.mhp_btn.pojo.ApartmentResident;
+import com.mhp_btn.pojo.ApartmentRoom;
+import com.mhp_btn.pojo.ApartmentRoom_;
 import com.mhp_btn.repositories.RentalConstractRepository;
+import java.util.ArrayList;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
@@ -11,6 +15,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.Query;
 import java.util.List;
+import java.util.Map;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 @Repository
 @Transactional
@@ -18,9 +28,24 @@ public class RentalConstractRepositoryImpl implements RentalConstractRepository 
     @Autowired
     private  LocalSessionFactoryBean factoryBean;
     @Override
-    public List<ApartmentRentalConstract> getAllRentalConstract() {
+    public List<ApartmentRentalConstract> getAllRentalConstract(Map<String,String> params) {
         Session s = this.factoryBean.getObject().getCurrentSession();
-        Query q = s.createNamedQuery("ApartmentRentalConstract.findAll");
+        CriteriaBuilder cb = s.getCriteriaBuilder();
+        CriteriaQuery<ApartmentRentalConstract> cq = cb.createQuery(ApartmentRentalConstract.class);
+        Root<ApartmentRentalConstract> r = cq.from(ApartmentRentalConstract.class);
+        cq.select(r);
+        List<Predicate> preds = new ArrayList<>();
+        
+        String room_id = params.get("room");
+        if(room_id!=null){
+            Join<ApartmentRentalConstract, ApartmentRoom> room = r.join(ApartmentRentalConstract_.roomId);
+            preds.add(cb.like(room.get(ApartmentRoom_.roomNumber), String.format("%%%s%%", room_id)));
+        }
+        
+        cq.where(preds.toArray(Predicate[]::new));
+        cq.orderBy(cb.desc(r.get("id")));
+        
+        Query q = s.createQuery(cq);
         return q.getResultList();
     }
 
@@ -41,8 +66,7 @@ public class RentalConstractRepositoryImpl implements RentalConstractRepository 
         Session s = this.factoryBean.getObject().getCurrentSession();
         Query q = s.createNamedQuery("ApartmentRentalConstract.findById");
         q.setParameter("id", id); // Bind giá trị của tham số id vào câu truy vấn
-        List<ApartmentRentalConstract> result = q.getResultList();
-        return result.isEmpty() ? null : result.get(0);
+        return (ApartmentRentalConstract) q.getSingleResult();
     }
 
     @Override

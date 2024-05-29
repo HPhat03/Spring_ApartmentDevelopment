@@ -4,14 +4,8 @@
  */
 package com.mhp_btn.serializers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
-import com.github.fge.jsonpatch.JsonPatch;
-import com.github.fge.jsonpatch.JsonPatchException;
-import com.mhp_btn.pojo.ApartmentUser;
 import org.springframework.http.converter.json.MappingJacksonValue;
 
 /**
@@ -21,29 +15,39 @@ import org.springframework.http.converter.json.MappingJacksonValue;
 public class UserSerializer {
     
     private static String KEY = "USER_FILTER";
-    
+    private static String[] LIST_FIELDS = {"id","name", "role", "avatar"};
     public static MappingJacksonValue UserList(Object users){
         MappingJacksonValue values = new MappingJacksonValue(users);
-        String[] fields = {"id", "name", "role"};
-        values.setFilters(new SimpleFilterProvider().addFilter(
-                KEY,
-                SimpleBeanPropertyFilter.filterOutAllExcept(fields)
-                ));
+        values.setFilters(new SimpleFilterProvider().addFilter(KEY
+                , SimpleBeanPropertyFilter.filterOutAllExcept(LIST_FIELDS)));
         return values;
     }
     
     public static MappingJacksonValue UserDetail(Object users){
         MappingJacksonValue values = new MappingJacksonValue(users);
-        values.setFilters(new SimpleFilterProvider().addFilter(
-                KEY,
+        values.setFilters(new SimpleFilterProvider().addFilter(getKEY(),
                 SimpleBeanPropertyFilter.serializeAll()
                 ));
         return values;
     }
     
-    public static ApartmentUser applyPatch(JsonPatch patchData, ApartmentUser user) throws JsonPatchException, IllegalArgumentException, JsonProcessingException{
-        ObjectMapper om = new ObjectMapper();
-        JsonNode patched = patchData.apply(om.convertValue(user, JsonNode.class));
-        return om.treeToValue(patched, ApartmentUser.class);
+//    public static ApartmentUser applyPatch(JsonPatch patchData, ApartmentUser user) throws JsonPatchException, IllegalArgumentException, JsonProcessingException{
+//        ObjectMapper om = new ObjectMapper();
+//        JsonNode patched = patchData.apply(om.convertValue(user, JsonNode.class));
+//        return om.treeToValue(patched, ApartmentUser.class);
+//    }
+
+    /**
+     * @return the KEY
+     */
+    public static String getKEY() {
+        return KEY;
+    }
+
+    /**
+     * @return the LIST_FIELDS
+     */
+    public static String[] getLIST_FIELDS() {
+        return LIST_FIELDS;
     }
 }

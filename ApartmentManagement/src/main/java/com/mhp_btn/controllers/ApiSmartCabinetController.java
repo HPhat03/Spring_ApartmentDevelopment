@@ -2,17 +2,12 @@ package com.mhp_btn.controllers;
 
 import com.mhp_btn.pojo.*;
 import com.mhp_btn.services.RentalConstractService;
-import com.mhp_btn.services.ReportService;
 import com.mhp_btn.services.SmartCabinetService;
-import com.mhp_btn.utils.StringUtil;
-import org.eclipse.persistence.jpa.jpql.parser.DateTime;
+import com.mhp_btn.utils.TwilioUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.text.ParseException;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -74,7 +69,7 @@ public class ApiSmartCabinetController {
     public ResponseEntity<?> addSmartCabinet(@RequestBody Map<String, String> params) {
 
             String desc = params.get("description");
-            String status = params.get("status");
+            String status = ApartmentSmartCabinet.Status.PENDING.toString();
             int apartmentId = Integer.parseInt(params.get("apartmentId"));
             Date createdDate = new Date();
             Date updatedDate = new Date();
@@ -92,8 +87,28 @@ public class ApiSmartCabinetController {
             newCabinet.setStatus(status);
 
             cabinetService.addCabinet(newCabinet);
+            TwilioUtil.SendSMS("+84365051699", String.format("\n[PN APARTMENT THÔNG BÁO]\nQuý khách phòng %s có một đơn hàng vừa được nhận tại tủ điện tử.\n"
+                    + "Vào ngày %s.\nThông tin chi tiết xem tại: www.apartmentTest.com", newCabinet.getApartmentId().getRoomId().getRoomNumber(),  createdDate.toString()));
+
             return ResponseEntity.status(HttpStatus.CREATED).build();
 
+    }
+    @PatchMapping(value = "/smart_cabinets/{id}/receivce", produces = "application/json")
+    public ResponseEntity<Object> ConfirmCabinet(@PathVariable int id){
+        ApartmentSmartCabinet cab = cabinetService.getSmartCabinetById(id);
+        if (cab == null){
+            return new ResponseEntity<>("Không tìm thấy tủ đồ với mã " + id, HttpStatus.NOT_FOUND);
+        }
+        
+        if (cab.getStatus().equals(ApartmentSmartCabinet.Status.PENDING.toString()) )
+            return new ResponseEntity<>("Không thể xác nhận nhận hàng các tủ đồ đã xác nhận trước đó ", HttpStatus.BAD_REQUEST);
+        cab.setStatus(ApartmentSmartCabinet.Status.RECEIVCED.toString());
+        cab.setUpdatedDate(new Date());
+        cabinetService.updateCabinet(cab);
+        TwilioUtil.SendSMS("+84365051699", String.format("\n[PN APARTMENT THÔNG BÁO]\nQuý khách phòng %s có một đơn hàng vừa được nhận tại tủ điện tử.\n"
+                    + "Vào ngày %s.\nThông tin chi tiết xem tại: www.apartmentTest.com", cab.getApartmentId().getRoomId().getRoomNumber(),  cab.getUpdatedDate().toString()));
+
+        return ResponseEntity.ok(cab);
     }
 
     @PatchMapping(value = "/smart_cabinets/{id}", produces = "application/json")

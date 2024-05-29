@@ -43,7 +43,7 @@ public class ApiServiceConstractController {
         ApartmentServiceConstract constract = serviceConstractService.getServiceConstractById(constractId);
         if(constract == null)
         {
-            return new ResponseEntity<>("service constract not found with ID: " + constractId, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("rental constract not found with ID: " + constractId, HttpStatus.NOT_FOUND);
         }
         serviceConstractService.deleteServiceConstractById(constractId);
         return new ResponseEntity<>( HttpStatus.NO_CONTENT);
@@ -81,7 +81,7 @@ public class ApiServiceConstractController {
                                                     @RequestBody Map<String, String> updates) {
         ApartmentServiceConstract serviceConstract = serviceConstractService.getServiceConstractById(id);
         if (serviceConstract == null) {
-            return new ResponseEntity<>("Service constract not found with ID: " + id, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Rental constract not found with ID: " + id, HttpStatus.NOT_FOUND);
         }
         if (updates.containsKey("apartmentId")) {
             ApartmentRentalConstract apartment = apartmentService.getConstractById(Integer.parseInt(updates.get("apartmentId")));
@@ -103,6 +103,4 @@ public class ApiServiceConstractController {
 
         return new ResponseEntity<>(serviceConstract, HttpStatus.OK);
     }
-
-
 }

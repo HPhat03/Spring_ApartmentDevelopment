@@ -45,5 +45,10 @@ public class ServiceServiceImpl implements  ServiceService{
         this.repo.updateService(service);
     }
 
+    @Override
+    public long countService() {
+        return this.repo.countService();
+    }
+
 
 }

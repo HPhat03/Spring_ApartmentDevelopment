@@ -5,10 +5,6 @@
 package com.mhp_btn.controllers;
 
 import com.cloudinary.Cloudinary;
-import com.cloudinary.utils.ObjectUtils;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.github.fge.jsonpatch.JsonPatch;
-import com.github.fge.jsonpatch.JsonPatchException;
 
 import com.mhp_btn.pojo.ApartmentAdmin;
 import com.mhp_btn.pojo.ApartmentResident;
@@ -121,7 +117,6 @@ public class ApiUserController {
         produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> update(@PathVariable int id, @RequestBody Map<String,String> data){
         ApartmentUser u = this.us.getUserByID(id);
-        System.out.println(data.get("firstname"));
         if (u==null)
         {
             ErrorHandle error = new ErrorHandle("Không tìm thấy người dùng", HttpStatus.NOT_FOUND, "USER IS NULL");

@@ -4,6 +4,7 @@
  */
 package com.mhp_btn.pojo;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -25,7 +26,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -34,6 +37,7 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author Admin
  */
 @Entity
+@JsonFilter("RECEIPT_FILTER")
 @Table(name = "apartment_receipt")
 @XmlRootElement
 @NamedQueries({
@@ -44,14 +48,25 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "ApartmentReceipt.findByTotal", query = "SELECT a FROM ApartmentReceipt a WHERE a.total = :total")})
 public class ApartmentReceipt implements Serializable {
 
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "month")
+    private int month;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 45)
+    @Column(name = "year")
+    private String year;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "receipt")
+    private Set<ApartmentPayment> apartmentPaymentSet;
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
-    @Column(name = "month")
-    private Integer month;
     @Basic(optional = false)
     @NotNull
     @Column(name = "created_date")
@@ -69,7 +84,9 @@ public class ApartmentReceipt implements Serializable {
     @JsonIgnore
     @ManyToOne(optional = false)
     private ApartmentRentalConstract apartmentId;
-
+    
+    @Transient
+    private String name; 
     public ApartmentReceipt() {
     }
 
@@ -82,7 +99,9 @@ public class ApartmentReceipt implements Serializable {
         this.createdDate = createdDate;
         this.total = total;
     }
-
+    public String getName(){
+        return String.format("Hoa don phong thang %d/%s phong %s", this.month, this.year, this.apartmentId.getRoomId().getRoomNumber());
+    }
     public Integer getId() {
         return id;
     }
@@ -91,13 +110,6 @@ public class ApartmentReceipt implements Serializable {
         this.id = id;
     }
 
-    public Integer getMonth() {
-        return month;
-    }
-
-    public void setMonth(Integer month) {
-        this.month = month;
-    }
 
     public Date getCreatedDate() {
         return createdDate;
@@ -155,6 +167,31 @@ public class ApartmentReceipt implements Serializable {
     @Override
     public String toString() {
         return "com.mhp_btn.pojo.ApartmentReceipt[ id=" + id + " ]";
+    }
+
+    @XmlTransient
+    public Set<ApartmentPayment> getApartmentPaymentSet() {
+        return apartmentPaymentSet;
+    }
+
+    public void setApartmentPaymentSet(Set<ApartmentPayment> apartmentPaymentSet) {
+        this.apartmentPaymentSet = apartmentPaymentSet;
+    }
+
+    public int getMonth() {
+        return month;
+    }
+
+    public void setMonth(int month) {
+        this.month = month;
+    }
+
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
     }
     
 }

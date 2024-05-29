@@ -1,6 +1,6 @@
 package com.mhp_btn.controllers;
 
-import com.mhp_btn.pojo.ApartmentReceipt;
+
 import com.mhp_btn.pojo.ApartmentRelativeRegistry;
 import com.mhp_btn.pojo.ApartmentRentalConstract;
 import com.mhp_btn.services.RelativeRegistryService;
@@ -65,6 +65,10 @@ public class ApiRelativeRegistryController {
             if (startDate.after(endDate)) {
                 return new ResponseEntity<>("Start date cannot be after end date", HttpStatus.BAD_REQUEST);
             }
+            if (startDate.before(new Date())){
+                return new ResponseEntity<>("Start date cannot be before today", HttpStatus.BAD_REQUEST);
+            }
+            
             ApartmentRelativeRegistry apartmentRelativeRegistry = new ApartmentRelativeRegistry();
             apartmentRelativeRegistry.setActive((short) isActive);
             apartmentRelativeRegistry.setName(name);

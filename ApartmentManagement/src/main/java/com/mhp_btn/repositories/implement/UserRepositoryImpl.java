@@ -132,7 +132,6 @@ public class UserRepositoryImpl implements UserRepository{
             String[] ArrayComponent = avatar.split("/"); 
             String key = ArrayComponent[ArrayComponent.length-1];
             key = key.substring(0, key.length()-4);
-            System.out.println(key);
             try {
                 cloudinary.uploader().destroy(key, new HashMap<>());
             } catch (IOException ex) {
