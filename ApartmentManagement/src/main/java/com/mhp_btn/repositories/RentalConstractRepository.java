@@ -4,9 +4,10 @@ import com.mhp_btn.pojo.ApartmentFloor;
 import com.mhp_btn.pojo.ApartmentRentalConstract;
 
 import java.util.List;
+import java.util.Map;
 
 public interface RentalConstractRepository {
-    public List<ApartmentRentalConstract> getAllRentalConstract() ;
+    public List<ApartmentRentalConstract> getAllRentalConstract(Map<String, String> params) ;
 
     void deleteRentalConstractById(int id);
 

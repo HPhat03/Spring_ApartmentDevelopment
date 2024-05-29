@@ -7,14 +7,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.HashMap;
 
 @Service
 public class ReceiptServiceImpl implements ReceiptService {
     @Autowired
     private ReceiptRepository receiptRepo;
     @Override
-    public List<ApartmentReceipt> getAllReceipt() {
-        return this.receiptRepo.getAllReceipt();
+    public List<ApartmentReceipt> getAllReceipt(HashMap<String, String> params) {
+        return this.receiptRepo.getAllReceipt(params);
     }
 
     @Override

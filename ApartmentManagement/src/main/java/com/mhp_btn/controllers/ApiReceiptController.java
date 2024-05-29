@@ -1,6 +1,7 @@
 package com.mhp_btn.controllers;
 
 import com.mhp_btn.pojo.*;
+import com.mhp_btn.serializers.ReceiptSerializer;
 import com.mhp_btn.services.ReceiptService;
 import com.mhp_btn.services.RentalConstractService;
 import com.mhp_btn.utils.StringUtil;
@@ -8,10 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.text.ParseException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,12 +25,12 @@ public class ApiReceiptController {
     private RentalConstractService constractService;
 
     @GetMapping(path = "/receipt/", produces = "application/json")
-    public ResponseEntity<List<ApartmentReceipt>> list() {
-        List<ApartmentReceipt> receipts = this.receiptService.getAllReceipt();
+    public ResponseEntity<Object> list(@RequestParam HashMap<String, String> params) {
+        List<ApartmentReceipt> receipts = this.receiptService.getAllReceipt(params);
         if (receipts.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(receipts, HttpStatus.OK);
+        return new ResponseEntity<>(ReceiptSerializer.ReceiptList(receipts), HttpStatus.OK);
     }
 
     @DeleteMapping(path = "/receipt/{id}")

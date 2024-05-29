@@ -4,16 +4,24 @@
  */
 package com.mhp_btn.pojo;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.mhp_btn.serializers.UserSerializer;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -29,12 +37,15 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import org.springframework.http.converter.json.MappingJacksonValue;
 
 /**
  *
  * @author Admin
  */
+
 @Entity
+@JsonFilter("CONSTRACT_FILTER")
 @Table(name = "apartment_rental_constract")
 @XmlRootElement
 @NamedQueries({
@@ -72,13 +83,13 @@ public class ApartmentRentalConstract implements Serializable {
     @Column(name = "final_price")
     private int finalPrice;
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "apartmentId")
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "apartmentId")
     private Set<ApartmentOtherMember> apartmentOtherMemberSet;
     @JsonIgnore
     @OneToMany(mappedBy = "apartmentId")
     private Set<ApartmentReport> apartmentReportSet;
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "apartmentId")
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "apartmentId")
     private Set<ApartmentServiceConstract> apartmentServiceConstractSet;
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "apartmentId")
@@ -157,6 +168,7 @@ public class ApartmentRentalConstract implements Serializable {
     }
 
     @XmlTransient
+    @JsonProperty("other_members")
     public Set<ApartmentOtherMember> getApartmentOtherMemberSet() {
         return apartmentOtherMemberSet;
     }
@@ -182,7 +194,12 @@ public class ApartmentRentalConstract implements Serializable {
     public void setApartmentServiceConstractSet(Set<ApartmentServiceConstract> apartmentServiceConstractSet) {
         this.apartmentServiceConstractSet = apartmentServiceConstractSet;
     }
-
+    @JsonProperty("services")
+    public Set<ApartmentService> getService(){
+        Set<ApartmentService> s = new HashSet<>();
+        this.apartmentServiceConstractSet.forEach(x -> s.add(x.getServiceId()));
+        return s;
+    }
     @XmlTransient
     public Set<ApartmentSmartCabinet> getApartmentSmartCabinetSet() {
         return apartmentSmartCabinetSet;
@@ -200,15 +217,18 @@ public class ApartmentRentalConstract implements Serializable {
     public void setApartmentRelativeRegistrySet(Set<ApartmentRelativeRegistry> apartmentRelativeRegistrySet) {
         this.apartmentRelativeRegistrySet = apartmentRelativeRegistrySet;
     }
-
+    
     public ApartmentResident getResidentId() {
         return residentId;
     }
-
+    @JsonProperty("resident")
+    public ApartmentUser getResidentUser(){
+        return this.residentId.getApartmentUser();
+    }
     public void setResidentId(ApartmentResident residentId) {
         this.residentId = residentId;
     }
-
+    @JsonProperty("room")
     public ApartmentRoom getRoomId() {
         return roomId;
     }
@@ -259,5 +279,8 @@ public class ApartmentRentalConstract implements Serializable {
     public String toString() {
         return "com.mhp_btn.pojo.ApartmentRentalConstract[ id=" + id + " ]";
     }
+    
+    
+   
     
 }

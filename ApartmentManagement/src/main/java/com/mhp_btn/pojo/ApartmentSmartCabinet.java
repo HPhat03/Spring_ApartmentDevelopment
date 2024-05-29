@@ -28,7 +28,10 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "ApartmentSmartCabinet.findByCreatedDate", query = "SELECT a FROM ApartmentSmartCabinet a WHERE a.createdDate = :createdDate"),
     @NamedQuery(name = "ApartmentSmartCabinet.findByUpdatedDate", query = "SELECT a FROM ApartmentSmartCabinet a WHERE a.updatedDate = :updatedDate")})
 public class ApartmentSmartCabinet implements Serializable {
-
+    public static enum Status{
+        PENDING,
+        RECEIVCED;
+    }
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)

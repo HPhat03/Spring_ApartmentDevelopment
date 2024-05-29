@@ -2,15 +2,11 @@ package com.mhp_btn.pojo;
 
 import com.mhp_btn.pojo.ApartmentRentalConstract;
 import java.util.Date;
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-<<<<<<< HEAD
-@Generated(value="EclipseLink-2.7.10.v20211216-rNA", date="2024-05-02T18:13:43")
-=======
-@Generated(value="EclipseLink-2.7.10.v20211216-rNA", date="2024-05-05T00:00:47")
->>>>>>> 8562484f7a349d165b5babbbbdd81b142e5c6cbc
+@Generated(value="org.eclipse.persistence.internal.jpa.modelgen.CanonicalModelProcessor", date="2024-05-20T14:47:14", comments="EclipseLink-2.7.10.v20211216-rNA")
 @StaticMetamodel(ApartmentSmartCabinet.class)
 public class ApartmentSmartCabinet_ { 
 

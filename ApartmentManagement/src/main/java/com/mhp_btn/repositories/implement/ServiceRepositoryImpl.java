@@ -9,6 +9,9 @@ import com.mhp_btn.pojo.ApartmentService;
 import com.mhp_btn.repositories.ServiceRepository;
 import java.util.List;
 import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -66,6 +69,17 @@ public class ServiceRepositoryImpl implements ServiceRepository{
     public void updateService(ApartmentService service) {
         Session session = this.f.getObject().getCurrentSession();
         session.update(service);
+    }
+
+    @Override
+    public long countService() {
+        Session session = this.f.getObject().getCurrentSession();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<Long> q = cb.createQuery(Long.class);
+        q.select(cb.count(q.from(ApartmentService.class)));
+        Query rq = session.createQuery(q);
+        return (long) rq.getSingleResult();
+        
     }
 
 

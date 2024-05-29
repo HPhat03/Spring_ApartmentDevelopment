@@ -7,14 +7,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.HashMap;
 
 @Service
 public class RentalConstractServiceImpl implements RentalConstractService {
     @Autowired
     private RentalConstractRepository rentalConstractRepo;
     @Override
-    public List<ApartmentRentalConstract> getAllRentalConstract() {
-        return this.rentalConstractRepo.getAllRentalConstract();
+    public List<ApartmentRentalConstract> getAllRentalConstract(HashMap<String,String> params) {
+        return this.rentalConstractRepo.getAllRentalConstract(params);
     }
 
     @Override
