@@ -1,9 +1,9 @@
 package com.mhp_btn.controllers;
 
-import com.mhp_btn.pojo.ApartmentRentalConstract;
-import com.mhp_btn.pojo.ApartmentSmartCabinet;
+import com.mhp_btn.pojo.ApartmentDetailRequest;
 import com.mhp_btn.pojo.ApartmentSurveyRequest;
 import com.mhp_btn.pojo.ApartmentUser;
+import com.mhp_btn.repositories.DetailRequestRepository;
 import com.mhp_btn.services.SurveyRequestService;
 import com.mhp_btn.services.UserService;
 import com.mhp_btn.utils.StringUtil;
@@ -24,6 +24,8 @@ public class ApiSurveyRequestController {
     private SurveyRequestService requestService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private DetailRequestRepository detailService;
 
     //Lay tat ca khao sat
     @GetMapping(path = "/survey_request", produces = "application/json")
@@ -36,26 +38,36 @@ public class ApiSurveyRequestController {
     public ResponseEntity<?> deleteSurveyRequestById(@PathVariable("surveyId") int surveyId) {
         ApartmentSurveyRequest request = requestService.getSurveyRequestById(surveyId);
         if (request == null) {
-            return new ResponseEntity<>("survey request not found with ID: " + surveyId, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Survey request not found with ID: " + surveyId, HttpStatus.NOT_FOUND);
         }
+
+        // Xóa tất cả các detail survey liên quan đến survey này
+        List<ApartmentDetailRequest> detailRequests = detailService.getAllDetailRequestByRequestID(surveyId);
+        for (ApartmentDetailRequest detailRequest : detailRequests) {
+            detailService.deleteDetailRequest(detailRequest.getId());
+        }
+
+        // Sau đó, xóa survey chính
         requestService.deleteSurveyRequestById(surveyId);
+
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @PostMapping("/survey_request")
-    public ResponseEntity<?> addSurveyRequest(@RequestBody Map<String, String> params) {
+    @PostMapping(path = "/survey_request", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<?> addSurveyRequest(@RequestBody Map<String, Object> requestBody) {
         try {
             // Lấy thông tin từ request body
-            String adminIdStr = params.get("adminId");
-            String startDateStr = params.get("startDate");
-            String endDateStr = params.get("endDate");
-            String isActiveStr = params.get("isActive");
+            Integer adminId = (Integer) requestBody.get("adminId");
+            String startDateStr = (String) requestBody.get("startDate");
+            String endDateStr = (String) requestBody.get("endDate");
+            Integer isActive = (Integer) requestBody.get("isActive");
+            List<String> questions = (List<String>) requestBody.get("questions");
+            String scoreBand = (String) requestBody.get("scoreBand");
 
-            if (adminIdStr == null || startDateStr == null || endDateStr == null || isActiveStr == null) {
+            if (adminId == null || startDateStr == null || endDateStr == null || isActive == null || questions == null || scoreBand == null) {
                 return new ResponseEntity<>("One or more parameters are missing or null", HttpStatus.BAD_REQUEST);
             }
 
-            int adminId = Integer.parseInt(adminIdStr);
             ApartmentUser user = userService.getUserByID(adminId);
             if (user == null) {
                 return new ResponseEntity<>("Can not find admin with Id: " + adminId, HttpStatus.NOT_FOUND);
@@ -69,19 +81,32 @@ public class ApiSurveyRequestController {
                 return new ResponseEntity<>("Start date cannot be after end date", HttpStatus.BAD_REQUEST);
             }
 
-            int isActive = Integer.parseInt(isActiveStr);
-
             // Tạo đối tượng ApartmentSurveyRequest
             ApartmentSurveyRequest surveyRequest = new ApartmentSurveyRequest();
             surveyRequest.setAdminId(user.getApartmentAdmin());
             surveyRequest.setStartDate(startDate);
             surveyRequest.setEndDate(endDate);
-            surveyRequest.setIsActive((short) isActive);
+            surveyRequest.setIsActive(isActive.shortValue());
 
-            // Lưu đối tượng vào cơ sở dữ liệu
+            // Thêm một survey request
             requestService.addSurveyRequest(surveyRequest);
 
-            return new ResponseEntity<>(HttpStatus.CREATED);
+            // Lấy requestId sau khi thêm ApartmentSurveyRequest
+            ApartmentSurveyRequest requestId = surveyRequest;
+
+            // Tạo và thêm detail requests cho mỗi câu hỏi
+            for (String question : questions) {
+                ApartmentDetailRequest detailRequest = new ApartmentDetailRequest();
+                detailRequest.setRequestId(requestId);
+                detailRequest.setQuestion(question);
+                detailRequest.setScoreBand(scoreBand);
+
+                // Thêm detail request
+                detailService.addDetailRequest(detailRequest);
+            }
+
+            // Trả về kết quả thành công
+            return new ResponseEntity<>("Survey requests created successfully", HttpStatus.CREATED);
         } catch (Exception e) {
             // Xử lý ngoại lệ và trả về lỗi nếu có
             return new ResponseEntity<>("Failed to create survey request: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

@@ -2,7 +2,7 @@ package com.mhp_btn.repositories.implement;
 
 
 import com.mhp_btn.pojo.ApartmentPayment;
-import com.mhp_btn.pojo.ApartmentPayment_;
+//import com.mhp_btn.pojo.ApartmentPayment_;
 import com.mhp_btn.pojo.ApartmentReceipt;
 import com.mhp_btn.pojo.ApartmentRelativeRegistry;
 import com.mhp_btn.repositories.ReceiptRepository;

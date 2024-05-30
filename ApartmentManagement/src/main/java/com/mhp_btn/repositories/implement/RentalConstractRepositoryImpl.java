@@ -1,10 +1,10 @@
 package com.mhp_btn.repositories.implement;
 
 import com.mhp_btn.pojo.ApartmentRentalConstract;
-import com.mhp_btn.pojo.ApartmentRentalConstract_;
+//import com.mhp_btn.pojo.ApartmentRentalConstract_;
 import com.mhp_btn.pojo.ApartmentResident;
 import com.mhp_btn.pojo.ApartmentRoom;
-import com.mhp_btn.pojo.ApartmentRoom_;
+//import com.mhp_btn.pojo.ApartmentRoom_;
 import com.mhp_btn.repositories.RentalConstractRepository;
 import java.util.ArrayList;
 import org.hibernate.Session;
@@ -35,16 +35,16 @@ public class RentalConstractRepositoryImpl implements RentalConstractRepository 
         Root<ApartmentRentalConstract> r = cq.from(ApartmentRentalConstract.class);
         cq.select(r);
         List<Predicate> preds = new ArrayList<>();
-        
+
         String room_id = params.get("room");
-        if(room_id!=null){
-            Join<ApartmentRentalConstract, ApartmentRoom> room = r.join(ApartmentRentalConstract_.roomId);
-            preds.add(cb.like(room.get(ApartmentRoom_.roomNumber), String.format("%%%s%%", room_id)));
-        }
-        
+//        if(room_id!=null){
+////            Join<ApartmentRentalConstract, ApartmentRoom> room = r.join(ApartmentRentalConstract_.roomId);
+//            preds.add(cb.like(room.get(ApartmentRoom_.roomNumber), String.format("%%%s%%", room_id)));
+//        }
+
         cq.where(preds.toArray(Predicate[]::new));
         cq.orderBy(cb.desc(r.get("id")));
-        
+
         Query q = s.createQuery(cq);
         return q.getResultList();
     }
