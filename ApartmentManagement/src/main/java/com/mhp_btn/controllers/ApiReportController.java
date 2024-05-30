@@ -1,10 +1,8 @@
 package com.mhp_btn.controllers;
 
 
-import com.mhp_btn.pojo.ApartmentDetailReceipt;
-import com.mhp_btn.pojo.ApartmentOtherMember;
-import com.mhp_btn.pojo.ApartmentRentalConstract;
-import com.mhp_btn.pojo.ApartmentReport;
+import com.mhp_btn.pojo.*;
+import com.mhp_btn.services.DetailReportService;
 import com.mhp_btn.services.RentalConstractService;
 import com.mhp_btn.services.ReportService;
 import com.mhp_btn.utils.StringUtil;
@@ -25,6 +23,8 @@ public class ApiReportController {
     private ReportService reportService;
     @Autowired
     private RentalConstractService apartmentService;
+    @Autowired
+    private DetailReportService detailService;
 
     @GetMapping(path="/apartment/{apartmentId}/reports", produces = "application/json")
     public ResponseEntity<?> getAllReportByApartmentId(@PathVariable int apartmentId) {
@@ -68,7 +68,7 @@ public class ApiReportController {
         if (apartment == null) {
             return new ResponseEntity<>("Apartment not found with ID: " + apartmentId, HttpStatus.NOT_FOUND);
         }
-        if (params.get("title") == null || params.get("createdDate") == null) {
+        if (params.get("title") == null || params.get("createdDate") == null || params.get("content") == null) {
             return new ResponseEntity<>("missing required information.", HttpStatus.BAD_REQUEST);
         }
 
@@ -82,11 +82,18 @@ public class ApiReportController {
         newReport.setApartmentId(apartment);
         newReport.setCreatedDate(createdDate);
         newReport.setTitle(params.get("title"));
-
         reportService.addReport(newReport);
+
+        // Tạo báo cáo chi tiết
+        ApartmentDetailReport newDetail = new ApartmentDetailReport();
+        newDetail.setReportId(newReport);
+        newDetail.setContent(params.get("content"));
+        detailService.addDetailReport(newDetail);
+
 
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
+
 
     @PatchMapping(value="/apartment/{apartmentId}/reports/{reportId}" , produces = "application/json")
     public ResponseEntity<?> updateReportByReportId(@PathVariable("apartmentId") int apartmentId,
