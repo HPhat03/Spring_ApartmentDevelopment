@@ -2,6 +2,7 @@ package com.mhp_btn.controllers;
 
 import com.mhp_btn.pojo.*;
 import com.mhp_btn.serializers.ReceiptSerializer;
+import com.mhp_btn.services.DetailReceiptService;
 import com.mhp_btn.services.ReceiptService;
 import com.mhp_btn.services.RentalConstractService;
 import com.mhp_btn.utils.StringUtil;
@@ -11,10 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDate;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api")
@@ -23,6 +22,9 @@ public class ApiReceiptController {
     private ReceiptService receiptService;
     @Autowired
     private RentalConstractService constractService;
+    @Autowired
+    private DetailReceiptService detailService;
+
 
     @GetMapping(path = "/receipt/", produces = "application/json")
     public ResponseEntity<Object> list(@RequestParam HashMap<String, String> params) {
@@ -34,50 +36,73 @@ public class ApiReceiptController {
     }
 
     @DeleteMapping(path = "/receipt/{id}")
-    public ResponseEntity<?> deleteFloorById(@PathVariable int id) {
+    public ResponseEntity<?> deleteReceiptById(@PathVariable int id) {
         ApartmentReceipt receipt = receiptService.getReceiptById(id);
         if (receipt == null) {
-            return new ResponseEntity<>("Can not find receipt with" + id, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Can not find receipt with ID " + id, HttpStatus.NOT_FOUND);
         }
 
+        // Lấy danh sách chi tiết hóa đơn
+        List<ApartmentDetailReceipt> detailReceipts = detailService.getDetailReceiptsByReceiptId(id);
+        // Xóa từng chi tiết hóa đơn
+        for (ApartmentDetailReceipt detailReceipt : detailReceipts) {
+            detailService.deleteDetailReceiptById(detailReceipt.getId());
+        }
+
+        // Xóa hóa đơn
         receiptService.deleteReiptById(id);
-        return new ResponseEntity<>("Delete success with receipt is ID " + id, HttpStatus.NO_CONTENT);
+
+        return new ResponseEntity<>("Delete success with receipt ID " + id + " and its details.", HttpStatus.NO_CONTENT);
     }
+
 
     @PostMapping("/receipt/")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> addReceipt(@RequestBody Map<String, String> params) {
-        if (params.containsKey("month") && params.containsKey("createdDate") && params.containsKey("total")) {
-            int month = Integer.parseInt(params.get("month"));
-            double total = Double.parseDouble(params.get("total"));
-            int apartmentId = Integer.parseInt(params.get("apartmentId"));
-            Date createdDate;
-            try {
-                createdDate = StringUtil.dateFormater().parse(params.get("createdDate"));
-            } catch (ParseException e) {
-                throw new RuntimeException(e);
+    public ResponseEntity<?> addReceipt(@RequestBody Map<String, Object> params) {
+        if (params.containsKey("month")  && params.containsKey("total")  && params.containsKey("apartmentId")) {
+            int month = (int) params.get("month");
+            String year = params.containsKey("year") ? (String) params.get("year") : String.valueOf(LocalDate.now().getYear());
+            double total = Double.parseDouble((String) params.get("total"));
+            int apartmentId = Integer.parseInt((String) params.get("apartmentId"));
+
+
+            // Tìm ApartmentRentalConstract trước
+            ApartmentRentalConstract apartmentRental = constractService.getRentalConstractById(apartmentId);
+            if (apartmentRental == null) {
+                return new ResponseEntity<>("Không tìm thấy apartment id: " + apartmentId, HttpStatus.NOT_FOUND);
             }
 
+            Date currentDate = new Date();
             ApartmentReceipt receipt = new ApartmentReceipt();
             receipt.setMonth(month);
-            receipt.setCreatedDate(createdDate);
+            receipt.setYear(year);
+            receipt.setCreatedDate(currentDate);
             receipt.setTotal((int) total);
+            receipt.setApartmentId(apartmentRental);
 
-            ApartmentRentalConstract apartmentRental = constractService.getRentalConstractById(apartmentId);
-            if(apartmentRental != null){
-                receipt.setApartmentId(apartmentRental);
-            }
-            else{
-                return new ResponseEntity<>("Can not find apartment id : " +apartmentId, HttpStatus.NOT_FOUND);
-            }
-
-            //save
+            // Lưu receipt
             receiptService.addReceipt(receipt);
+
+            // Tạo và lưu ReceiptDetails
+            List<Map<String, Object>> detailsList = (List<Map<String, Object>>) params.get("details");
+            for (Map<String, Object> detailParams : detailsList) {
+                String content = (String) detailParams.get("content");
+                double price = Double.parseDouble((String) detailParams.get("price"));
+
+                ApartmentDetailReceipt detail = new ApartmentDetailReceipt();
+                detail.setContent(content);
+                detail.setPrice(String.valueOf(price));
+                detail.setReceiptId(receipt);
+
+                detailService.createDetailByReceiptId(detail);
+            }
+
             return ResponseEntity.status(HttpStatus.CREATED).build();
         } else {
-            throw new IllegalArgumentException("missing required information");
+            throw new IllegalArgumentException("Thiếu thông tin cần thiết");
         }
     }
+
 
     @PatchMapping(value = "/receipt/{id}", produces = "application/json")
     public ResponseEntity<ApartmentReceipt> updateReceiptById(@PathVariable int id, @RequestBody Map<String, String> updates) {
