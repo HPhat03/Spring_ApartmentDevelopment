@@ -31,19 +31,24 @@ public class ApiSurveyRequestController {
     private DetailRequestService detailRequestService;
 
     //Lay tat ca khao sat
-    @GetMapping(path = "/survey_request", produces = "application/json")
     public ResponseEntity<List<ApartmentSurveyRequest>> getAllSurveyRequest() {
-        List<ApartmentSurveyRequest> surveyRequests = requestService.getAllSurveyRequest();
-        return new ResponseEntity<>(surveyRequests, HttpStatus.OK);
-    }
 
     @DeleteMapping(path = "/survey_request/{surveyId}")
     public ResponseEntity<?> deleteSurveyRequestById(@PathVariable("surveyId") int surveyId) {
         ApartmentSurveyRequest request = requestService.getSurveyRequestById(surveyId);
         if (request == null) {
-            return new ResponseEntity<>("survey request not found with ID: " + surveyId, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Survey request not found with ID: " + surveyId, HttpStatus.NOT_FOUND);
         }
+
+        // Xóa tất cả các detail survey liên quan đến survey này
+        List<ApartmentDetailRequest> detailRequests = detailService.getAllDetailRequestByRequestID(surveyId);
+        for (ApartmentDetailRequest detailRequest : detailRequests) {
+            detailService.deleteDetailRequest(detailRequest.getId());
+        }
+
+        // Sau đó, xóa survey chính
         requestService.deleteSurveyRequestById(surveyId);
+
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -81,7 +86,7 @@ public class ApiSurveyRequestController {
             surveyRequest.setEndDate(endDate);
             surveyRequest.setIsActive((short) 1);
 
-            // Lưu đối tượng vào cơ sở dữ liệu
+            // Thêm một survey request
             requestService.addSurveyRequest(surveyRequest);
             List<Map<String,String>> questions = (List<Map<String,String>>) params.get("questions");
             questions.forEach(x -> {

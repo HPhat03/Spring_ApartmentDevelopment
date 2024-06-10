@@ -32,7 +32,7 @@ public class RentalConstractRepositoryImpl implements RentalConstractRepository 
         Root<ApartmentRentalConstract> r = cq.from(ApartmentRentalConstract.class);
         cq.select(r);
         List<Predicate> preds = new ArrayList<>();
-        
+
         String room_id = params.get("room");
         if(room_id!=null){
             Root room = cq.from(ApartmentRoom.class);
@@ -42,7 +42,7 @@ public class RentalConstractRepositoryImpl implements RentalConstractRepository 
         
         cq.where(preds.toArray(Predicate[]::new));
         cq.orderBy(cb.desc(r.get("id")));
-        
+
         Query q = s.createQuery(cq);
         return q.getResultList();
     }

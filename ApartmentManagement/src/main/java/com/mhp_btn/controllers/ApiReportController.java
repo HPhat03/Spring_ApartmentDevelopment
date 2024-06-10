@@ -117,6 +117,7 @@ public class ApiReportController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+
     @PatchMapping(value="/apartment/{apartmentId}/reports/{reportId}" , produces = "application/json")
     public ResponseEntity<?> updateReportByReportId(@PathVariable("apartmentId") int apartmentId,
                                                     @PathVariable("reportId") int reportId,

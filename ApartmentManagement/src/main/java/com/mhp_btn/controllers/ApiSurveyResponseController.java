@@ -96,7 +96,7 @@ public class ApiSurveyResponseController {
             surveyResponse.setSubmitDate(currentDate);
             surveyResponse.setApartmentId(apartment);
 
-            // Lưu đối tượng vào cơ sở dữ liệu
+            // Lưu đối tượng phản hồi khảo sát vào cơ sở dữ liệu
             responseService.addSurveyResponse(surveyResponse);
             List<Map<String, Integer>> answers = (List<Map<String, Integer>>) params.get("answers");
             answers.forEach(x -> {
@@ -109,64 +109,70 @@ public class ApiSurveyResponseController {
             });
             return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (Exception e) {
-            return new ResponseEntity<>("Failed to create survey request: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Failed to create survey response: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-// Cập nhật thông tin của một phản hồi cụ thể dựa trên ID.
-@PatchMapping(value = "/survey_response/{id}", produces = "application/json")
-public ResponseEntity<Object> updateSurveyResponseById(@PathVariable int id,
-                                                      @RequestBody Map<String, String> updates) {
-    ApartmentSurveyResponse surveyResponse = responseService.getSurveyResponseById(id);
-    if (surveyResponse == null) {
-        return new ResponseEntity<>("Survey response not found with ID: " + id, HttpStatus.NOT_FOUND);
-    }
-    for (Map.Entry<String, String> entry : updates.entrySet()) {
-        String key = entry.getKey();
-        String value = entry.getValue();
-        switch (key) {
-            case "apartmentId":
-                int apartmentId = Integer.parseInt(value);
-                ApartmentRentalConstract apartment = apartmentService.getConstractById(apartmentId);
-                if (apartment == null) {
-                    return new ResponseEntity<>("Apartment rental constract not found with id " + apartmentId, HttpStatus.NOT_FOUND);
-                }
-                surveyResponse.setApartmentId(apartment);
-                break;
-            case "surveyId":
-                int surveyId = Integer.parseInt(value);
-                ApartmentSurveyRequest request = surveyService.getSurveyRequestById(surveyId);
-                if (request == null) {
-                    return new ResponseEntity<>("Survey request not found with id " + surveyId, HttpStatus.NOT_FOUND);
-                }
-                surveyResponse.setSurveyId(request);
-                break;
-
-            case "submitDate":
-                try {
-                    Date submitDate = StringUtil.dateFormater().parse(value);
-                    surveyResponse.setSubmitDate(submitDate);
-                } catch (ParseException e) {
-                    throw new IllegalArgumentException("Invalid end date format");
-                }
-                break;
-            case "name":
-                surveyResponse.setName(value);
-                break;
-            default:
-                throw new IllegalArgumentException("Trường cập nhật không hợp lệ: " + key);
+    // Cập nhật thông tin của một phản hồi cụ thể dựa trên ID.
+    @PatchMapping(value = "/survey_response/{id}", produces = "application/json")
+    public ResponseEntity<Object> updateSurveyResponseById(@PathVariable int id,
+                                                           @RequestBody Map<String, String> updates) {
+        ApartmentSurveyResponse surveyResponse = responseService.getSurveyResponseById(id);
+        if (surveyResponse == null) {
+            return new ResponseEntity<>("Survey response not found with ID: " + id, HttpStatus.NOT_FOUND);
         }
+        for (Map.Entry<String, String> entry : updates.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+            switch (key) {
+                case "apartmentId":
+                    int apartmentId = Integer.parseInt(value);
+                    ApartmentRentalConstract apartment = apartmentService.getConstractById(apartmentId);
+                    if (apartment == null) {
+                        return new ResponseEntity<>("Apartment rental constract not found with id " + apartmentId, HttpStatus.NOT_FOUND);
+                    }
+                    surveyResponse.setApartmentId(apartment);
+                    break;
+                case "surveyId":
+                    int surveyId = Integer.parseInt(value);
+                    ApartmentSurveyRequest request = surveyService.getSurveyRequestById(surveyId);
+                    if (request == null) {
+                        return new ResponseEntity<>("Survey request not found with id " + surveyId, HttpStatus.NOT_FOUND);
+                    }
+                    surveyResponse.setSurveyId(request);
+                    break;
 
+                case "submitDate":
+                    try {
+                        Date submitDate = StringUtil.dateFormater().parse(value);
+                        surveyResponse.setSubmitDate(submitDate);
+                    } catch (ParseException e) {
+                        throw new IllegalArgumentException("Invalid end date format");
+                    }
+                    break;
+                case "name":
+                    surveyResponse.setName(value);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Trường cập nhật không hợp lệ: " + key);
+            }
+
+        }
+        responseService.updateSurveyResponse(surveyResponse);
+        return ResponseEntity.ok(surveyResponse);
     }
-    responseService.updateSurveyResponse(surveyResponse);
-    return ResponseEntity.ok(surveyResponse);
-}
-// Xóa một phản hồi cụ thể dựa trên ID.
+
+    // Xóa một phản hồi cụ thể dựa trên ID.
     @DeleteMapping(path = "/survey_response/{surveyId}")
     public ResponseEntity<?> deleteSurveyResponseById(@PathVariable("surveyId") int surveyId) {
         ApartmentSurveyResponse response = responseService.getSurveyResponseById(surveyId);
         if (response == null) {
-            return new ResponseEntity<>("survey response not found with ID: " + surveyId, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Survey response not found with ID: " + surveyId, HttpStatus.NOT_FOUND);
+        }
+        // Xóa các chi tiết phản hồi liên quan
+        List<ApartmentDetailResponse> detailResponses = detailResService.getAllDetailResponseByResponseID(surveyId);
+        for (ApartmentDetailResponse detailResponse : detailResponses) {
+            detailResService.deleteDetailResponse(detailResponse.getId());
         }
         responseService.deleteSurveyResponseById(surveyId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

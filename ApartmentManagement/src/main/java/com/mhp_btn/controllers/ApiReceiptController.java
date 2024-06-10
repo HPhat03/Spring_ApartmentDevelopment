@@ -14,11 +14,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
+<<<<<<< HEAD
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+=======
+import java.time.LocalDate;
+import java.util.*;
+>>>>>>> 0a3011455945981a4b831dac334d728af5be7156
 
 @RestController
 @RequestMapping("/api")
@@ -42,15 +47,25 @@ public class ApiReceiptController {
     }
 
     @DeleteMapping(path = "/receipt/{id}")
-    public ResponseEntity<?> deleteFloorById(@PathVariable int id) {
+    public ResponseEntity<?> deleteReceiptById(@PathVariable int id) {
         ApartmentReceipt receipt = receiptService.getReceiptById(id);
         if (receipt == null) {
-            return new ResponseEntity<>("Can not find receipt with" + id, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Can not find receipt with ID " + id, HttpStatus.NOT_FOUND);
         }
 
+        // Lấy danh sách chi tiết hóa đơn
+        List<ApartmentDetailReceipt> detailReceipts = detailService.getDetailReceiptsByReceiptId(id);
+        // Xóa từng chi tiết hóa đơn
+        for (ApartmentDetailReceipt detailReceipt : detailReceipts) {
+            detailService.deleteDetailReceiptById(detailReceipt.getId());
+        }
+
+        // Xóa hóa đơn
         receiptService.deleteReiptById(id);
-        return new ResponseEntity<>("Delete success with receipt is ID " + id, HttpStatus.NO_CONTENT);
+
+        return new ResponseEntity<>("Delete success with receipt ID " + id + " and its details.", HttpStatus.NO_CONTENT);
     }
+
 
     @PostMapping("/receipt/")
     @ResponseStatus(HttpStatus.CREATED)
@@ -72,15 +87,7 @@ public class ApiReceiptController {
             receipt.setCreatedDate(new Date());
             receipt.setTotal(-1);
 
-            ApartmentRentalConstract apartmentRental = constractService.getRentalConstractById(apartmentId);
-            if(apartmentRental != null){
-                receipt.setApartmentId(apartmentRental);
-            }
-            else{
-                return new ResponseEntity<>("Can not find apartment id : " +apartmentId, HttpStatus.NOT_FOUND);
-            }
-
-            //save
+            // Lưu receipt
             receiptService.addReceipt(receipt);
             int amount_water = 0, amount_electric = 0;
             List<ApartmentUsageNumber> ul = usageNumberService.getLastMonthUsage(apartmentId, month, year);
@@ -139,6 +146,7 @@ public class ApiReceiptController {
            return new ResponseEntity<>("Thiếu các thông tin cần thiết", HttpStatus.BAD_REQUEST);
         }
     }
+
 
     @PatchMapping(value = "/receipt/{id}", produces = "application/json")
     public ResponseEntity<ApartmentReceipt> updateReceiptById(@PathVariable int id, @RequestBody Map<String, String> updates) {
