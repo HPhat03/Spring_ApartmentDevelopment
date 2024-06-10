@@ -100,12 +100,12 @@ public class ApiSmartCabinetController {
             return new ResponseEntity<>("Không tìm thấy tủ đồ với mã " + id, HttpStatus.NOT_FOUND);
         }
         
-        if (cab.getStatus().equals(ApartmentSmartCabinet.Status.PENDING.toString()) )
+        if (!cab.getStatus().equals(ApartmentSmartCabinet.Status.PENDING.toString()) )
             return new ResponseEntity<>("Không thể xác nhận nhận hàng các tủ đồ đã xác nhận trước đó ", HttpStatus.BAD_REQUEST);
         cab.setStatus(ApartmentSmartCabinet.Status.RECEIVCED.toString());
         cab.setUpdatedDate(new Date());
         cabinetService.updateCabinet(cab);
-        TwilioUtil.SendSMS("+84365051699", String.format("\n[PN APARTMENT THÔNG BÁO]\nQuý khách phòng %s có một đơn hàng vừa được nhận tại tủ điện tử.\n"
+        TwilioUtil.SendSMS("+84365051699", String.format("\n[PN APARTMENT THÔNG BÁO]\nĐơn hàng quý khách phòng %s vừa được nhận tại tủ điện tử.\n"
                     + "Vào ngày %s.\nThông tin chi tiết xem tại: www.apartmentTest.com", cab.getApartmentId().getRoomId().getRoomNumber(),  cab.getUpdatedDate().toString()));
 
         return ResponseEntity.ok(cab);

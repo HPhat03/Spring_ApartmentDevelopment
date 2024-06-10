@@ -1,10 +1,7 @@
 package com.mhp_btn.repositories.implement;
 
 import com.mhp_btn.pojo.ApartmentRentalConstract;
-import com.mhp_btn.pojo.ApartmentRentalConstract_;
-import com.mhp_btn.pojo.ApartmentResident;
 import com.mhp_btn.pojo.ApartmentRoom;
-import com.mhp_btn.pojo.ApartmentRoom_;
 import com.mhp_btn.repositories.RentalConstractRepository;
 import java.util.ArrayList;
 import org.hibernate.Session;
@@ -38,8 +35,9 @@ public class RentalConstractRepositoryImpl implements RentalConstractRepository 
         
         String room_id = params.get("room");
         if(room_id!=null){
-            Join<ApartmentRentalConstract, ApartmentRoom> room = r.join(ApartmentRentalConstract_.roomId);
-            preds.add(cb.like(room.get(ApartmentRoom_.roomNumber), String.format("%%%s%%", room_id)));
+            Root room = cq.from(ApartmentRoom.class);
+            preds.add(cb.like(room.get("roomNumber"), String.format("%%%s%%", room_id)));
+            preds.add(cb.equal(r.get("roomId"), room.get("id")));
         }
         
         cq.where(preds.toArray(Predicate[]::new));

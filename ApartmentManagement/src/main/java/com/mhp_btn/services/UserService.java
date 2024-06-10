@@ -20,4 +20,5 @@ public interface UserService extends UserDetailsService {
     ApartmentUser getUsersByUsername(String username);
     void save(ApartmentUser user, boolean resetPassword);
     ApartmentUser ChangeOrInitialize(ApartmentUser user, Map<String, String> data, boolean isInit);
+    boolean authUser(String username, String password);
 }

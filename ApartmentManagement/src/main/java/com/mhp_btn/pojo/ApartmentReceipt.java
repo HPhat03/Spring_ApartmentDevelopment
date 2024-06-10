@@ -48,6 +48,9 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "ApartmentReceipt.findByTotal", query = "SELECT a FROM ApartmentReceipt a WHERE a.total = :total")})
 public class ApartmentReceipt implements Serializable {
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "receiptId")
+    private Set<ApartmentUsageNumber> apartmentUsageNumberSet;
+
     @Basic(optional = false)
     @NotNull
     @Column(name = "month")
@@ -192,6 +195,15 @@ public class ApartmentReceipt implements Serializable {
 
     public void setYear(String year) {
         this.year = year;
+    }
+
+    @XmlTransient
+    public Set<ApartmentUsageNumber> getApartmentUsageNumberSet() {
+        return apartmentUsageNumberSet;
+    }
+
+    public void setApartmentUsageNumberSet(Set<ApartmentUsageNumber> apartmentUsageNumberSet) {
+        this.apartmentUsageNumberSet = apartmentUsageNumberSet;
     }
     
 }

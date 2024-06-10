@@ -5,6 +5,7 @@
 package com.mhp_btn.controllers;
 
 import com.cloudinary.Cloudinary;
+import com.mhp_btn.components.JwtService;
 
 import com.mhp_btn.pojo.ApartmentAdmin;
 import com.mhp_btn.pojo.ApartmentResident;
@@ -17,17 +18,22 @@ import com.mhp_btn.utils.ErrorHandle;
 import com.mhp_btn.utils.StringUtil;
 //import com.mhp_btn.utils.TwilioUtil;
 import java.io.IOException;
+import java.security.Principal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -58,6 +64,8 @@ public class ApiUserController {
     private ResidentService rs;
     @Autowired
     private Cloudinary cloudinary;
+    @Autowired
+    private JwtService jwtService;
     
     @GetMapping(path = "/user/", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MappingJacksonValue> list(){
@@ -168,5 +176,26 @@ public class ApiUserController {
         return new ResponseEntity<>(UserSerializer.UserDetail(u), HttpStatus.OK);
     }
     
+    @PostMapping(path = "/login/", produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin
+    public ResponseEntity<String> login(@RequestBody ApartmentUser user) {
+        
+        if (this.us.authUser(user.getUsername(), user.getPassword()) == true) {
+            String token = this.jwtService.generateTokenLogin(user.getUsername());
+            
+            return new ResponseEntity<>(token, HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>("INVALID USER " + user.getUsername() + " " + user.getPassword(), HttpStatus.BAD_REQUEST);
+    }
     
+    @GetMapping(path = "/me/", produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin
+    public ResponseEntity<MappingJacksonValue> getCurrentUser(Principal p) {
+        System.out.println(p.getName());
+//        System.out.println(jwtService.getUsernameFromToken(request.getHeader("Authorization")));
+        ApartmentUser u = this.us.getUsersByUsername(p.getName());
+        System.out.println(u.getBirthdate());
+        return new ResponseEntity<>(UserSerializer.UserDetail(u), HttpStatus.OK);
+    }
 }

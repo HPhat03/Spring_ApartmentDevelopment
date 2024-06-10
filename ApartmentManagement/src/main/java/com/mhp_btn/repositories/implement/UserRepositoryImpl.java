@@ -5,14 +5,13 @@
 package com.mhp_btn.repositories.implement;
 
 import com.cloudinary.Cloudinary;
-import com.cloudinary.utils.ObjectUtils;
+import com.mhp_btn.components.CloudinaryUtil;
 import com.mhp_btn.pojo.ApartmentUser;
 import com.mhp_btn.repositories.UserRepository;
 import com.mhp_btn.utils.StringUtil;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -21,6 +20,7 @@ import javax.persistence.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -37,6 +37,8 @@ public class UserRepositoryImpl implements UserRepository{
     private LocalSessionFactoryBean factory;
     @Autowired
     private Cloudinary cloudinary;
+    @Autowired
+    private BCryptPasswordEncoder encoder;
 
     @Override
     public List<ApartmentUser> getUsers() {
@@ -50,6 +52,8 @@ public class UserRepositoryImpl implements UserRepository{
         Session s = this.factory.getObject().getCurrentSession();
         Query q = s.createQuery("FROM ApartmentUser U WHERE U.username=:un");
         q.setParameter("un", username);
+        if (q.getResultList().isEmpty())
+            return null;
         return (ApartmentUser) q.getSingleResult();
     }
 
@@ -70,7 +74,7 @@ public class UserRepositoryImpl implements UserRepository{
         Session s = this.factory.getObject().getCurrentSession();
         Query q = s.createNamedQuery("ApartmentUser.findById");
         q.setParameter("id", id);
-        if (q.getResultList().size() > 0)
+        if (!q.getResultList().isEmpty())
             return (ApartmentUser) q.getSingleResult();
         else
             return null;
@@ -129,19 +133,15 @@ public class UserRepositoryImpl implements UserRepository{
             user.setPassword(password);
         }
         if (avatar != null && file!= null && !file.isEmpty()){
-            String[] ArrayComponent = avatar.split("/"); 
-            String key = ArrayComponent[ArrayComponent.length-1];
-            key = key.substring(0, key.length()-4);
             try {
-                cloudinary.uploader().destroy(key, new HashMap<>());
+                CloudinaryUtil.destroy(avatar, cloudinary);
             } catch (IOException ex) {
                 return new ApartmentUser();
             }
         }
         try {
                 if (file!=null && !file.isEmpty()) {
-                    Map res = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
-                    user.setAvatar(res.get("secure_url").toString());
+                    user.setAvatar(CloudinaryUtil.upload(file, cloudinary));
                 }
             } catch (IOException e) {
                     return new ApartmentUser();
@@ -149,6 +149,15 @@ public class UserRepositoryImpl implements UserRepository{
         
         return user;
         
+    }
+
+    @Override
+    public boolean authUser(String username, String password) {
+        ApartmentUser u = this.getUserByUsername(username);
+        if(u==null)
+            return false;
+//        System.out.println(this.encoder.encode("123456"));
+        return this.encoder.matches(password, u.getPassword());
     }
     
 }

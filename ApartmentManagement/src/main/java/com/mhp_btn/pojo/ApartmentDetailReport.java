@@ -38,7 +38,7 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "ApartmentDetailReport.findAll", query = "SELECT a FROM ApartmentDetailReport a"),
     @NamedQuery(name = "ApartmentDetailReport.findById", query = "SELECT a FROM ApartmentDetailReport a WHERE a.id = :id")})
 public class ApartmentDetailReport implements Serializable {
-
+    
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

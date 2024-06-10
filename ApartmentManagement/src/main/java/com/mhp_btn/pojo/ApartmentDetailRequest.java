@@ -39,7 +39,20 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "ApartmentDetailRequest.findByQuestion", query = "SELECT a FROM ApartmentDetailRequest a WHERE a.question = :question"),
     @NamedQuery(name = "ApartmentDetailRequest.findByScoreBand", query = "SELECT a FROM ApartmentDetailRequest a WHERE a.scoreBand = :scoreBand")})
 public class ApartmentDetailRequest implements Serializable {
-
+    public static enum ScoreBand{
+        BAND_5,
+        BAND_10;
+        
+        public static ScoreBand get(String s){
+            ScoreBand[] arr = ScoreBand.values();
+            for (ScoreBand x : arr) {
+                if (x.toString().equals(s)) {
+                    return ScoreBand.valueOf(s);
+                }
+            }
+            return null;
+        }
+    }
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

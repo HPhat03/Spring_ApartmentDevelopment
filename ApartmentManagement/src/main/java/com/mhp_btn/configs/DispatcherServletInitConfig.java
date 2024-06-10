@@ -20,7 +20,8 @@ public class DispatcherServletInitConfig extends AbstractAnnotationConfigDispatc
     protected Class<?>[] getRootConfigClasses() {
         return new Class[] {
           HibernateConfig.class,
-          SpringSecurityConfig.class
+          SpringSecurityConfig.class,
+          JwtSecurityConfig.class,
         };
     }
     

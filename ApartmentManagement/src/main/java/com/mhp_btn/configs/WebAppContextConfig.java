@@ -27,7 +27,8 @@ import org.springframework.web.servlet.view.JstlView;
 @ComponentScan(basePackages = { //Chỉ nơi scan các annotation trong các package
     "com.mhp_btn.controllers",
     "com.mhp_btn.repositories",
-    "com.mhp_btn.services"
+    "com.mhp_btn.services",
+    "com.mhp_btn.components"
 })
 public class WebAppContextConfig implements WebMvcConfigurer {
 
