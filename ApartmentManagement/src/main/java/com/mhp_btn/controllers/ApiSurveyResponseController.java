@@ -170,9 +170,9 @@ public class ApiSurveyResponseController {
             return new ResponseEntity<>("Survey response not found with ID: " + surveyId, HttpStatus.NOT_FOUND);
         }
         // Xóa các chi tiết phản hồi liên quan
-        List<ApartmentDetailResponse> detailResponses = detailResService.getAllDetailResponseByResponseID(surveyId);
+        List<ApartmentDetailResponse> detailResponses = detailResponseService.getAllDetailResponseByResponseID(surveyId);
         for (ApartmentDetailResponse detailResponse : detailResponses) {
-            detailResService.deleteDetailResponse(detailResponse.getId());
+            detailResponseService.deleteDetailResponse(detailResponse.getId());
         }
         responseService.deleteSurveyResponseById(surveyId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

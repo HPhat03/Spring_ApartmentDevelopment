@@ -31,7 +31,11 @@ public class ApiSurveyRequestController {
     private DetailRequestService detailRequestService;
 
     //Lay tat ca khao sat
+        @GetMapping(path = "/survey_request", produces = "application/json")
     public ResponseEntity<List<ApartmentSurveyRequest>> getAllSurveyRequest() {
+        List<ApartmentSurveyRequest> surveyRequests = requestService.getAllSurveyRequest();
+        return new ResponseEntity<>(surveyRequests, HttpStatus.OK);
+    }
 
     @DeleteMapping(path = "/survey_request/{surveyId}")
     public ResponseEntity<?> deleteSurveyRequestById(@PathVariable("surveyId") int surveyId) {
@@ -41,9 +45,9 @@ public class ApiSurveyRequestController {
         }
 
         // Xóa tất cả các detail survey liên quan đến survey này
-        List<ApartmentDetailRequest> detailRequests = detailService.getAllDetailRequestByRequestID(surveyId);
+        List<ApartmentDetailRequest> detailRequests = detailRequestService.getAllDetailRequestByRequestID(surveyId);
         for (ApartmentDetailRequest detailRequest : detailRequests) {
-            detailService.deleteDetailRequest(detailRequest.getId());
+            detailRequestService.deleteDetailRequest(detailRequest.getId());
         }
 
         // Sau đó, xóa survey chính

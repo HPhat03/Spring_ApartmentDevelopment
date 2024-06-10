@@ -14,16 +14,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
-<<<<<<< HEAD
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-=======
-import java.time.LocalDate;
-import java.util.*;
->>>>>>> 0a3011455945981a4b831dac334d728af5be7156
 
 @RestController
 @RequestMapping("/api")
@@ -54,10 +49,10 @@ public class ApiReceiptController {
         }
 
         // Lấy danh sách chi tiết hóa đơn
-        List<ApartmentDetailReceipt> detailReceipts = detailService.getDetailReceiptsByReceiptId(id);
+        List<ApartmentDetailReceipt> detailReceipts = detailReceiptService.getDetailReceiptsByReceiptId(id);
         // Xóa từng chi tiết hóa đơn
         for (ApartmentDetailReceipt detailReceipt : detailReceipts) {
-            detailService.deleteDetailReceiptById(detailReceipt.getId());
+            detailReceiptService.deleteDetailReceiptById(detailReceipt.getId());
         }
 
         // Xóa hóa đơn
@@ -86,8 +81,16 @@ public class ApiReceiptController {
             receipt.setYear(year);
             receipt.setCreatedDate(new Date());
             receipt.setTotal(-1);
+            
+            ApartmentRentalConstract apartmentRental = constractService.getRentalConstractById(apartmentId);
+            if(apartmentRental != null){
+                receipt.setApartmentId(apartmentRental);
+            }
+            else{
+                return new ResponseEntity<>("Can not find apartment id : " +apartmentId, HttpStatus.NOT_FOUND);
+            }
 
-            // Lưu receipt
+            //save
             receiptService.addReceipt(receipt);
             int amount_water = 0, amount_electric = 0;
             List<ApartmentUsageNumber> ul = usageNumberService.getLastMonthUsage(apartmentId, month, year);
