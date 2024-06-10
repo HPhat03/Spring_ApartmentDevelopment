@@ -4,8 +4,6 @@
  */
 package com.mhp_btn.pojo;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -27,15 +25,18 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Admin
  */
 @Entity
-@Table(name = "apartment_detail_receipt")
+@Table(name = "apartment_usage_number")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "ApartmentDetailReceipt.findAll", query = "SELECT a FROM ApartmentDetailReceipt a"),
-    @NamedQuery(name = "ApartmentDetailReceipt.findById", query = "SELECT a FROM ApartmentDetailReceipt a WHERE a.id = :id"),
-    @NamedQuery(name = "ApartmentDetailReceipt.findByContent", query = "SELECT a FROM ApartmentDetailReceipt a WHERE a.content = :content"),
-    @NamedQuery(name = "ApartmentDetailReceipt.findByPrice", query = "SELECT a FROM ApartmentDetailReceipt a WHERE a.price = :price")})
-public class ApartmentDetailReceipt implements Serializable {
-
+    @NamedQuery(name = "ApartmentUsageNumber.findAll", query = "SELECT a FROM ApartmentUsageNumber a"),
+    @NamedQuery(name = "ApartmentUsageNumber.findById", query = "SELECT a FROM ApartmentUsageNumber a WHERE a.id = :id"),
+    @NamedQuery(name = "ApartmentUsageNumber.findByType", query = "SELECT a FROM ApartmentUsageNumber a WHERE a.type = :type"),
+    @NamedQuery(name = "ApartmentUsageNumber.findByNumber", query = "SELECT a FROM ApartmentUsageNumber a WHERE a.number = :number")})
+public class ApartmentUsageNumber implements Serializable {
+    public static enum Type{
+        ELECTRIC,
+        WATER
+    }
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,30 +45,28 @@ public class ApartmentDetailReceipt implements Serializable {
     private Integer id;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 45)
-    @Column(name = "content")
-    private String content;
+    @Size(min = 1, max = 8)
+    @Column(name = "type")
+    private String type;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 45)
-    @Column(name = "price")
-    private int price;
+    @Column(name = "number")
+    private int number;
     @JoinColumn(name = "receipt_id", referencedColumnName = "id")
-    @JsonIgnore
     @ManyToOne(optional = false)
     private ApartmentReceipt receiptId;
 
-    public ApartmentDetailReceipt() {
+    public ApartmentUsageNumber() {
     }
 
-    public ApartmentDetailReceipt(Integer id) {
+    public ApartmentUsageNumber(Integer id) {
         this.id = id;
     }
 
-    public ApartmentDetailReceipt(Integer id, String content, int price) {
+    public ApartmentUsageNumber(Integer id, String type, int number) {
         this.id = id;
-        this.content = content;
-        this.price = price;
+        this.type = type;
+        this.number = number;
     }
 
     public Integer getId() {
@@ -78,20 +77,20 @@ public class ApartmentDetailReceipt implements Serializable {
         this.id = id;
     }
 
-    public String getContent() {
-        return content;
+    public String getType() {
+        return type;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setType(String type) {
+        this.type = type;
     }
 
-    public int getPrice() {
-        return price;
+    public int getNumber() {
+        return number;
     }
 
-    public void setPrice(int price) {
-        this.price = price;
+    public void setNumber(int number) {
+        this.number = number;
     }
 
     public ApartmentReceipt getReceiptId() {
@@ -112,10 +111,10 @@ public class ApartmentDetailReceipt implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof ApartmentDetailReceipt)) {
+        if (!(object instanceof ApartmentUsageNumber)) {
             return false;
         }
-        ApartmentDetailReceipt other = (ApartmentDetailReceipt) object;
+        ApartmentUsageNumber other = (ApartmentUsageNumber) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -124,7 +123,7 @@ public class ApartmentDetailReceipt implements Serializable {
 
     @Override
     public String toString() {
-        return "com.mhp_btn.pojo.ApartmentDetailReceipt[ id=" + id + " ]";
+        return "com.mhp_btn.pojo.ApartmentUsageNumber[ id=" + id + " ]";
     }
     
 }

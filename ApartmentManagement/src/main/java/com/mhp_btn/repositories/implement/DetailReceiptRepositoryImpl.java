@@ -4,6 +4,7 @@ import com.mhp_btn.pojo.ApartmentDetailReceipt;
 import com.mhp_btn.pojo.ApartmentReceipt;
 import com.mhp_btn.pojo.ApartmentResident;
 import com.mhp_btn.repositories.DetailReceiptRepository;
+import java.util.ArrayList;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,11 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Subquery;
 
 @Transactional
 @Repository
@@ -59,6 +65,7 @@ public class DetailReceiptRepositoryImpl implements DetailReceiptRepository {
         Session session = this.factoryBean.getObject().getCurrentSession();
         session.update(detailReceipt);
     }
+
 
 
 }

@@ -18,4 +18,5 @@ public interface UserRepository{
     ApartmentUser getUsersByID(int id);
     ApartmentUser getUserByUsername(String username);
     ApartmentUser ChangeOrInitialize(ApartmentUser user, Map<String,String> data, boolean isInit);
+     boolean authUser(String username, String password);
 }

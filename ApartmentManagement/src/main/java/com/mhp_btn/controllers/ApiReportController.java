@@ -1,22 +1,30 @@
 package com.mhp_btn.controllers;
 
-
-import com.mhp_btn.pojo.ApartmentDetailReceipt;
-import com.mhp_btn.pojo.ApartmentOtherMember;
+import com.cloudinary.Cloudinary;
+import com.mhp_btn.components.CloudinaryUtil;
+import com.mhp_btn.pojo.ApartmentDetailReport;
 import com.mhp_btn.pojo.ApartmentRentalConstract;
 import com.mhp_btn.pojo.ApartmentReport;
+import com.mhp_btn.pojo.ApartmentReportPicture;
+import com.mhp_btn.services.DetailReportService;
 import com.mhp_btn.services.RentalConstractService;
+import com.mhp_btn.services.ReportPictureService;
 import com.mhp_btn.services.ReportService;
 import com.mhp_btn.utils.StringUtil;
+import java.io.IOException;
+import java.security.Principal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import org.springframework.http.MediaType;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api")
@@ -25,6 +33,12 @@ public class ApiReportController {
     private ReportService reportService;
     @Autowired
     private RentalConstractService apartmentService;
+    @Autowired
+    private DetailReportService detailReportService;
+    @Autowired
+    private ReportPictureService reportPictureService;
+    @Autowired
+    private Cloudinary cloudinary;
 
     @GetMapping(path="/apartment/{apartmentId}/reports", produces = "application/json")
     public ResponseEntity<?> getAllReportByApartmentId(@PathVariable int apartmentId) {
@@ -61,30 +75,45 @@ public class ApiReportController {
         return new ResponseEntity<>( HttpStatus.NO_CONTENT);
     }
 
-    @PostMapping("/apartment/{apartmentId}/reports")
+    @PostMapping("/apartment/{apartmentId}/reports/")
     public ResponseEntity<?> createReportByApartmentId(@PathVariable("apartmentId") int apartmentId,
-                                                       @RequestBody Map<String, String> params) {
+                                                       @RequestBody Map<String, Object> params,
+                                                       Principal p) {
         ApartmentRentalConstract apartment = apartmentService.getConstractById(apartmentId);
         if (apartment == null) {
-            return new ResponseEntity<>("Apartment not found with ID: " + apartmentId, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Không tìm thầy chung cư với mã: " + apartmentId, HttpStatus.NOT_FOUND);
         }
-        if (params.get("title") == null || params.get("createdDate") == null) {
-            return new ResponseEntity<>("missing required information.", HttpStatus.BAD_REQUEST);
+        if (!apartment.getResidentUser().getUsername().equals(p.getName()))
+            return new ResponseEntity<>("Không thể báo cáo cho chung cư khác", HttpStatus.BAD_REQUEST);
+        if (params.get("title") == null) {
+            return new ResponseEntity<>("Thiếu thông tin.", HttpStatus.BAD_REQUEST);
         }
 
-        Date createdDate;
-        try {
-            createdDate = StringUtil.dateFormater().parse(params.get("createdDate"));
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
+        
         ApartmentReport newReport = new ApartmentReport();
         newReport.setApartmentId(apartment);
-        newReport.setCreatedDate(createdDate);
-        newReport.setTitle(params.get("title"));
+        newReport.setCreatedDate(new Date());
+        newReport.setTitle((String) params.get("title"));
 
         reportService.addReport(newReport);
-
+        
+        List<Map<String,Object>> details = (List<Map< String, Object>>) params.get("details");
+        details.forEach(x -> {
+            ApartmentDetailReport temp = new ApartmentDetailReport();
+            temp.setContent((String) x.get("content"));
+            temp.setReportId(newReport);
+            detailReportService.addDetailReport(temp);
+            if(x.get("pictures")!=null)
+            {
+                List<String> pictures = (List<String>) x.get("pictures");
+                pictures.forEach(y -> {
+                    ApartmentReportPicture pic = new ApartmentReportPicture();
+                    pic.setPicture(y);
+                    pic.setReportId(temp);
+                    reportPictureService.addOrUpdate(pic);
+                });
+            }
+        });
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
@@ -122,6 +151,25 @@ public class ApiReportController {
 
         return new ResponseEntity<>(existingReport, HttpStatus.OK);
     }
-
+    
+    @PostMapping(path = "/upload/", consumes = {
+        MediaType.APPLICATION_JSON_VALUE,
+        MediaType.MULTIPART_FORM_DATA_VALUE
+    }, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> uploadImg(@RequestPart MultipartFile[] files) throws IOException {
+        if(files.length == 0)
+            return new ResponseEntity<>("File trống", HttpStatus.BAD_REQUEST);
+        List<String> res = new ArrayList<>();
+        for(MultipartFile f : files){
+            try{
+                res.add(CloudinaryUtil.upload(f, cloudinary));
+            }
+            catch (IOException e)
+            {
+                return new ResponseEntity<>(e.toString(), HttpStatus.BAD_GATEWAY);
+            }
+        }
+        return new ResponseEntity<>(res,HttpStatus.OK);
+    }
 
 }

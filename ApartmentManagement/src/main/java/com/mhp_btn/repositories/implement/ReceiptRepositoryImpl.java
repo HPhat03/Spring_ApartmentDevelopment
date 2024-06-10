@@ -2,9 +2,12 @@ package com.mhp_btn.repositories.implement;
 
 
 import com.mhp_btn.pojo.ApartmentPayment;
-import com.mhp_btn.pojo.ApartmentPayment_;
+//import com.mhp_btn.pojo.ApartmentPayment_;
 import com.mhp_btn.pojo.ApartmentReceipt;
 import com.mhp_btn.pojo.ApartmentRelativeRegistry;
+import com.mhp_btn.pojo.ApartmentRentalConstract;
+import com.mhp_btn.pojo.ApartmentResident;
+import com.mhp_btn.pojo.ApartmentUser;
 import com.mhp_btn.repositories.ReceiptRepository;
 import java.util.ArrayList;
 import org.hibernate.Session;
@@ -19,9 +22,11 @@ import java.util.HashMap;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @Transactional
 @Repository
@@ -62,8 +67,13 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
 
     @Override
     public List<ApartmentReceipt> getAllReceipt(HashMap<String, String> params) {
-        
         Session s = this.factoryBean.getObject().getCurrentSession();
+        
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Query uq = s.createQuery("FROM ApartmentUser U WHERE U.username=:un");
+        uq.setParameter("un", username);
+        ApartmentUser user = (ApartmentUser) uq.getSingleResult();
+        
         CriteriaBuilder cb = s.getCriteriaBuilder();
         CriteriaQuery<ApartmentReceipt> q = cb.createQuery(ApartmentReceipt.class);
         Root r = q.from(ApartmentReceipt.class);
@@ -91,7 +101,13 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
                 predicates.add(cb.not(cb.exists(sq)));
             }
         }
-        
+        System.out.println(user.getName());
+        if(user.getRole().equals(ApartmentUser.RESIDENT))
+        {
+            Root rc = q.from(ApartmentRentalConstract.class);
+            predicates.add(cb.equal(r.get("apartmentId"), rc.get("id")));
+            predicates.add(cb.equal(rc.get("residentId"),user.getId()));
+        }
         
         q.where(predicates.toArray(Predicate[]::new));
         q.orderBy(cb.desc(r.get("id")));

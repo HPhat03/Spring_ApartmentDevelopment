@@ -1,9 +1,12 @@
 package com.mhp_btn.controllers;
 
+import com.mhp_btn.pojo.ApartmentAdmin;
+import com.mhp_btn.pojo.ApartmentDetailRequest;
 import com.mhp_btn.pojo.ApartmentRentalConstract;
 import com.mhp_btn.pojo.ApartmentSmartCabinet;
 import com.mhp_btn.pojo.ApartmentSurveyRequest;
 import com.mhp_btn.pojo.ApartmentUser;
+import com.mhp_btn.services.DetailRequestService;
 import com.mhp_btn.services.SurveyRequestService;
 import com.mhp_btn.services.UserService;
 import com.mhp_btn.utils.StringUtil;
@@ -24,6 +27,8 @@ public class ApiSurveyRequestController {
     private SurveyRequestService requestService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private DetailRequestService detailRequestService;
 
     //Lay tat ca khao sat
     @GetMapping(path = "/survey_request", produces = "application/json")
@@ -43,44 +48,51 @@ public class ApiSurveyRequestController {
     }
 
     @PostMapping("/survey_request")
-    public ResponseEntity<?> addSurveyRequest(@RequestBody Map<String, String> params) {
+    public ResponseEntity<?> addSurveyRequest(@RequestBody Map<String, Object> params) throws ParseException {
         try {
             // Lấy thông tin từ request body
-            String adminIdStr = params.get("adminId");
-            String startDateStr = params.get("startDate");
-            String endDateStr = params.get("endDate");
-            String isActiveStr = params.get("isActive");
-
-            if (adminIdStr == null || startDateStr == null || endDateStr == null || isActiveStr == null) {
+            int adminId = (int) params.get("adminId");
+            String startDateStr = (String) params.get("startDate");
+            String endDateStr = (String) params.get("endDate");
+            
+            if (endDateStr == null) {
                 return new ResponseEntity<>("One or more parameters are missing or null", HttpStatus.BAD_REQUEST);
             }
-
-            int adminId = Integer.parseInt(adminIdStr);
+            
             ApartmentUser user = userService.getUserByID(adminId);
-            if (user == null) {
+            if (user == null || !user.getRole().equals(ApartmentUser.ADMIN)) {
                 return new ResponseEntity<>("Can not find admin with Id: " + adminId, HttpStatus.NOT_FOUND);
             }
-
-            Date startDate = StringUtil.dateFormater().parse(startDateStr);
+            Date startDate = startDateStr!=null ? StringUtil.dateFormater().parse(startDateStr) : new Date();
             Date endDate = StringUtil.dateFormater().parse(endDateStr);
 
             // Kiểm tra nếu ngày bắt đầu lớn hơn ngày kết thúc
             if (startDate.after(endDate)) {
                 return new ResponseEntity<>("Start date cannot be after end date", HttpStatus.BAD_REQUEST);
             }
-
-            int isActive = Integer.parseInt(isActiveStr);
+            if (startDateStr!=null && startDate.before(new Date()))
+                 return new ResponseEntity<>("Start date cannot be before today", HttpStatus.BAD_REQUEST);
 
             // Tạo đối tượng ApartmentSurveyRequest
+            
             ApartmentSurveyRequest surveyRequest = new ApartmentSurveyRequest();
             surveyRequest.setAdminId(user.getApartmentAdmin());
             surveyRequest.setStartDate(startDate);
             surveyRequest.setEndDate(endDate);
-            surveyRequest.setIsActive((short) isActive);
+            surveyRequest.setIsActive((short) 1);
 
             // Lưu đối tượng vào cơ sở dữ liệu
             requestService.addSurveyRequest(surveyRequest);
-
+            List<Map<String,String>> questions = (List<Map<String,String>>) params.get("questions");
+            questions.forEach(x -> {
+                ApartmentDetailRequest temp = new ApartmentDetailRequest();
+                temp.setQuestion(x.get("question"));
+                temp.setRequestId(surveyRequest);
+                ApartmentDetailRequest.ScoreBand band = ApartmentDetailRequest.ScoreBand.get(x.get("band"));
+                System.out.println("band = " + band);
+                temp.setScoreBand(band != null ? band.toString() : ApartmentDetailRequest.ScoreBand.BAND_5.toString());
+                detailRequestService.addDetailRequest(temp);
+            });
             return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (Exception e) {
             // Xử lý ngoại lệ và trả về lỗi nếu có

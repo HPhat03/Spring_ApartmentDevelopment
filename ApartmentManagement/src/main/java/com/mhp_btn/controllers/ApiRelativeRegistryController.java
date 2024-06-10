@@ -3,9 +3,12 @@ package com.mhp_btn.controllers;
 
 import com.mhp_btn.pojo.ApartmentRelativeRegistry;
 import com.mhp_btn.pojo.ApartmentRentalConstract;
+import com.mhp_btn.pojo.ApartmentUser;
 import com.mhp_btn.services.RelativeRegistryService;
 import com.mhp_btn.services.RentalConstractService;
+import com.mhp_btn.services.UserService;
 import com.mhp_btn.utils.StringUtil;
+import java.security.Principal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +26,8 @@ public class ApiRelativeRegistryController {
     private RelativeRegistryService registryService;
     @Autowired
     private RentalConstractService apartmentService;
+    @Autowired
+    private UserService userService;
 
     @GetMapping(path = "/relative_registries/", produces = "application/json")
     public ResponseEntity<List<ApartmentRelativeRegistry>> list() {
@@ -46,7 +51,7 @@ public class ApiRelativeRegistryController {
 
     @PostMapping("/relative_registries/")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> addRelativeRegistry(@RequestBody Map<String, String> params) {
+    public ResponseEntity<?> addRelativeRegistry(@RequestBody Map<String, String> params, Principal p) {
         if (params.containsKey("name") && params.containsKey("startDate")
                 && params.containsKey("endDate")&& params.containsKey("isActive")) {
 
@@ -63,26 +68,24 @@ public class ApiRelativeRegistryController {
             }
             // Kiểm tra nếu ngày bắt đầu lớn hơn ngày kết thúc
             if (startDate.after(endDate)) {
-                return new ResponseEntity<>("Start date cannot be after end date", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("Ngày bắt đầu không thể trước ngày kết thúc", HttpStatus.BAD_REQUEST);
             }
-            if (startDate.before(new Date())){
-                return new ResponseEntity<>("Start date cannot be before today", HttpStatus.BAD_REQUEST);
+            if (startDate.getTime() - (new Date().getTime()) >60000){
+                return new ResponseEntity<>("Không thể đăng kí trước thời điểm hiện tại", HttpStatus.BAD_REQUEST);
             }
+            ApartmentRentalConstract apartmentRental = apartmentService.getRentalConstractById(apartmentId);
+            if(apartmentRental==null)
+                return new ResponseEntity<>("Không tìm thấy chung cư với mã: " +apartmentId, HttpStatus.NOT_FOUND);
+            if(apartmentRental.getResidentUser().getUsername().equals(p.getName()))
+                return new ResponseEntity<>("Không thể đăng kí cho chung cư khác", HttpStatus.NOT_FOUND);
             
             ApartmentRelativeRegistry apartmentRelativeRegistry = new ApartmentRelativeRegistry();
             apartmentRelativeRegistry.setActive((short) isActive);
             apartmentRelativeRegistry.setName(name);
             apartmentRelativeRegistry.setStartDate(startDate);
             apartmentRelativeRegistry.setEndDate(endDate);
-
-            ApartmentRentalConstract apartmentRental = apartmentService.getRentalConstractById(apartmentId);
-
-            if(apartmentRental != null){
-                apartmentRelativeRegistry.setApartmentId(apartmentRental);
-            }
-            else{
-                return new ResponseEntity<>("Can not find apartment id : " +apartmentId, HttpStatus.NOT_FOUND);
-            }
+            apartmentRelativeRegistry.setApartmentId(apartmentRental);
+         
 
             //save
             registryService.addRelativeRegistry(apartmentRelativeRegistry);

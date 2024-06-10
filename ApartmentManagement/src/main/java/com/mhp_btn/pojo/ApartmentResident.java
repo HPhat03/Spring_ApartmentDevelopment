@@ -39,6 +39,11 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "ApartmentResident.findByJoinedDate", query = "SELECT a FROM ApartmentResident a WHERE a.joinedDate = :joinedDate")})
 public class ApartmentResident implements Serializable {
 
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "first_login")
+    private short firstLogin;
+
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
@@ -126,6 +131,14 @@ public class ApartmentResident implements Serializable {
     @Override
     public String toString() {
         return "com.mhp_btn.pojo.ApartmentResident[ userId=" + userId + " ]";
+    }
+
+    public short getFirstLogin() {
+        return firstLogin;
+    }
+
+    public void setFirstLogin(short firstLogin) {
+        this.firstLogin = firstLogin;
     }
     
 }

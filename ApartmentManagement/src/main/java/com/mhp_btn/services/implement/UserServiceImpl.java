@@ -75,4 +75,9 @@ public class UserServiceImpl implements UserService {
         return up.ChangeOrInitialize(user, data, isInit);
     }
 
+    @Override
+    public boolean authUser(String username, String password) {
+        return this.up.authUser(username, password);
+    }
+
 }

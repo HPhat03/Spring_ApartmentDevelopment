@@ -2,9 +2,12 @@ package com.mhp_btn.controllers;
 
 import com.mhp_btn.pojo.*;
 import com.mhp_btn.serializers.ReceiptSerializer;
+import com.mhp_btn.services.DetailReceiptService;
 import com.mhp_btn.services.ReceiptService;
 import com.mhp_btn.services.RentalConstractService;
+import com.mhp_btn.services.UsageNumberService;
 import com.mhp_btn.utils.StringUtil;
+import java.security.Principal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +18,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api")
@@ -23,6 +27,10 @@ public class ApiReceiptController {
     private ReceiptService receiptService;
     @Autowired
     private RentalConstractService constractService;
+    @Autowired
+    private UsageNumberService usageNumberService;
+    @Autowired
+    private DetailReceiptService detailReceiptService;
 
     @GetMapping(path = "/receipt/", produces = "application/json")
     public ResponseEntity<Object> list(@RequestParam HashMap<String, String> params) {
@@ -47,21 +55,22 @@ public class ApiReceiptController {
     @PostMapping("/receipt/")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> addReceipt(@RequestBody Map<String, String> params) {
-        if (params.containsKey("month") && params.containsKey("createdDate") && params.containsKey("total")) {
+        if (params.containsKey("month") && 
+                params.containsKey("year") && 
+                params.containsKey("water_usage")  && 
+                params.containsKey("electric_usage") && 
+                params.containsKey("apartmentId")) {
             int month = Integer.parseInt(params.get("month"));
-            double total = Double.parseDouble(params.get("total"));
+            String year = params.get("year");
             int apartmentId = Integer.parseInt(params.get("apartmentId"));
-            Date createdDate;
-            try {
-                createdDate = StringUtil.dateFormater().parse(params.get("createdDate"));
-            } catch (ParseException e) {
-                throw new RuntimeException(e);
-            }
-
+            int cur_electric = Integer.parseInt(params.get("electric_usage"));
+            int cur_water = Integer.parseInt(params.get("water_usage"));
+            
             ApartmentReceipt receipt = new ApartmentReceipt();
             receipt.setMonth(month);
-            receipt.setCreatedDate(createdDate);
-            receipt.setTotal((int) total);
+            receipt.setYear(year);
+            receipt.setCreatedDate(new Date());
+            receipt.setTotal(-1);
 
             ApartmentRentalConstract apartmentRental = constractService.getRentalConstractById(apartmentId);
             if(apartmentRental != null){
@@ -73,9 +82,61 @@ public class ApiReceiptController {
 
             //save
             receiptService.addReceipt(receipt);
+            int amount_water = 0, amount_electric = 0;
+            List<ApartmentUsageNumber> ul = usageNumberService.getLastMonthUsage(apartmentId, month, year);
+            for(ApartmentUsageNumber x : ul){
+                if(x.getType().equals(ApartmentUsageNumber.Type.ELECTRIC.toString()))
+                    amount_electric = cur_electric - x.getNumber();
+                if(x.getType().equals(ApartmentUsageNumber.Type.WATER.toString()))
+                    amount_water = cur_water - x.getNumber();
+            }
+            System.out.println(cur_electric + " :: " + amount_electric);
+            System.out.println(cur_water + " :: " + amount_water);
+            
+            int sum = apartmentRental.getFinalPrice();
+            String electric = "Tiền điện", water = "Tiền nước";
+            for(ApartmentServiceConstract s : apartmentRental.getApartmentServiceConstractSet())
+            {
+                ApartmentDetailReceipt temp = new ApartmentDetailReceipt();
+                if(s.getServiceId().getName().contains(electric))
+                {
+                    temp.setContent(electric);
+                    int price = s.getServiceId().getPrice()*amount_electric;
+                    temp.setPrice(price);
+                    sum += price;
+                } else if(s.getServiceId().getName().contains(water))
+                {
+                    temp.setContent(water);
+                    temp.setPrice(s.getServiceId().getPrice() * amount_water);
+                    sum += s.getServiceId().getPrice() * amount_water;
+                }else
+                {
+                    temp.setContent(s.getServiceId().getName());
+                    temp.setPrice(s.getServiceId().getPrice());
+                    sum += s.getServiceId().getPrice();
+                }
+                temp.setReceiptId(receipt);
+                detailReceiptService.createDetailByReceiptId(temp);
+            }
+            receipt.setTotal(sum);
+            receiptService.updateReceipt(receipt);
+            
+            //update usage
+            ApartmentUsageNumber electric_usage = new ApartmentUsageNumber();
+            electric_usage.setType(ApartmentUsageNumber.Type.ELECTRIC.toString());
+            electric_usage.setReceiptId(receipt);
+            electric_usage.setNumber(cur_electric);
+            usageNumberService.saveOrUpdate(electric_usage);
+            
+            ApartmentUsageNumber water_usage = new ApartmentUsageNumber();
+            water_usage.setType(ApartmentUsageNumber.Type.WATER.toString());
+            water_usage.setReceiptId(receipt);
+            water_usage.setNumber(cur_water);
+            usageNumberService.saveOrUpdate(water_usage);
+            
             return ResponseEntity.status(HttpStatus.CREATED).build();
         } else {
-            throw new IllegalArgumentException("missing required information");
+           return new ResponseEntity<>("Thiếu các thông tin cần thiết", HttpStatus.BAD_REQUEST);
         }
     }
 
