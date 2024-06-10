@@ -26,9 +26,11 @@ public class ServiceServiceImpl implements  ServiceService{
     }
 
     @Override
-    public void addService(ApartmentService service) {
-        this.repo.addService(service);
+    public void addOrUpdate(ApartmentService service) {
+        this.repo.addOrUpdate(service);
     }
+
+
 
     @Override
     public ApartmentService getServiceById(int id) {

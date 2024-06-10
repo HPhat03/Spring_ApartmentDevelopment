@@ -12,7 +12,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="ApartmentManagement" options="-endorseddirs C:\Users\FShop\Desktop\Spring_ApartmentDevelopment\ApartmentManagement\target/endorsed" />
+      <module name="ApartmentManagement" options="-endorseddirs D:\Downloads\Spring_ApartmentDevelopment\ApartmentManagement\target/endorsed" />
     </option>
   </component>
 </project>

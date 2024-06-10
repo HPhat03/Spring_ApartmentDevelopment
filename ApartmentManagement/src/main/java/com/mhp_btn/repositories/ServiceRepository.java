@@ -15,7 +15,7 @@ import java.util.List;
 public interface ServiceRepository {
     List<ApartmentService> getService();
 
-    void addService(ApartmentService service);
+    void addOrUpdate(ApartmentService service);
     public ApartmentService getServiceById(int id) ;
 
     void deleteServiceById(int id);

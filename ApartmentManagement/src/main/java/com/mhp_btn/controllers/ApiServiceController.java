@@ -16,38 +16,44 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 /**
  * @author Admin
  */
-@RestController
-@RequestMapping("/api")
+@Controller
+@RequestMapping("/services")
 public class ApiServiceController {
 
     @Autowired
     private ServiceService ss;
 
-    @GetMapping(path = "/service/")
-    public ResponseEntity<List<ApartmentService>> list() {
-        return new ResponseEntity<>(this.ss.getServices(), HttpStatus.OK);
+    @GetMapping("/")
+    public String Index(Model model) {
+        model.addAttribute("services", this.ss.getServices());
+        return "services"; // Tên này phải khớp với tên định nghĩa trong tiles.xml
     }
 
-    @PostMapping(path = "/service/")
-    @ResponseStatus(HttpStatus.CREATED)
-    public void addService(@RequestBody ApartmentService request) {
 
-        String name = request.getName();
-        int price = request.getPrice();
-        short isActive = 1;
-
-        ApartmentService newService = new ApartmentService();
-        newService.setName(name);
-        newService.setPrice(price);
-        newService.setIsActive(isActive);
-
-        ss.addService(newService);
+    @GetMapping("/add")
+    public String addService(Model model) {
+        model.addAttribute("service", new ApartmentService());
+        return "addService";
+    }
+    // Chưa bắt looi cac truong nhap lieu
+    @PostMapping(path = "/add")
+    public String addService(@ModelAttribute("service") ApartmentService service) {
+        this.ss.addOrUpdate(service);
+        return "redirect:/services/";
+    }
+    @GetMapping("/edit/{id}")
+    public String editService(@PathVariable int id, Model model) {
+        ApartmentService service = ss.getServiceById(id);
+        model.addAttribute("service", service);
+        return "addService";
     }
 
     @DeleteMapping("/service/{id}")
@@ -62,35 +68,33 @@ public class ApiServiceController {
         return new ResponseEntity<>("Đã xóa phòng có ID " + id, HttpStatus.OK);
     }
 
-    @PatchMapping(value = "/service/{id}", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<ApartmentService> updateServiceById(@PathVariable int id, @RequestBody Map<String, Object> updates) {
-        ApartmentService service = ss.getServiceById(id);
-        if (service == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy dịch vụ với ID " + id);
-        }
-        for (Map.Entry<String, Object> entry : updates.entrySet()) {
-            String key = entry.getKey();
-            Object value = entry.getValue();
-            switch (key) {
-                case "name":
-                    service.setName((String) value);
-                    break;
-                case "price":
-                   service.setPrice((int) value);
-                    break;
-                case "is_active":
-                    service.setIsActive((short) value);
-                    break;
-                default:
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Trường không hợp lệ: " + key);
-            }
-        }
-
-        ss.updateervice(service);
-        return new ResponseEntity<>(service, HttpStatus.OK);
-    }
-
-
+//    @PatchMapping(value = "/service/{id}", consumes = "application/json", produces = "application/json")
+//    public ResponseEntity<ApartmentService> updateServiceById(@PathVariable int id, @RequestBody Map<String, Object> updates) {
+//        ApartmentService service = ss.getServiceById(id);
+//        if (service == null) {
+//            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy dịch vụ với ID " + id);
+//        }
+//        for (Map.Entry<String, Object> entry : updates.entrySet()) {
+//            String key = entry.getKey();
+//            Object value = entry.getValue();
+//            switch (key) {
+//                case "name":
+//                    service.setName((String) value);
+//                    break;
+//                case "price":
+//                    service.setPrice((int) value);
+//                    break;
+//                case "is_active":
+//                    service.setIsActive((short) value);
+//                    break;
+//                default:
+//                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Trường không hợp lệ: " + key);
+//            }
+//        }
+//
+//        ss.updateervice(service);
+//        return new ResponseEntity<>(service, HttpStatus.OK);
+//    }
 
 
 }

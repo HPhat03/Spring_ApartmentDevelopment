@@ -13,7 +13,7 @@ import java.util.List;
  */
 public interface ServiceService {
     List<ApartmentService> getServices();
-    void addService(ApartmentService service);
+    void addOrUpdate(ApartmentService service);
 
     public ApartmentService getServiceById(int id);
 
