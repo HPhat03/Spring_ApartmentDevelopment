@@ -10,7 +10,7 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <c:url value="/services/add" var="action"/>
 
-<div class="container">
+<div class="container m-4">
     <h1 class="h3 mb-3">${service.id != null ? 'Chỉnh sửa' : 'Thêm mới'} dịch vụ</h1>
     <form:form method="post" action="${action}" modelAttribute="service">
         <form:hidden path="id"/>
@@ -32,7 +32,7 @@
             <button type="submit" class="btn btn-info">
                     ${service.id != null ? 'Cập nhật dịch vụ' : 'Thêm mới'}
             </button>
-            <a href="/services" class="btn btn-secondary ms-2">Quay lại</a>
+            <a href="<c:url value="/services/" />" class="btn btn-secondary ms-2">Quay lại</a>
         </div>
     </form:form>
 </div>
