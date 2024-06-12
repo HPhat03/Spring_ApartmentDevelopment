@@ -15,6 +15,9 @@
                 <li class="nav-item">
                     <a class="nav-link" href="<c:url value="/services/"/>">Dịch vụ</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="<c:url value="/rooms/"/>">Phòng</a>
+                </li>
 <%--                <li class="nav-item">--%>
 <%--                    <a class="nav-link " href="<c:url value="/rooms/"/>">Phòng</a>--%>
 <%--                </li>--%>

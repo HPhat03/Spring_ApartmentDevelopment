@@ -18,8 +18,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+
+import javax.validation.Valid;
 
 /**
  * @author Admin
@@ -45,10 +48,26 @@ public class ApiServiceController {
     }
     // Chưa bắt looi cac truong nhap lieu
     @PostMapping(path = "/add")
-    public String addService(@ModelAttribute("service") ApartmentService service) {
-        this.ss.addOrUpdate(service);
-        return "redirect:/services/";
+    public String addService(@ModelAttribute("service") @Valid ApartmentService service, BindingResult rs)  {
+        // Kiểm tra xem có lỗi không
+        if (!rs.hasErrors()) {
+            try {
+                if (service.getId() == null) {
+                    this.ss.addOrUpdate(service);
+                } else {
+                    // Nếu id không phải null, thực hiện cập nhật
+                    this.ss.addOrUpdate(service);
+                }
+                return "redirect:/services/";
+            } catch (Exception ex) {
+                System.err.println("Lỗi khi thêm/cập nhật dịch vụ: " + ex.getMessage());
+            }
+        }
+        return "addService";
     }
+
+
+
     @GetMapping("/edit/{id}")
     public String editService(@PathVariable int id, Model model) {
         ApartmentService service = ss.getServiceById(id);

@@ -11,13 +11,21 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @Repository
 @Transactional
 public class RoomRepositoryImpl implements RoomRepository {
     @Autowired
     private LocalSessionFactoryBean factoryBean;
+
     @Override
     public List<ApartmentRoom> getRooms() {
         Session s = this.factoryBean.getObject().getCurrentSession();
@@ -26,9 +34,32 @@ public class RoomRepositoryImpl implements RoomRepository {
     }
 
     @Override
-    public void addRoom(ApartmentRoom room) {
-        Session session = factoryBean.getObject().getCurrentSession();
-        session.save(room);
+    public List<ApartmentRoom> getRoomFilter(Map<String, String> params) {
+        Session s = this.factoryBean.getObject().getCurrentSession();
+        CriteriaBuilder b = s.getCriteriaBuilder();
+        CriteriaQuery<ApartmentRoom> q = b.createQuery(ApartmentRoom.class);
+        Root<ApartmentRoom> r = q.from(ApartmentRoom.class);
+
+        q.select(r);
+        List<Predicate> predicates = new ArrayList<>();
+
+//        String status = params.get("status");
+//        System.out.println(status);
+//        if (status != null && !status.equals("all")) {
+//            predicates.add(b.like(r.get("status"), String.format("%%%s%%", status)));
+//        }
+        q.where(predicates.toArray(Predicate[]::new));
+        Query query = s.createQuery(q);
+
+        List<ApartmentRoom> roomsFilter = query.getResultList();
+
+        return roomsFilter;
+    }
+
+    @Override
+    public void addOrUpdateRoom(ApartmentRoom room) {
+        Session s = factoryBean.getObject().getCurrentSession();
+       s.saveOrUpdate(room);
     }
 
     @Override
@@ -93,9 +124,6 @@ public class RoomRepositoryImpl implements RoomRepository {
         query.setParameter("floorId", floorId);
         return query.getResultList();
     }
-
-
-
 
 
     @Override

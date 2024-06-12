@@ -6,6 +6,8 @@ import com.mhp_btn.services.FloorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -13,11 +15,17 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-@RestController
+@Controller
+@ControllerAdvice
 @RequestMapping("/api")
 public class ApiFloorController {
     @Autowired
     private FloorService floorService;
+    @ModelAttribute
+    public void commonAttr(Model model) {
+        // phan header chung va gan @modelattribute
+        model.addAttribute("floors", this.floorService.getAllFloor());
+    }
     @GetMapping(path = "/floors/", produces = "application/json")
     public ResponseEntity<List<ApartmentFloor>> list() {
         List<ApartmentFloor> floors = this.floorService.getAllFloor();

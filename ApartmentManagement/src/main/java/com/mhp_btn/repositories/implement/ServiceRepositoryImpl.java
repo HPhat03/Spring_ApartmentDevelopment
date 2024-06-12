@@ -39,12 +39,13 @@ public class ServiceRepositoryImpl implements ServiceRepository{
     @Override
     public void addOrUpdate(ApartmentService service) {
         Session s = this.f.getObject().getCurrentSession();
-        if(service.getId() > 0) {
+        if(service.getId() != null && service.getId() > 0) {
             s.update(service);
-        }else {
+        } else {
             s.save(service);
         }
     }
+
 
 
 

@@ -26,5 +26,14 @@
         <put-attribute name="content" value="/WEB-INF/pages/services/addServices.jsp" />
     </definition>
 
+    <definition name="rooms" extends="baseLayout">
+        <put-attribute name="title" value="Phòng" />
+        <put-attribute name="content" value="/WEB-INF/pages/rooms/index.jsp" />
+    </definition>
+    <definition name="addRoom" extends="baseLayout">
+        <put-attribute name="title" value="Thêm phòng" />
+        <put-attribute name="content" value="/WEB-INF/pages/rooms/addRooms.jsp" />
+    </definition>
+
 
 </tiles-definitions>
