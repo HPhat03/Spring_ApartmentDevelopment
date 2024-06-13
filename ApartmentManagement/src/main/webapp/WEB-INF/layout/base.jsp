@@ -14,6 +14,7 @@
         <tiles:insertAttribute name="title"/>
     </title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+
     <link id="pagestyle"  href="<c:url value="/css/material-dashboard.css?v=3.1.0"/>"  rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
@@ -22,7 +23,7 @@
             crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"  crossorigin="anonymous"></script>
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
-
+    <link   href="<c:url value="/css/index.css"/>"  rel="stylesheet" />
 </head>
 
 <body class="g-sidenav-show  bg-gray-200">

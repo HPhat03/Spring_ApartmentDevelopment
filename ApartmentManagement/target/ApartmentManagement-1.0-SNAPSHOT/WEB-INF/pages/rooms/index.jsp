@@ -15,7 +15,7 @@
                 <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
                     <h6 class="text-white text-capitalize ps-3">Quản lí phòng</h6>
                 </div>
-                <form >
+                <form>
                     <label for="status">Trạng thái phòng:</label>
                     <select id="status" name="status" class="p-1">
                         <option value="all" ${status == 'all' ? 'selected' : ''}>Tất cả</option>
@@ -73,17 +73,17 @@
                             <td>${room.floor.name}</td>
                             <td>
                                 <c:choose>
-                                    <c:when test="${room.isBlank == 0}">
-                                        <a class="btn btn-sm border-radius-2xl btn-success"
-                                           href="<c:url value='/rooms/rent/${room.id}' />">
+                                <c:when test="${room.isBlank == 0}">
+                                    <a class="btn btn-sm border-radius-2xl btn-success"
+                                       href="<c:url value='/rooms/rent/${room.id}' />">
                                         <i class="bi bi-person-plus"></i> Tạo hợp đồng
                                     </a></c:when>
-                                    <c:otherwise>
-                                    <a class="btn btn-sm border-radius-2xl btn-danger"
-                                       href="<c:url value='/rooms/rent/${room.id}' />">
-                                        <i class="bi bi-person-plus"></i> Đã thuê
+                                <c:otherwise>
+                                <a class="btn btn-sm border-radius-2xl btn-danger"
+                                   href="<c:url value='/rooms/rent/${room.id}' />">
+                                    <i class="bi bi-person-plus"></i> Đã thuê
                                     </c:otherwise>
-                                </c:choose>
+                                    </c:choose>
                             </td>
                             <td>
                                 <a class="btn btn-sm btn-primary" href="<c:url value='/rooms/edit/${room.id}' />">
@@ -110,7 +110,8 @@
             <c:forEach begin="1" end="${totalPages}" var="pageNumber">
                 <c:choose>
                     <c:when test="${pageNumber == currentPage}">
-                        <li class="page-item active"><a class="page-link" href="?page=${pageNumber}">${pageNumber}</a></li>
+                        <li class="page-item active"><a class="page-link" href="?page=${pageNumber}">${pageNumber}</a>
+                        </li>
                     </c:when>
                     <c:otherwise>
                         <li class="page-item"><a class="page-link" href="?page=${pageNumber}">${pageNumber}</a></li>

@@ -36,7 +36,10 @@
     </definition>
 
     <definition name="stats" extends="baseLayout">
-        <put-attribute name="title" value="Thêm phòng" />
+        <put-attribute name="title" value="Thống kê" />
         <put-attribute name="content" value="/WEB-INF/pages/stats/index.jsp" />
+    </definition>
+
+    <definition name="login" template="/WEB-INF/pages/auth/login.jsp">
     </definition>
 </tiles-definitions>

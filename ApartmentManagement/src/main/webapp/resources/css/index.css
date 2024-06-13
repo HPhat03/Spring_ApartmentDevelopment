@@ -1,0 +1,3 @@
+.sidenav {
+    overflow: hidden !important; /* Tắt thanh cuộn với !important */
+}
