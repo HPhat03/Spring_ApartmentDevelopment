@@ -7,13 +7,19 @@ package com.mhp_btn.repositories.implement;
 import com.mhp_btn.pojo.ApartmentRoom;
 import com.mhp_btn.pojo.ApartmentService;
 import com.mhp_btn.repositories.ServiceRepository;
+
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
@@ -26,14 +32,38 @@ import org.springframework.web.server.ResponseStatusException;
  */
 @Repository
 @Transactional
+@PropertySource("classpath:configs.properties")
 public class ServiceRepositoryImpl implements ServiceRepository{
     @Autowired
     private LocalSessionFactoryBean f;
+    @Autowired
+    private Environment env;
     @Override
-    public List<ApartmentService> getService() {
+    public List<ApartmentService> getService(Map<String, String> params) {
         Session s = this.f.getObject().getCurrentSession();
-        Query q = s.createNamedQuery("ApartmentService.findAll");
-        return q.getResultList();
+        CriteriaBuilder b = s.getCriteriaBuilder();
+        CriteriaQuery<ApartmentService> q = b.createQuery(ApartmentService.class);
+        Root<ApartmentService> r = q.from(ApartmentService.class);
+        q.select(r);
+
+        List<Predicate> predicates = new ArrayList<>();
+
+        String kw = params.get("kw");
+        if (kw != null && !kw.isEmpty()) {
+            predicates.add(b.like(r.get("name"), String.format("%%%s%%", kw)));
+        }
+        q.where(predicates.toArray(Predicate[]::new));
+        Query query = s.createQuery(q);
+
+        // phan trang
+        String page = params.get("page");
+        if(page != null && !page.isEmpty() ){
+            int pagesize = Integer.parseInt(env.getProperty("services.pagesize"));
+            int start = (Integer.parseInt(page)-1) * pagesize;
+            query.setFirstResult(start);
+            query.setMaxResults(pagesize);
+        }
+        return (List<ApartmentService>) query.getResultList();
     }
 
     @Override

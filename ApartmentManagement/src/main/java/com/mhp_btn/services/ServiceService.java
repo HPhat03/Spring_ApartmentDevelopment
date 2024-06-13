@@ -6,14 +6,15 @@ package com.mhp_btn.services;
 
 import com.mhp_btn.pojo.ApartmentService;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
  * @author Admin
  */
 public interface ServiceService {
-    List<ApartmentService> getServices();
-    void addOrUpdate(ApartmentService service);
+    List<ApartmentService> getService(Map<String, String> params) ;
+        void addOrUpdate(ApartmentService service);
 
     public ApartmentService getServiceById(int id);
 

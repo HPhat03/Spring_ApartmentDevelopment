@@ -23,5 +23,12 @@ public class StatServiceImpl implements StatService{
     public List<Object[]> statSurvey(int id) {
         return repo.statSurveybyId(id);
     }
-    
+
+
+
+    @Override
+    public List<Object[]> statRevenue(int year, String filter) {
+        return this.repo.statRevenue(year,filter);
+    }
+
 }

@@ -115,9 +115,9 @@ public class ApiRentalConstractController {
                 services_id =  (List<Integer>) params.get("services");
                 len = services_id.size();
             }
-            else {
-                services = serviceService.getServices();
-            }
+//            else {
+//                services = serviceService.getService(params);
+//            }
             
             for(int i = 0; i<len; i++){
                 ApartmentService temp;

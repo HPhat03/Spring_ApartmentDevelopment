@@ -7,15 +7,16 @@ package com.mhp_btn.repositories;
 import com.mhp_btn.pojo.ApartmentRoom;
 import com.mhp_btn.pojo.ApartmentService;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
  * @author Admin
  */
 public interface ServiceRepository {
-    List<ApartmentService> getService();
+    List<ApartmentService> getService(Map<String, String> params) ;
 
-    void addOrUpdate(ApartmentService service);
+        void addOrUpdate(ApartmentService service);
     public ApartmentService getServiceById(int id) ;
 
     void deleteServiceById(int id);

@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -29,14 +31,34 @@ import javax.validation.Valid;
  */
 @Controller
 @RequestMapping("/services")
+@PropertySource("classpath:configs.properties")
 public class ApiServiceController {
 
     @Autowired
     private ServiceService ss;
+    @Autowired
+    private Environment env;
 
     @GetMapping("/")
-    public String Index(Model model) {
-        model.addAttribute("services", this.ss.getServices());
+    public String Index(Model model, @RequestParam Map<String, String> params) {
+        // Lấy kích thước trang từ file properties
+        int pageSize = Integer.parseInt(env.getProperty("services.pagesize"));
+
+        // Tổng số sản phẩm từ dịch vụ
+        List<ApartmentService> totalService = this.ss.getService(params);
+        long totalItems = this.ss.countService();
+
+        // Tính tổng số trang cần thiết
+        int totalPages = (int) Math.ceil((double) totalItems / pageSize);
+
+        // Lấy trang hiện tại từ tham số request, mặc định là trang 1
+        int currentPage = params.get("page") != null ? Integer.parseInt(params.get("page")) : 1;
+
+        // Đưa các thông tin này vào model để sử dụng trong JSP
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("currentPage", currentPage);
+        model.addAttribute("services", totalService);
+
         return "services"; // Tên này phải khớp với tên định nghĩa trong tiles.xml
     }
 
