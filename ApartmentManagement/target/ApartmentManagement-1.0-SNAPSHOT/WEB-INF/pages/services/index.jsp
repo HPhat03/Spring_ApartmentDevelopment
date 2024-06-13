@@ -72,8 +72,8 @@
 
             </div>
         </div>
-        <h1>Total page : ${totalPages}</h1>
-        <h1>CUrrent page : ${currentPage}</h1>
+<%--        <h1>Total page : ${totalPages}</h1>--%>
+<%--        <h1>CUrrent page : ${currentPage}</h1>--%>
         <div class="d-flex justify-content-center">
             <ul class="pagination align-items-center">
                 <c:if test="${currentPage > 1}">

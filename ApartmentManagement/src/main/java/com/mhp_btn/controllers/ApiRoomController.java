@@ -8,6 +8,8 @@ import com.mhp_btn.repositories.FloorRepository;
 import com.mhp_btn.services.FloorService;
 import com.mhp_btn.services.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -25,24 +27,28 @@ import java.util.Map;
 
 @Controller
 @RequestMapping("/rooms")
+@PropertySource("classpath:configs.properties")
 public class ApiRoomController {
     @Autowired
     private RoomService rs;
     @Autowired
     private FloorService floorSer;
+    @Autowired
+    private Environment env;
 
-    //    @RequestMapping("/")
-//    public String index(Model model,
-//                        @RequestParam Map<String, String> params) {
-//
-//        model.addAttribute("rooms", this.rs.getRoomFilter(params));
-//        return "rooms";
-//    }
-    @GetMapping("/")
-    public String Index(Model model) {
-        model.addAttribute("rooms", this.rs.getRooms());
+        @RequestMapping("/")
+    public String index(Model model,@RequestParam Map<String, String> params) {
+            int pageSize = Integer.parseInt(env.getProperty("services.pagesize"));
+
+            long totalRoom = this.rs.countRoom();
+            int totalPages = (int) Math.ceil((double) totalRoom / pageSize);
+            int currentPage = params.get("page") != null ? Integer.parseInt(params.get("page")) : 1;
+            model.addAttribute("totalPages", totalPages);
+            model.addAttribute("currentPage", currentPage);
+            model.addAttribute("rooms", this.rs.getRoomFilter(params));
         return "rooms";
     }
+
 
     @GetMapping("/add")
     public String addRoom(Model model) {

@@ -41,25 +41,22 @@ public class ApiServiceController {
 
     @GetMapping("/")
     public String Index(Model model, @RequestParam Map<String, String> params) {
-        // Lấy kích thước trang từ file properties
         int pageSize = Integer.parseInt(env.getProperty("services.pagesize"));
 
         // Tổng số sản phẩm từ dịch vụ
         List<ApartmentService> totalService = this.ss.getService(params);
         long totalItems = this.ss.countService();
 
-        // Tính tổng số trang cần thiết
         int totalPages = (int) Math.ceil((double) totalItems / pageSize);
 
         // Lấy trang hiện tại từ tham số request, mặc định là trang 1
         int currentPage = params.get("page") != null ? Integer.parseInt(params.get("page")) : 1;
 
-        // Đưa các thông tin này vào model để sử dụng trong JSP
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("currentPage", currentPage);
         model.addAttribute("services", totalService);
 
-        return "services"; // Tên này phải khớp với tên định nghĩa trong tiles.xml
+        return "services";
     }
 
 

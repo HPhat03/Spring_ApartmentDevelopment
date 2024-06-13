@@ -38,25 +38,7 @@ public class RoomServiceImpl implements RoomService {
         this.roomRepo.deleteRoomById(id);
     }
 
-    @Override
-    public List<ApartmentRoom> getActiveRooms() {
-        return this.roomRepo.getActiveRooms();
-    }
 
-    @Override
-    public List<ApartmentRoom> getEmptyRoom() {
-        return this.roomRepo.getEmptyRoom();
-    }
-
-    @Override
-    public List<ApartmentRoom> getRentedRoom() {
-        return this.roomRepo.getRentedRoom();
-    }
-
-    @Override
-    public List<ApartmentRoom> getInactiveRooms() {
-        return this.roomRepo.getInactiveRooms();
-    }
 
     @Override
     public List<ApartmentRoom> getRoomByFloorId(int id) {
@@ -66,6 +48,11 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public void updateRoom(ApartmentRoom room) {
         this.roomRepo.updateRoom(room);
+    }
+
+    @Override
+    public long countRoom() {
+        return this.roomRepo.countRoom();
     }
 
 
