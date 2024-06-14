@@ -60,7 +60,9 @@
                                     <a class="btn btn-sm btn-primary" href="<c:url value='/services/edit/${service.id}' />">
                                         <i class="bi bi-pencil"></i> Sửa
                                     </a>
-                                    <button class="btn btn-sm btn-danger removeService" data-id="${service.id}">
+                                    <c:url value="/services/${service.id}" var="urlDelete" />
+
+                                    <button class="btn btn-sm btn-danger removeRoom" data-id="${service.id}" onclick="deleteRoom('${urlDelete}', ${service.id})">
                                         <i class="bi bi-trash"></i> Xóa
                                     </button>
                                 </td>
@@ -97,3 +99,27 @@
 
     </div>
 </div>
+<script>
+    function deleteRoom(url,roomId) {
+        console.log(url);
+        if (confirm("Bạn có chắc chắn muốn xóa dịch vụ này không?")) {
+            fetch(url, {
+                method: "DELETE",
+            })
+                .then(response => {
+                    if (response.status === 200) {
+                        alert("Xóa dịch vụ thành công");
+                        location.reload();
+                    } else {
+                        console.log("id rooom:", roomId);
+                        alert("Xóa dịch vụ thất bại");
+                    }
+                })
+                .catch(error => {
+                    console.log("id rooom:", roomId);
+                    console.error("Loi fetch api:", error);
+                    alert("Có lỗi xảy ra khi xóa dịch vụ");
+                });
+        }
+    }
+</script>

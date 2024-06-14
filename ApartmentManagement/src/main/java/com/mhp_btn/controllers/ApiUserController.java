@@ -9,6 +9,7 @@ import com.mhp_btn.components.JwtService;
 
 import com.mhp_btn.pojo.ApartmentAdmin;
 import com.mhp_btn.pojo.ApartmentResident;
+import com.mhp_btn.pojo.ApartmentRoom;
 import com.mhp_btn.pojo.ApartmentUser;
 import com.mhp_btn.serializers.UserSerializer;
 import com.mhp_btn.services.AdminService;
@@ -26,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -33,26 +35,15 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.*;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- *
  * @author Admin
  */
 @RestController
-@RequestMapping("/api")
+//@RequestMapping("/api")
 public class ApiUserController {
 
     private final SimpleDateFormat dateFormatter = StringUtil.dateFormater();
@@ -66,38 +57,47 @@ public class ApiUserController {
     private Cloudinary cloudinary;
     @Autowired
     private JwtService jwtService;
-    
-    @GetMapping(path = "/user/", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<MappingJacksonValue> list(){
-        List<ApartmentUser> users = this.us.getUsers();
-        return new ResponseEntity<>(UserSerializer.UserList(users),HttpStatus.OK);
-        
+
+    //    @GetMapping(path = "/user/", produces = MediaType.APPLICATION_JSON_VALUE)
+//    public ResponseEntity<MappingJacksonValue> list(){
+//        List<ApartmentUser> users = this.us.getUsers();
+//        return new ResponseEntity<>(UserSerializer.UserList(users),HttpStatus.OK);
+//
+//    }
+    @DeleteMapping("/users/{id}/")
+    public ResponseEntity<String> deleteUserById(@PathVariable int id) {
+        ApartmentUser u = this.us.getUserByID(id);
+        if (u == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        us.deleteUserById(id);
+        return new ResponseEntity<>("Đã xóa phòng có ID " + id, HttpStatus.NO_CONTENT);
     }
 
-    @PostMapping(path = "/user/", consumes = {
-        MediaType.APPLICATION_JSON_VALUE,
-        MediaType.MULTIPART_FORM_DATA_VALUE
+    @PostMapping(path = "/users/add/", consumes = {
+            MediaType.APPLICATION_JSON_VALUE,
+            MediaType.MULTIPART_FORM_DATA_VALUE
     }, produces = MediaType.APPLICATION_JSON_VALUE)
 
     public ResponseEntity<Object> create(@RequestParam Map<String, String> data, @RequestPart MultipartFile[] file) throws ParseException, IOException {
         ApartmentUser u = new ApartmentUser();
-        if (file.length>0){
+        if (file.length > 0) {
             u.setFile(file[0]);
         }
         u = us.ChangeOrInitialize(u, data, true);
-        if (u.getFirstName()== null)
-        {
-            ErrorHandle error = new ErrorHandle("Không thể upload hình ảnh", HttpStatus.BAD_REQUEST,"ERROR UPLOADING TO CLOUDINARY");
+        if (u.getFirstName() == null) {
+            ErrorHandle error = new ErrorHandle("Không thể upload hình ảnh", HttpStatus.BAD_REQUEST, "ERROR UPLOADING TO CLOUDINARY");
             return new ResponseEntity<>(error, error.getStatus());
         }
         try {
             us.save(u, true);
-            if (u.getRole().equals(ApartmentUser.ADMIN)){
+            if (u.getRole().equals(ApartmentUser.ADMIN)) {
                 ApartmentAdmin admin = new ApartmentAdmin(u.getId());
                 admin.setApartmentUser(u);
                 as.save(admin);
                 u.setApartmentAdmin(admin);
-            }else if (u.getRole().equals(ApartmentUser.RESIDENT)){
+            } else if (u.getRole().equals(ApartmentUser.RESIDENT)) {
                 ApartmentResident resident = new ApartmentResident(u.getId());
                 resident.setApartmentUser(u);
                 Date actualJoin = data.get("joineddate") == null ? new Date() : this.dateFormatter.parse(data.get("joineddate"));
@@ -106,7 +106,7 @@ public class ApiUserController {
                 u.setApartmentResident(resident);
             }
             us.save(u, false);
-            
+
         } catch (Exception e) {
             ErrorHandle error = new ErrorHandle("Tạo không thành công", HttpStatus.BAD_REQUEST, e.toString());
             return new ResponseEntity<>(error, error.getStatus());
@@ -118,78 +118,97 @@ public class ApiUserController {
         return new ResponseEntity<>(UserSerializer.UserDetail(u), HttpStatus.CREATED);
 
     }
-    
-    @PatchMapping(path = "/user/{id}", consumes = {
-        MediaType.APPLICATION_JSON_VALUE
+
+    @PatchMapping(path = "/api/user/{id}", consumes = {
+            MediaType.APPLICATION_JSON_VALUE
     },
-        produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> update(@PathVariable int id, @RequestBody Map<String,String> data){
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> update(@PathVariable int id, @RequestBody Map<String, String> data) {
         ApartmentUser u = this.us.getUserByID(id);
-        if (u==null)
-        {
+        if (u == null) {
             ErrorHandle error = new ErrorHandle("Không tìm thấy người dùng", HttpStatus.NOT_FOUND, "USER IS NULL");
             return new ResponseEntity<>(error, error.getStatus());
         }
         u = us.ChangeOrInitialize(u, data, false);
-        if (u.getFirstName()== null)
-        {
-            ErrorHandle error = new ErrorHandle("Không thể upload hình ảnh", HttpStatus.BAD_REQUEST,"ERROR UPLOADING TO CLOUDINARY");
+        if (u.getFirstName() == null) {
+            ErrorHandle error = new ErrorHandle("Không thể upload hình ảnh", HttpStatus.BAD_REQUEST, "ERROR UPLOADING TO CLOUDINARY");
             return new ResponseEntity<>(error, error.getStatus());
         }
-        
-        try{
-           us.save(u, false); 
-        }catch (Exception e)
-        {
+
+        try {
+            us.save(u, false);
+        } catch (Exception e) {
             ErrorHandle error = new ErrorHandle("Tạo không thành công", HttpStatus.BAD_REQUEST, e.toString());
             return new ResponseEntity<>(error, error.getStatus());
         }
         return new ResponseEntity<>(UserSerializer.UserDetail(u), HttpStatus.OK);
-        
+
     }
-    
-    @PostMapping(path = "/user/{id}/add_avatar/", consumes = {
-        MediaType.APPLICATION_JSON_VALUE,
-        MediaType.MULTIPART_FORM_DATA_VALUE
-    }, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> AddAvatar(@PathVariable int id, @RequestPart MultipartFile file){
+    @PatchMapping(path = "/user/{id}", consumes = {
+            MediaType.APPLICATION_JSON_VALUE
+    },
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> updateUser(@PathVariable int id, @RequestBody Map<String, String> data) {
         ApartmentUser u = this.us.getUserByID(id);
-        if (u==null)
-        {
+        if (u == null) {
+            ErrorHandle error = new ErrorHandle("Không tìm thấy người dùng", HttpStatus.NOT_FOUND, "USER IS NULL");
+            return new ResponseEntity<>(error, error.getStatus());
+        }
+        u = us.ChangeOrInitialize(u, data, false);
+        if (u.getFirstName() == null) {
+            ErrorHandle error = new ErrorHandle("Không thể upload hình ảnh", HttpStatus.BAD_REQUEST, "ERROR UPLOADING TO CLOUDINARY");
+            return new ResponseEntity<>(error, error.getStatus());
+        }
+
+        try {
+            us.save(u, false);
+        } catch (Exception e) {
+            ErrorHandle error = new ErrorHandle("Tạo không thành công", HttpStatus.BAD_REQUEST, e.toString());
+            return new ResponseEntity<>(error, error.getStatus());
+        }
+        return new ResponseEntity<>(UserSerializer.UserDetail(u), HttpStatus.OK);
+
+    }
+
+    @PostMapping(path = "/api/user/{id}/add_avatar/", consumes = {
+            MediaType.APPLICATION_JSON_VALUE,
+            MediaType.MULTIPART_FORM_DATA_VALUE
+    }, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> AddAvatar(@PathVariable int id, @RequestPart MultipartFile file) {
+        ApartmentUser u = this.us.getUserByID(id);
+        if (u == null) {
             ErrorHandle error = new ErrorHandle("Không tìm thấy người dùng", HttpStatus.NOT_FOUND, "USER IS NULL");
             return new ResponseEntity<>(error, error.getStatus());
         }
         u.setFile(file);
         u = us.ChangeOrInitialize(u, new HashMap<>(), false);
-        if (u.getAvatar()== null)
-        {
-            ErrorHandle error = new ErrorHandle("Không thể upload hình ảnh", HttpStatus.BAD_REQUEST,"ERROR UPLOADING TO CLOUDINARY");
+        if (u.getAvatar() == null) {
+            ErrorHandle error = new ErrorHandle("Không thể upload hình ảnh", HttpStatus.BAD_REQUEST, "ERROR UPLOADING TO CLOUDINARY");
             return new ResponseEntity<>(error, error.getStatus());
         }
-        try{
-           us.save(u, false); 
-        }catch (Exception e)
-        {
+        try {
+            us.save(u, false);
+        } catch (Exception e) {
             ErrorHandle error = new ErrorHandle("Tạo không thành công", HttpStatus.BAD_REQUEST, e.toString());
             return new ResponseEntity<>(error, error.getStatus());
         }
         return new ResponseEntity<>(UserSerializer.UserDetail(u), HttpStatus.OK);
     }
-    
-    @PostMapping(path = "/login/", produces = MediaType.APPLICATION_JSON_VALUE)
+
+    @PostMapping(path = "/api/login/", produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin
     public ResponseEntity<String> login(@RequestBody ApartmentUser user) {
-        
+
         if (this.us.authUser(user.getUsername(), user.getPassword()) == true) {
             String token = this.jwtService.generateTokenLogin(user.getUsername());
-            
+
             return new ResponseEntity<>(token, HttpStatus.OK);
         }
 
         return new ResponseEntity<>("INVALID USER " + user.getUsername() + " " + user.getPassword(), HttpStatus.BAD_REQUEST);
     }
-    
-    @GetMapping(path = "/me/", produces = MediaType.APPLICATION_JSON_VALUE)
+
+    @GetMapping(path = "/api/me/", produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin
     public ResponseEntity<MappingJacksonValue> getCurrentUser(Principal p) {
         System.out.println(p.getName());
@@ -198,4 +217,6 @@ public class ApiUserController {
         System.out.println(u.getBirthdate());
         return new ResponseEntity<>(UserSerializer.UserDetail(u), HttpStatus.OK);
     }
+
+
 }

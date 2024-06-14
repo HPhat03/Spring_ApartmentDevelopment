@@ -17,6 +17,7 @@
         <put-attribute name="content"
                        value="/WEB-INF/pages/index.jsp" />
     </definition>
+<!--    dịch vụ-->
     <definition name="services" extends="baseLayout">
         <put-attribute name="title" value="Dịch vụ" />
         <put-attribute name="content" value="/WEB-INF/pages/services/index.jsp" />
@@ -26,6 +27,7 @@
         <put-attribute name="content" value="/WEB-INF/pages/services/addServices.jsp" />
     </definition>
 
+<!--    room-->
     <definition name="rooms" extends="baseLayout">
         <put-attribute name="title" value="Phòng" />
         <put-attribute name="content" value="/WEB-INF/pages/rooms/index.jsp" />
@@ -34,12 +36,30 @@
         <put-attribute name="title" value="Thêm phòng" />
         <put-attribute name="content" value="/WEB-INF/pages/rooms/addRooms.jsp" />
     </definition>
-
+<!--thống kê-->
     <definition name="stats" extends="baseLayout">
         <put-attribute name="title" value="Thống kê" />
         <put-attribute name="content" value="/WEB-INF/pages/stats/index.jsp" />
     </definition>
 
     <definition name="login" template="/WEB-INF/pages/auth/login.jsp">
+    </definition>
+
+<!--    người dùng-->
+    <definition name="users" extends="baseLayout">
+        <put-attribute name="title" value="Người dùng" />
+        <put-attribute name="content" value="/WEB-INF/pages/user/index.jsp" />
+    </definition>
+    <definition name="user" extends="baseLayout">
+        <put-attribute name="title" value="Thông tin người dùng" />
+        <put-attribute name="content" value="/WEB-INF/pages/user/detailUser.jsp" />
+    </definition>
+    <definition name="addUser" extends="baseLayout">
+        <put-attribute name="title" value="Thêm người dùng" />
+        <put-attribute name="content" value="/WEB-INF/pages/user/addUser.jsp" />
+    </definition>
+    <definition name="editUser" extends="baseLayout">
+        <put-attribute name="title" value="Chỉnh sửa người dùng" />
+        <put-attribute name="content" value="/WEB-INF/pages/user/editUser.jsp" />
     </definition>
 </tiles-definitions>

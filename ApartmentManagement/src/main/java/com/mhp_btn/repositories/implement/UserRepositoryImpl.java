@@ -6,6 +6,7 @@ package com.mhp_btn.repositories.implement;
 
 import com.cloudinary.Cloudinary;
 import com.mhp_btn.components.CloudinaryUtil;
+import com.mhp_btn.pojo.ApartmentService;
 import com.mhp_btn.pojo.ApartmentUser;
 import com.mhp_btn.repositories.UserRepository;
 import com.mhp_btn.utils.StringUtil;
@@ -159,5 +160,14 @@ public class UserRepositoryImpl implements UserRepository{
 //        System.out.println(this.encoder.encode("123456"));
         return this.encoder.matches(password, u.getPassword());
     }
-    
+
+    @Override
+    public void deleteUserById(int id) {
+        Session s = this.factory.getObject().getCurrentSession();
+        ApartmentUser u = s.get(ApartmentUser.class, id);
+        if(u!=null){
+            s.delete(u);
+        }
+    }
+
 }

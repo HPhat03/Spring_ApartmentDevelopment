@@ -7,6 +7,8 @@
         <entry key="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/pages/index.jsp" value="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/pages" />
         <entry key="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/pages/rooms/index.jsp" value="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/pages/rooms" />
         <entry key="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/pages/services/addServices.jsp" value="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/pages/services" />
+        <entry key="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/pages/user/addUser.jsp" value="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/pages/user" />
+        <entry key="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/pages/user/editUser.jsp" value="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/pages/user" />
       </map>
     </option>
   </component>

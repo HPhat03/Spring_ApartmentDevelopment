@@ -19,4 +19,6 @@ public interface UserRepository{
     ApartmentUser getUserByUsername(String username);
     ApartmentUser ChangeOrInitialize(ApartmentUser user, Map<String,String> data, boolean isInit);
      boolean authUser(String username, String password);
+
+    public void deleteUserById(int id) ;
 }

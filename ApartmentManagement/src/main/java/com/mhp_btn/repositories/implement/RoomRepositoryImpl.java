@@ -2,6 +2,7 @@ package com.mhp_btn.repositories.implement;
 
 import com.mhp_btn.pojo.ApartmentRoom;
 import com.mhp_btn.pojo.ApartmentService;
+import com.mhp_btn.pojo.ApartmentSmartCabinet;
 import com.mhp_btn.repositories.RoomRepository;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,13 +106,10 @@ public class RoomRepositoryImpl implements RoomRepository {
     public void deleteRoomById(int id) {
         Session s = factoryBean.getObject().getCurrentSession();
         ApartmentRoom room = s.get(ApartmentRoom.class, id);
-        if (room != null) {
-            // Cập nhật cờ isActive thành 0
-            room.setIsActive((short) 0);
-            s.update(room);
-        } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Room not found with id: " + id);
+        if(room!=null){
+            s.delete(room);
         }
+
     }
 
 

@@ -80,4 +80,9 @@ public class UserServiceImpl implements UserService {
         return this.up.authUser(username, password);
     }
 
+    @Override
+    public void deleteUserById(int id) {
+        this.up.deleteUserById(id);
+    }
+
 }

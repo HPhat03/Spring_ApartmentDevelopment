@@ -54,7 +54,7 @@
             <li class="nav-item">
                 <a class="nav-link text-white" href="">
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-                        <i class="material-icons opacity-10">person</i>
+                        <i class="material-icons opacity-10">format_textdirection_r_to_l</i>
                     </div>
                     <span class="nav-link-text ms-1">Hợp đồng</span>
                 </a>
@@ -62,9 +62,17 @@
             <li class="nav-item">
                 <a class="nav-link text-white" href="#">
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-                        <i class="material-icons opacity-10">person</i>
+                        <i class="material-icons opacity-10">view_in_ar</i>
                     </div>
                     <span class="nav-link-text ms-1">Tủ đồ thông minh</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" href="<c:url value="/users/"/>">
+                    <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="material-icons opacity-10">person</i>
+                    </div>
+                    <span class="nav-link-text ms-1">Người dùng </span>
                 </a>
             </li>
             <li class="nav-item">

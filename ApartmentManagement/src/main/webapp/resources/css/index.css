@@ -1,3 +1,41 @@
-.sidenav {
-    overflow: hidden !important; /* Tắt thanh cuộn với !important */
+/*h1 {*/
+/*    color: red;*/
+/*    font-size: 100px;*/
+/*}*/
+
+.table th, .table td {
+    text-align: center;
+    vertical-align: middle;
+}
+/*trang user*/
+.avatar-image {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+.bold-text {
+    font-weight: bold;
+}
+/*thanh tìm kiếm*/
+.search-bar {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.search-bar .form-control {
+    width: 300px; /* Độ rộng của ô tìm kiếm */
+    margin-right: 10px;
+}
+
+/*.search-bar .btn {*/
+/*    width: 120px; !* Độ rộng của nút tìm kiếm *!*/
+/*}*/
+/*trang user*/
+.avatar{
+    width:200px;
+    height:200px;
 }

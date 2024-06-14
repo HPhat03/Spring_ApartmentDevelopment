@@ -4,7 +4,6 @@
  */
 package com.mhp_btn.repositories.implement;
 
-import com.mhp_btn.pojo.ApartmentRoom;
 import com.mhp_btn.pojo.ApartmentService;
 import com.mhp_btn.repositories.ServiceRepository;
 
@@ -20,11 +19,10 @@ import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
-import org.springframework.http.HttpStatus;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
+
 
 /**
  *
@@ -91,14 +89,10 @@ public class ServiceRepositoryImpl implements ServiceRepository{
 
     @Override
     public void deleteServiceById(int id) {
-        Session s = f.getObject().getCurrentSession();
-        ApartmentService service = s.get(ApartmentService.class, id);
-        if (service != null) {
-            // Cập nhật cờ isActive thành 0
-            service.setIsActive((short) 0);
-            s.update(service);
-        } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Room not found with id: " + id);
+        Session s = this.f.getObject().getCurrentSession();
+        ApartmentService sv = s.get(ApartmentService.class, id);
+        if(sv!=null){
+            s.delete(sv);
         }
     }
 

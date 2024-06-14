@@ -89,9 +89,12 @@
                                 <a class="btn btn-sm btn-primary" href="<c:url value='/rooms/edit/${room.id}' />">
                                     <i class="bi bi-pencil"></i> Sửa
                                 </a>
-                                <button class="btn btn-sm btn-danger removeRoom" data-id="${room.id}">
+                                <c:url value="/rooms/${room.id}" var="urlDelete" />
+
+                                <button class="btn btn-sm btn-danger removeRoom" data-id="${room.id}" onclick="deleteRoom('${urlDelete}', ${room.id})">
                                     <i class="bi bi-trash"></i> Xóa
                                 </button>
+
                             </td>
 
                         </tr>
@@ -102,27 +105,29 @@
 
         </div>
     </div>
-    <div class="d-flex justify-content-center">
-        <ul class="pagination align-items-center">
-            <c:if test="${currentPage > 1}">
-                <li class="page-item"><a class="page-link" href="?page=${currentPage - 1}">Previous</a></li>
-            </c:if>
-            <c:forEach begin="1" end="${totalPages}" var="pageNumber">
-                <c:choose>
-                    <c:when test="${pageNumber == currentPage}">
-                        <li class="page-item active"><a class="page-link" href="?page=${pageNumber}">${pageNumber}</a>
-                        </li>
-                    </c:when>
-                    <c:otherwise>
-                        <li class="page-item"><a class="page-link" href="?page=${pageNumber}">${pageNumber}</a></li>
-                    </c:otherwise>
-                </c:choose>
-            </c:forEach>
-            <c:if test="${currentPage < totalPages}">
-                <li class="page-item"><a class="page-link" href="?page=${currentPage + 1}">Next</a></li>
-            </c:if>
-        </ul>
-    </div>
+
 
 </div>
+<div class="d-flex justify-content-center">
+    <ul class="pagination align-items-center">
+        <c:if test="${currentPage > 1}">
+            <li class="page-item"><a class="page-link" href="?page=${currentPage - 1}">Previous</a></li>
+        </c:if>
+        <c:forEach begin="1" end="${totalPages}" var="pageNumber">
+            <c:choose>
+                <c:when test="${pageNumber == currentPage}">
+                    <li class="page-item active"><a class="page-link" href="?page=${pageNumber}">${pageNumber}</a>
+                    </li>
+                </c:when>
+                <c:otherwise>
+                    <li class="page-item"><a class="page-link" href="?page=${pageNumber}">${pageNumber}</a></li>
+                </c:otherwise>
+            </c:choose>
+        </c:forEach>
+        <c:if test="${currentPage < totalPages}">
+            <li class="page-item"><a class="page-link" href="?page=${currentPage + 1}">Next</a></li>
+        </c:if>
+    </ul>
 </div>
+</div>
+<script src="<c:url value="/js/rooms.js" /> "></script>
