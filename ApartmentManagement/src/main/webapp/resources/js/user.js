@@ -86,3 +86,111 @@ function deleteUser(url, userId) {
             });
     }
 }
+
+// cap nhat user
+
+document.addEventListener('DOMContentLoaded', function () {
+    var form = document.getElementById('editProfileForm');
+
+    form.addEventListener('submit', function (event) {
+        event.preventDefault(); // Ngăn form gửi yêu cầu mặc định của trình duyệt
+        const userId = form.getAttribute('data-user-id');
+        const firstNameInput = document.getElementById('firstName');
+        const firstName = firstNameInput.value;
+        const originalFirstName = firstNameInput.getAttribute('data-old');
+
+        const lastNameInput = document.getElementById('lastName');
+        const lastName = lastNameInput.value;
+        const originalLastName = lastNameInput.getAttribute('data-old');
+
+        // var birthdateInput = document.getElementById('birthdate');
+        // var birthdate = birthdateInput.value;
+        // var originalBirthdate = birthdateInput.getAttribute('data-old');
+
+        const gender = document.querySelector('input[name="gender"]:checked').value;
+
+        const emailInput = document.getElementById('email');
+        const email = emailInput.value;
+        const originalEmail = emailInput.getAttribute('data-old');
+
+        const phoneInput = document.getElementById('phone');
+        const phone = phoneInput.value;
+        const originalPhone = phoneInput.getAttribute('data-old');
+
+        // Tạo đối tượng dữ liệu JSON để gửi lên server
+        const data = {};
+
+        // Kiểm tra từng trường và thêm vào data nếu có thay đổi
+        if (firstName !== originalFirstName) {
+            data.firstname = firstName;
+        }
+        if (lastName !== originalLastName) {
+            data.lastname = lastName;
+        }
+        // if (birthdate !== originalBirthdate) {
+        //     data.birthdate = birthdate;
+        // }
+        if (email !== originalEmail) {
+            data.email = email;
+        }
+        if (phone !== originalPhone) {
+            data.phone = phone;
+        }
+        console.log("DATA", data);
+        // Gửi yêu cầu PATCH lên server nếu có dữ liệu để gửi
+        if (Object.keys(data).length > 0) {
+            fetch(`/ApartmentManagement/admin/user/${userId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Xử lý phản hồi từ server sau khi cập nhật thành công
+                    alert('Cập nhật thành công');
+                    // Có thể thực hiện chuyển hướng hoặc các hành động khác ở đây
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Đã xảy ra lỗi khi cập nhật hồ sơ');
+                });
+        } else {
+            // Nếu không có dữ liệu thay đổi, thông báo cho người dùng
+            alert('Không có thay đổi để lưu');
+        }
+    });
+
+
+});
+
+// change status
+// user.js
+
+function changeStatus(userId, newStatus) {
+    fetch(`/ApartmentManagement/admin/user/${userId}`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            isActive: newStatus
+        })
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            location.reload();
+        })
+        .catch(error => {
+            console.error('Lỗi', error);
+            alert('Đã xảy ra lỗi khi cập nhật trạng thái người dùng.');
+        });
+}

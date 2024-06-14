@@ -15,7 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
  * @author Admin
  */
 public interface UserService extends UserDetailsService {
-    List<ApartmentUser> getUsers();
+    List<ApartmentUser> getUsers(Map<String, String> params) ;
     ApartmentUser getUserByID(int id);
     ApartmentUser getUsersByUsername(String username);
     void save(ApartmentUser user, boolean resetPassword);

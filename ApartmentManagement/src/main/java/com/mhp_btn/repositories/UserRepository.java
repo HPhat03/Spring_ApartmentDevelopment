@@ -14,7 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
  */
 public interface UserRepository{
     void save(ApartmentUser user);
-    List<ApartmentUser> getUsers();
+    List<ApartmentUser> getUsers(Map<String, String> params) ;
     ApartmentUser getUsersByID(int id);
     ApartmentUser getUserByUsername(String username);
     ApartmentUser ChangeOrInitialize(ApartmentUser user, Map<String,String> data, boolean isInit);

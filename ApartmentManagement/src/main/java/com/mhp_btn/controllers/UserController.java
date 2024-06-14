@@ -18,7 +18,7 @@ public class UserController {
 
     @GetMapping("/")
     public String index(Model model, @RequestParam Map<String, String> params) {
-       model.addAttribute("users", this.us.getUsers());
+       model.addAttribute("users", this.us.getUsers(params));
        return "users";
     }
     @GetMapping("/{id}")
