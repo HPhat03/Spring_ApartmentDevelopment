@@ -4,7 +4,9 @@
  */
 package com.mhp_btn.pojo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -49,6 +51,7 @@ public class ApartmentResident implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Column(name = "user_id")
+    @JsonIgnore
     private Integer userId;
     @Basic(optional = false)
     @NotNull
@@ -83,6 +86,7 @@ public class ApartmentResident implements Serializable {
         this.userId = userId;
     }
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     public Date getJoinedDate() {
         return joinedDate;
     }

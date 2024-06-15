@@ -29,4 +29,9 @@ public class ResidentServiceImpl implements ResidentService {
         return this.ar.getResidentById(id);
     }
 
+    @Override
+    public void update(ApartmentResident resident) {
+        this.ar.update(resident);
+    }
+
 }

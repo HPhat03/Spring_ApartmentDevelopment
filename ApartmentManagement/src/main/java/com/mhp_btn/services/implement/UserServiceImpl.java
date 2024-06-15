@@ -79,5 +79,8 @@ public class UserServiceImpl implements UserService {
     public boolean authUser(String username, String password) {
         return this.up.authUser(username, password);
     }
-
+    @Override
+    public boolean authResident(String username, String password) {
+        return this.up.authResident(username, password);
+    }
 }

@@ -2,20 +2,24 @@ package com.mhp_btn.controllers;
 
 import com.mhp_btn.pojo.ApartmentFloor;
 import com.mhp_btn.pojo.ApartmentOtherMember;
+import com.mhp_btn.pojo.ApartmentReceipt;
 import com.mhp_btn.pojo.ApartmentRentalConstract;
 import com.mhp_btn.pojo.ApartmentResident;
 import com.mhp_btn.pojo.ApartmentRoom;
 import com.mhp_btn.pojo.ApartmentService;
 import com.mhp_btn.pojo.ApartmentServiceConstract;
 import com.mhp_btn.pojo.ApartmentUser;
+import com.mhp_btn.serializers.ReceiptSerializer;
 import com.mhp_btn.serializers.RentalConstractSerializer;
 import com.mhp_btn.serializers.ServiceSerializer;
 import com.mhp_btn.services.OtherMemberService;
+import com.mhp_btn.services.ReceiptService;
 import com.mhp_btn.services.RentalConstractService;
 import com.mhp_btn.services.ResidentService;
 import com.mhp_btn.services.RoomService;
 import com.mhp_btn.services.ServiceConstractService;
 import com.mhp_btn.services.ServiceService;
+import java.security.Principal;
 import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,6 +31,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.springframework.http.MediaType;
 
 
 @RestController
@@ -45,17 +50,31 @@ public class ApiRentalConstractController {
     private ServiceConstractService serviceConstractService;
     @Autowired
     private OtherMemberService otherMemberService;
+    @Autowired
+    private ReceiptService receiptService;
     
-    
+    @GetMapping(path = "/my_constract/", produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin
+    public ResponseEntity<Object> myConstract(Principal p)
+    {
+        HashMap<String, String> filter = new HashMap<>();
+        filter.put("resident", p.getName());
+        List<ApartmentRentalConstract> constract = this.constractService.getAllRentalConstract(filter);
+        return new ResponseEntity<>(RentalConstractSerializer.RentalConstractAuthList(constract), HttpStatus.OK);
+    }
     @GetMapping(path = "/constract/", produces = "application/json")
     public ResponseEntity<Object> list(@RequestParam HashMap<String,String> params) {
         List<ApartmentRentalConstract> constract = this.constractService.getAllRentalConstract(params);
         return new ResponseEntity<>(RentalConstractSerializer.RentalConstractList(constract), HttpStatus.OK);
     }
     
-    @GetMapping(path = "/constract/{id}", produces = "application/json")
-    public ResponseEntity<Object> retrieve(@PathVariable int id){
+    @GetMapping(path = "/constract/{id}/", produces = "application/json")
+    @CrossOrigin
+    public ResponseEntity<Object> retrieve(@PathVariable int id, Principal p){
+        if(!this.constractService.checkRenter(id, p.getName()))
+            return new ResponseEntity<>("Không thể xem hợp đồng của người khác", HttpStatus.BAD_REQUEST);
         ApartmentRentalConstract constract = constractService.getRentalConstractById(id);
+        
         return ResponseEntity.ok(RentalConstractSerializer.RentalConstractDetail(constract));
     }
     @DeleteMapping("/constract/{id}")
@@ -69,7 +88,17 @@ public class ApiRentalConstractController {
         constractService.deleteRentalConstractById(id);
         return new ResponseEntity<>("Delete success with constract is ID " + id, HttpStatus.OK);
     }
-
+    @GetMapping(path = "/constract/{id}/receipts/", produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin
+    public ResponseEntity<Object> getReceiptOfConstract(@PathVariable int id, @RequestParam HashMap<String, String> params, Principal p) {
+        params.put("apartment", String.format("%d", id));
+        System.out.println("Start.....");
+        if(!this.constractService.checkRenter(id, p.getName()))
+            return new ResponseEntity<>("Không thể xem của người khác", HttpStatus.OK);
+        System.out.println("Start.....");
+        List<ApartmentReceipt> receipts = this.receiptService.getAllReceipt(params);
+        return new ResponseEntity<>(ReceiptSerializer.ReceiptList(receipts), HttpStatus.OK);
+    }
     @PostMapping(path = "/constract/", consumes = "application/json",produces = "application/json")
     public ResponseEntity<Object> addConstract(@RequestBody Map<String, Object> params) {
         try {

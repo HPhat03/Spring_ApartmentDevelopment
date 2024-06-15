@@ -7,6 +7,7 @@ package com.mhp_btn.pojo;
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -15,6 +16,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -48,7 +50,8 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "ApartmentReceipt.findByTotal", query = "SELECT a FROM ApartmentReceipt a WHERE a.total = :total")})
 public class ApartmentReceipt implements Serializable {
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "receiptId")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "receiptId", fetch = FetchType.EAGER)
+    @JsonIgnore
     private Set<ApartmentUsageNumber> apartmentUsageNumberSet;
 
     @Basic(optional = false)
@@ -61,7 +64,8 @@ public class ApartmentReceipt implements Serializable {
     @Column(name = "year")
     private String year;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "receipt")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "receipt", fetch = FetchType.EAGER)
+    @JsonIgnore
     private Set<ApartmentPayment> apartmentPaymentSet;
 
     private static final long serialVersionUID = 1L;
@@ -81,7 +85,7 @@ public class ApartmentReceipt implements Serializable {
     @Column(name = "total")
     private int total;
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "receiptId")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "receiptId", fetch = FetchType.EAGER)
     private Set<ApartmentDetailReceipt> apartmentDetailReceiptSet;
     @JoinColumn(name = "apartment_id", referencedColumnName = "id")
     @JsonIgnore
@@ -92,7 +96,10 @@ public class ApartmentReceipt implements Serializable {
     private String name; 
     public ApartmentReceipt() {
     }
-
+    @JsonProperty("isPaid")
+    public boolean IsPaid() {
+        return !this.apartmentPaymentSet.isEmpty();
+    }
     public ApartmentReceipt(Integer id) {
         this.id = id;
     }
@@ -103,7 +110,7 @@ public class ApartmentReceipt implements Serializable {
         this.total = total;
     }
     public String getName(){
-        return String.format("Hoa don phong thang %d/%s phong %s", this.month, this.year, this.apartmentId.getRoomId().getRoomNumber());
+        return String.format("Hóa đơn tháng %d/%s phòng %s", this.month, this.year, this.apartmentId.getRoomId().getRoomNumber());
     }
     public Integer getId() {
         return id;
@@ -131,6 +138,7 @@ public class ApartmentReceipt implements Serializable {
     }
 
     @XmlTransient
+    @JsonProperty("details")
     public Set<ApartmentDetailReceipt> getApartmentDetailReceiptSet() {
         return apartmentDetailReceiptSet;
     }
@@ -198,6 +206,7 @@ public class ApartmentReceipt implements Serializable {
     }
 
     @XmlTransient
+    @JsonProperty("usage")
     public Set<ApartmentUsageNumber> getApartmentUsageNumberSet() {
         return apartmentUsageNumberSet;
     }

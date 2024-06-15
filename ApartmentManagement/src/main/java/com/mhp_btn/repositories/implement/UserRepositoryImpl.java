@@ -130,9 +130,9 @@ public class UserRepositoryImpl implements UserRepository{
             user.setPassword(ApartmentUser.RESIDENT_DEFAULT_PASSWORD);
         }
         if ((!isInit && password!=null) || (isInit && role!=null && role.equals(ApartmentUser.ADMIN))){
-            user.setPassword(password);
+            user.setPassword(encoder.encode(password));
         }
-        if (avatar != null && file!= null && !file.isEmpty()){
+        if (avatar != null && avatar!="" && file!= null && !file.isEmpty()){
             try {
                 CloudinaryUtil.destroy(avatar, cloudinary);
             } catch (IOException ex) {
@@ -158,6 +158,15 @@ public class UserRepositoryImpl implements UserRepository{
             return false;
 //        System.out.println(this.encoder.encode("123456"));
         return this.encoder.matches(password, u.getPassword());
+    }
+    
+    @Override
+    public boolean authResident(String username, String password) {
+        ApartmentUser u = this.getUserByUsername(username);
+        if(u==null)
+            return false;
+//        System.out.println(this.encoder.encode("123456"));
+        return this.encoder.matches(password, u.getPassword()) && u.getRole().equals(ApartmentUser.RESIDENT);
     }
     
 }

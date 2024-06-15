@@ -24,4 +24,12 @@ public class ReceiptSerializer {
                 ));
         return values;
     }
+    
+    public static MappingJacksonValue ReceiptDetail(Object receipt){
+        MappingJacksonValue values = new MappingJacksonValue(receipt);
+        values.setFilters(new SimpleFilterProvider().addFilter(
+                KEY,
+                SimpleBeanPropertyFilter.serializeAll()));
+        return values;
+    }
 }

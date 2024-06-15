@@ -7,6 +7,7 @@ package com.mhp_btn.pojo;
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Basic;
@@ -135,7 +136,13 @@ public class ApartmentUser implements Serializable {
     private String confirmPassword;
     public ApartmentUser() {
     }
-    
+    @JsonProperty("first_login")
+    public short getMoreInfo(){
+        if (this.role.equals(ApartmentUser.RESIDENT))
+            return this.apartmentResident.getFirstLogin();
+        else
+            return (short) 0;
+    }
 
     public ApartmentUser(Integer id) {
         this.id = id;

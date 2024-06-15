@@ -52,7 +52,7 @@ import org.springframework.web.multipart.MultipartFile;
  * @author Admin
  */
 @RestController
-@RequestMapping("/api")
+@CrossOrigin
 public class ApiUserController {
 
     private final SimpleDateFormat dateFormatter = StringUtil.dateFormater();
@@ -119,7 +119,7 @@ public class ApiUserController {
 
     }
     
-    @PatchMapping(path = "/user/{id}", consumes = {
+    @PatchMapping(path = "/api/user/{id}/", consumes = {
         MediaType.APPLICATION_JSON_VALUE
     },
         produces = MediaType.APPLICATION_JSON_VALUE)
@@ -148,7 +148,7 @@ public class ApiUserController {
         
     }
     
-    @PostMapping(path = "/user/{id}/add_avatar/", consumes = {
+    @PostMapping(path = "/api/user/{id}/add_avatar/", consumes = {
         MediaType.APPLICATION_JSON_VALUE,
         MediaType.MULTIPART_FORM_DATA_VALUE
     }, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -163,9 +163,12 @@ public class ApiUserController {
         u = us.ChangeOrInitialize(u, new HashMap<>(), false);
         if (u.getAvatar()== null)
         {
-            ErrorHandle error = new ErrorHandle("Không thể upload hình ảnh", HttpStatus.BAD_REQUEST,"ERROR UPLOADING TO CLOUDINARY");
-            return new ResponseEntity<>(error, error.getStatus());
+            return new ResponseEntity<>("Không thể upload hình ảnh", HttpStatus.BAD_REQUEST);
         }
+        ApartmentResident res = u.getApartmentResident();
+        res.setFirstLogin((short) 0);
+        rs.update(res);
+        
         try{
            us.save(u, false); 
         }catch (Exception e)
@@ -176,20 +179,20 @@ public class ApiUserController {
         return new ResponseEntity<>(UserSerializer.UserDetail(u), HttpStatus.OK);
     }
     
-    @PostMapping(path = "/login/", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/api/login/", produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin
     public ResponseEntity<String> login(@RequestBody ApartmentUser user) {
         
-        if (this.us.authUser(user.getUsername(), user.getPassword()) == true) {
+        if (this.us.authResident(user.getUsername(), user.getPassword()) == true ) {
             String token = this.jwtService.generateTokenLogin(user.getUsername());
             
             return new ResponseEntity<>(token, HttpStatus.OK);
         }
 
-        return new ResponseEntity<>("INVALID USER " + user.getUsername() + " " + user.getPassword(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("INVALID RESIDENT", HttpStatus.BAD_REQUEST);
     }
     
-    @GetMapping(path = "/me/", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/api/me/", produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin
     public ResponseEntity<MappingJacksonValue> getCurrentUser(Principal p) {
         System.out.println(p.getName());

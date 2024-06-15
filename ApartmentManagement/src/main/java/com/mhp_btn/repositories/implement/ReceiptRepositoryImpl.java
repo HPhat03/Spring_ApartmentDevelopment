@@ -2,12 +2,9 @@ package com.mhp_btn.repositories.implement;
 
 
 import com.mhp_btn.pojo.ApartmentPayment;
-//import com.mhp_btn.pojo.ApartmentPayment_;
 import com.mhp_btn.pojo.ApartmentReceipt;
 import com.mhp_btn.pojo.ApartmentRelativeRegistry;
-import com.mhp_btn.pojo.ApartmentRentalConstract;
-import com.mhp_btn.pojo.ApartmentResident;
-import com.mhp_btn.pojo.ApartmentUser;
+
 import com.mhp_btn.repositories.ReceiptRepository;
 import java.util.ArrayList;
 import org.hibernate.Session;
@@ -21,19 +18,20 @@ import java.util.List;
 import java.util.HashMap;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 
 @Transactional
 @Repository
+@PropertySource("classpath:config.properties")
 public class ReceiptRepositoryImpl implements ReceiptRepository {
     @Autowired
     private  LocalSessionFactoryBean factoryBean;
-
+    @Autowired
+    private Environment env;
     @Override
     public ApartmentReceipt getReceiptById(int id) {
         
@@ -69,11 +67,6 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
     public List<ApartmentReceipt> getAllReceipt(HashMap<String, String> params) {
         Session s = this.factoryBean.getObject().getCurrentSession();
         
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Query uq = s.createQuery("FROM ApartmentUser U WHERE U.username=:un");
-        uq.setParameter("un", username);
-        ApartmentUser user = (ApartmentUser) uq.getSingleResult();
-        
         CriteriaBuilder cb = s.getCriteriaBuilder();
         CriteriaQuery<ApartmentReceipt> q = cb.createQuery(ApartmentReceipt.class);
         Root r = q.from(ApartmentReceipt.class);
@@ -101,18 +94,26 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
                 predicates.add(cb.not(cb.exists(sq)));
             }
         }
-        System.out.println(user.getName());
-        if(user.getRole().equals(ApartmentUser.RESIDENT))
-        {
-            Root rc = q.from(ApartmentRentalConstract.class);
-            predicates.add(cb.equal(r.get("apartmentId"), rc.get("id")));
-            predicates.add(cb.equal(rc.get("residentId"),user.getId()));
+        
+        String apartment = params.get("apartment");
+        if(apartment!=null && !apartment.isEmpty()){
+            predicates.add(cb.equal(r.get("apartmentId"), Integer.parseInt(apartment)));
         }
         
         q.where(predicates.toArray(Predicate[]::new));
         q.orderBy(cb.desc(r.get("id")));
         
         Query rs = s.createQuery(q);
+        System.out.println(env.getProperty("receipt.clientPageSize"));
+        String page = params.get("page");
+        if(page!=null && !page.isEmpty())
+        {
+            
+           int pageSize = Integer.parseInt(env.getProperty("receipt.clientPageSize").toString());
+            int start = (Integer.parseInt(page) - 1) * pageSize;
+            rs.setFirstResult(start);
+            rs.setMaxResults(pageSize);
+        }
         List<ApartmentReceipt> receipts = rs.getResultList();
         
         return receipts;

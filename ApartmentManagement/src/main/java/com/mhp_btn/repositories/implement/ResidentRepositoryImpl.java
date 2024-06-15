@@ -32,6 +32,12 @@ public class ResidentRepositoryImpl implements ResidentRepository{
         Session s = this.factory.getObject().getCurrentSession();
         s.save(resident);
     }
+    
+    @Override
+    public void update(ApartmentResident resident) {
+        Session s = this.factory.getObject().getCurrentSession();
+        s.update(resident);
+    }
 
     @Override
     public ApartmentResident getResidentById(int id) {

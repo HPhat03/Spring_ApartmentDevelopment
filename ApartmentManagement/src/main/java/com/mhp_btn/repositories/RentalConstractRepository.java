@@ -18,4 +18,5 @@ public interface RentalConstractRepository {
     ApartmentRentalConstract getConstractById(int id);
 
     void updateConstract(ApartmentRentalConstract constract);
+    boolean checkRenter(int id, String username);
 }

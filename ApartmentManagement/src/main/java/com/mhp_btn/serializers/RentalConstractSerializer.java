@@ -15,6 +15,7 @@ import org.springframework.http.converter.json.MappingJacksonValue;
 public class RentalConstractSerializer {
     private static String KEY = "CONSTRACT_FILTER";
     private static String[] LIST_FIELDS = {"id","resident", "room"};
+    private static String[] LIST_AUTH_FIELDS = {"id", "room", "finalPrice", "createdDate"};
     public static MappingJacksonValue RentalConstractList(Object constract){
         MappingJacksonValue values = new MappingJacksonValue(constract);
         SimpleFilterProvider provider = new SimpleFilterProvider();
@@ -35,7 +36,14 @@ public class RentalConstractSerializer {
         values.setFilters(provider);
         return values;
     }
-    
+    public static MappingJacksonValue RentalConstractAuthList(Object constract){
+        MappingJacksonValue values = new MappingJacksonValue(constract);
+        SimpleFilterProvider provider = new SimpleFilterProvider();
+        provider.addFilter(KEY, SimpleBeanPropertyFilter.filterOutAllExcept(LIST_AUTH_FIELDS));
+        provider.addFilter(RoomSerializer.getKEY(), SimpleBeanPropertyFilter.filterOutAllExcept(RoomSerializer.getLIST_FIELDS()));
+        values.setFilters(provider);
+        return values;
+    }
     public static String getKEY(){
             return KEY;
     }

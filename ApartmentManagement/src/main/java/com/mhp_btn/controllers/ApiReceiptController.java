@@ -19,9 +19,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.springframework.http.MediaType;
 
 @RestController
-@RequestMapping("/api")
+//@RequestMapping("/api")
 public class ApiReceiptController {
     @Autowired
     private ReceiptService receiptService;
@@ -104,6 +105,11 @@ public class ApiReceiptController {
             System.out.println(cur_water + " :: " + amount_water);
             
             int sum = apartmentRental.getFinalPrice();
+            ApartmentDetailReceipt rp = new ApartmentDetailReceipt();
+            rp.setContent("Tiền Phòng");
+            rp.setPrice(apartmentRental.getFinalPrice());
+            rp.setReceiptId(receipt);
+            detailReceiptService.createDetailByReceiptId(rp);
             String electric = "Tiền điện", water = "Tiền nước";
             for(ApartmentServiceConstract s : apartmentRental.getApartmentServiceConstractSet())
             {
@@ -197,9 +203,16 @@ public class ApiReceiptController {
 
         return new ResponseEntity<>(receipt, HttpStatus.OK);
     }
-
-
-
+    
+    
+    @GetMapping(path = "/api/receipt/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin
+    public ResponseEntity<Object> retrieve(@PathVariable int id, Principal p){
+        ApartmentReceipt r = receiptService.getReceiptById(id);
+        if (r==null)
+            return new ResponseEntity<>("Không tìm thấy", HttpStatus.OK);
+        return new ResponseEntity<>(ReceiptSerializer.ReceiptDetail(r),HttpStatus.OK);
+    }
 }
 
 

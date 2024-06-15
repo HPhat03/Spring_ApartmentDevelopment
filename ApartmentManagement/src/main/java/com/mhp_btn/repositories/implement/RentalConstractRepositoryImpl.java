@@ -1,7 +1,9 @@
 package com.mhp_btn.repositories.implement;
 
 import com.mhp_btn.pojo.ApartmentRentalConstract;
+import com.mhp_btn.pojo.ApartmentResident;
 import com.mhp_btn.pojo.ApartmentRoom;
+import com.mhp_btn.pojo.ApartmentUser;
 import com.mhp_btn.repositories.RentalConstractRepository;
 import java.util.ArrayList;
 import org.hibernate.Session;
@@ -15,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -29,15 +30,24 @@ public class RentalConstractRepositoryImpl implements RentalConstractRepository 
         Session s = this.factoryBean.getObject().getCurrentSession();
         CriteriaBuilder cb = s.getCriteriaBuilder();
         CriteriaQuery<ApartmentRentalConstract> cq = cb.createQuery(ApartmentRentalConstract.class);
-        Root<ApartmentRentalConstract> r = cq.from(ApartmentRentalConstract.class);
+        Root r = cq.from(ApartmentRentalConstract.class);
         cq.select(r);
         List<Predicate> preds = new ArrayList<>();
 
         String room_id = params.get("room");
         if(room_id!=null){
+            System.out.println("HIIIII" + " " + room_id);
             Root room = cq.from(ApartmentRoom.class);
             preds.add(cb.like(room.get("roomNumber"), String.format("%%%s%%", room_id)));
             preds.add(cb.equal(r.get("roomId"), room.get("id")));
+        }
+        String resident = params.get("resident");
+        if(resident!=null){
+            Root rr = cq.from(ApartmentResident.class);
+            Root ru = cq.from(ApartmentUser.class);
+            preds.add(cb.equal(r.get("residentId"), rr.get("userId")));
+            preds.add(cb.equal(rr.get("userId"), ru.get("id")));
+            preds.add(cb.or(cb.like(ru.get("firstName"), String.format("%%%s%%", resident)), cb.like(ru.get("lastName"), String.format("%%%s%%", resident)), cb.equal(ru.get("username"), resident) ));
         }
         
         cq.where(preds.toArray(Predicate[]::new));
@@ -93,5 +103,28 @@ public class RentalConstractRepositoryImpl implements RentalConstractRepository 
         session.update(constract);
     }
 
+    @Override
+    public boolean checkRenter(int id, String username) {
+        Session s = this.factoryBean.getObject().getCurrentSession();
+        CriteriaBuilder cb = s.getCriteriaBuilder();
+        CriteriaQuery<ApartmentRentalConstract> cq = cb.createQuery(ApartmentRentalConstract.class);
+        Root r = cq.from(ApartmentRentalConstract.class);
+        Root rr = cq.from(ApartmentResident.class);
+        Root ru = cq.from(ApartmentUser.class);
+
+        cq.select(r);
+        
+        List<Predicate> preds = new ArrayList<>();
+        preds.add(cb.equal(r.get("residentId"), rr.get("userId")));
+        preds.add(cb.equal(rr.get("userId"), ru.get("id")));
+        
+        preds.add(cb.equal(r.get("id"), id));
+        preds.add(cb.equal(ru.get("username"), username));
+        
+        cq.where(preds.toArray(Predicate[]::new));
+
+        Query q = s.createQuery(cq);
+        return !q.getResultList().isEmpty();
+    }
 
 }
