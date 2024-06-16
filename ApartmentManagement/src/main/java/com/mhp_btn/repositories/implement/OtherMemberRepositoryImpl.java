@@ -58,4 +58,13 @@ public class OtherMemberRepositoryImpl implements OtherMemberRepository {
         return result.isEmpty() ? null : result.get(0);
     }
 
+    @Override
+    public void deleteMembersByApartmentId(int apartmentId) {
+        Session session = factoryBean.getObject().getCurrentSession();
+        Query query = session.createQuery(
+                "DELETE FROM ApartmentOtherMember m WHERE m.apartmentId.id = :apartmentId");
+        query.setParameter("apartmentId", apartmentId);
+        query.executeUpdate();
+    }
+
 }

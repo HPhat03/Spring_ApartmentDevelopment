@@ -202,4 +202,15 @@ public class UserRepositoryImpl implements UserRepository{
         }
     }
 
+    @Override
+    public List<ApartmentUser> getUserByRole(String role) {
+        Session s = this.factory.getObject().getCurrentSession();
+        Query q = s.createNamedQuery("ApartmentUser.findByRole");
+        q.setParameter("role", role);
+        if (!q.getResultList().isEmpty())
+            return (List<ApartmentUser>) q.getResultList();
+        else
+            return null;
+    }
+
 }

@@ -14,4 +14,6 @@ public interface OtherMemberRepository {
     void updateOthMember(ApartmentOtherMember member);
 
     ApartmentOtherMember getOtherMemberById(int id);
+
+    void deleteMembersByApartmentId(int apartmentId);
 }

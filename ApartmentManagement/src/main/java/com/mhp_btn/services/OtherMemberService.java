@@ -14,4 +14,6 @@ public interface OtherMemberService {
     void updateOthMember(ApartmentOtherMember member);
 
     ApartmentOtherMember getOtherMemberById(int id) ;
+
+    public void deleteMembersByApartmentId(int apartmentId) ;
 }

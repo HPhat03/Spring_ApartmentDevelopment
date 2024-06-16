@@ -128,6 +128,14 @@ public class RoomRepositoryImpl implements RoomRepository {
         Session session = this.factoryBean.getObject().getCurrentSession();
         session.update(room);
     }
+    @Override
+    public List<ApartmentRoom> getRoomsBlank() {
+        Session s = Objects.requireNonNull(this.factoryBean.getObject()).getCurrentSession();
+        Query q = s.createNamedQuery("ApartmentRoom.findByIsBlank", ApartmentRoom.class);
+        q.setParameter("isBlank", (short) 1);
+        return q.getResultList();
+    }
+
 
     @Override
     public long countRoom() {

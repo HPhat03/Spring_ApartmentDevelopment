@@ -82,6 +82,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<ApartmentUser> getUserByRole(String role) {
+        return this.up.getUserByRole(role);
+    }
+
+    @Override
     public void deleteUserById(int id) {
         this.up.deleteUserById(id);
     }

@@ -4,12 +4,14 @@
  */
 package com.mhp_btn.repositories.implement;
 
+import com.mhp_btn.pojo.ApartmentRoom;
 import com.mhp_btn.pojo.ApartmentService;
 import com.mhp_btn.repositories.ServiceRepository;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -62,6 +64,21 @@ public class ServiceRepositoryImpl implements ServiceRepository{
             query.setMaxResults(pagesize);
         }
         return (List<ApartmentService>) query.getResultList();
+    }
+
+    @Override
+    public List<ApartmentService> getServiceActive() {
+        Session s = Objects.requireNonNull(this.f.getObject()).getCurrentSession();
+        Query q = s.createNamedQuery("ApartmentService.findByIsActive", ApartmentService.class);
+        q.setParameter("isActive", (short) 1);
+        return q.getResultList();
+    }
+
+    @Override
+    public List<ApartmentService> getAllServices() {
+        Session s = this.f.getObject().getCurrentSession();
+        Query q = s.createNamedQuery("ApartmentService.findAll");
+        return q.getResultList();
     }
 
     @Override

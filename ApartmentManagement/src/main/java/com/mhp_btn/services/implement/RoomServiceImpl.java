@@ -49,6 +49,11 @@ public class RoomServiceImpl implements RoomService {
     public void updateRoom(ApartmentRoom room) {
         this.roomRepo.updateRoom(room);
     }
+    @Override
+    public List<ApartmentRoom> getRoomsBlank() {
+        return this.roomRepo.getRoomsBlank();
+    }
+
 
     @Override
     public long countRoom() {

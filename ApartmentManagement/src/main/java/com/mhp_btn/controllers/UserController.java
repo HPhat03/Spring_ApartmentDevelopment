@@ -12,9 +12,15 @@ import java.util.Map;
 
 @Controller
 @RequestMapping("/users")
+@ControllerAdvice
 public class UserController {
     @Autowired
     private UserService us;
+    @ModelAttribute
+    public void common(Model model) {
+        // phan header chung va gan @modelattribute
+        model.addAttribute("residents", this.us.getUserByRole("RESIDENT"));
+    }
 
     @GetMapping("/")
     public String index(Model model, @RequestParam Map<String, String> params) {

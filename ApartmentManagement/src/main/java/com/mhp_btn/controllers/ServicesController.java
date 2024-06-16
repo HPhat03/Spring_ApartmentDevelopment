@@ -32,13 +32,17 @@ import javax.validation.Valid;
 @Controller
 @RequestMapping("/services")
 @PropertySource("classpath:configs.properties")
+@ControllerAdvice
 public class ServicesController {
 
     @Autowired
     private ServiceService ss;
     @Autowired
     private Environment env;
-
+    @ModelAttribute
+    public void commonServices(Model model) {
+        model.addAttribute("services", this.ss.getServiceActive());
+    }
     @GetMapping("/")
     public String Index(Model model, @RequestParam Map<String, String> params) {
         int pageSize = Integer.parseInt(env.getProperty("services.pagesize"));

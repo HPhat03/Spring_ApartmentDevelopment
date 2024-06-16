@@ -16,7 +16,9 @@ import com.mhp_btn.services.ResidentService;
 import com.mhp_btn.services.RoomService;
 import com.mhp_btn.services.ServiceConstractService;
 import com.mhp_btn.services.ServiceService;
+
 import java.util.ArrayList;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +32,7 @@ import java.util.Map;
 
 
 @RestController
-@RequestMapping("/api")
+//@RequestMapping("/api")
 public class ApiRentalConstractController {
 
     @Autowired
@@ -45,32 +47,62 @@ public class ApiRentalConstractController {
     private ServiceConstractService serviceConstractService;
     @Autowired
     private OtherMemberService otherMemberService;
-    
-    
-    @GetMapping(path = "/constract/", produces = "application/json")
-    public ResponseEntity<Object> list(@RequestParam HashMap<String,String> params) {
+    @Autowired
+    private ServiceConstractService scs;
+
+
+    @GetMapping(path = "/api/constract/", produces = "application/json")
+    public ResponseEntity<Object> list(@RequestParam HashMap<String, String> params) {
         List<ApartmentRentalConstract> constract = this.constractService.getAllRentalConstract(params);
         return new ResponseEntity<>(RentalConstractSerializer.RentalConstractList(constract), HttpStatus.OK);
     }
-    
-    @GetMapping(path = "/constract/{id}", produces = "application/json")
-    public ResponseEntity<Object> retrieve(@PathVariable int id){
+
+    @GetMapping(path = "/api/constract/{id}", produces = "application/json")
+    public ResponseEntity<Object> retrieve(@PathVariable int id) {
         ApartmentRentalConstract constract = constractService.getRentalConstractById(id);
         return ResponseEntity.ok(RentalConstractSerializer.RentalConstractDetail(constract));
     }
-    @DeleteMapping("/constract/{id}")
+
+    @DeleteMapping("/constracts/{id}/")
     public ResponseEntity<String> deleteConstractById(@PathVariable int id) {
 
+        // Lấy hợp đồng bởi ID
         ApartmentRentalConstract constract = constractService.getRentalConstractById(id);
         if (constract == null) {
             return new ResponseEntity<>("Không tìm thấy hợp đồng với ID " + id, HttpStatus.NOT_FOUND);
         }
 
-        constractService.deleteRentalConstractById(id);
-        return new ResponseEntity<>("Delete success with constract is ID " + id, HttpStatus.OK);
+        try {
+            // Lấy ID của căn hộ từ hợp đồng
+            Integer apartmentId = constract.getId();
+            // Cập nhật trạng thái phòng
+            ApartmentRoom room = constract.getRoomId();
+            if (room != null) {
+                room.setIsBlank((short) 1);
+                roomService.addOrUpdateRoom(room);
+            }
+
+            // Xóa các other members theo apartment ID
+            List<ApartmentOtherMember> members = otherMemberService.getOtherMembersByApartmentId(apartmentId);
+            if (members.size() > 0) {
+                otherMemberService.deleteMembersByApartmentId(apartmentId);
+            }
+
+            // Xóa các hợp đồng service theo apartment ID
+            List<ApartmentService> servicesCon = scs.getServicesByApartmentId(apartmentId);
+            if (servicesCon.size() > 0) {
+                scs.deleteServiceConstractByApartmentId(apartmentId);
+            }
+
+            constractService.deleteRentalConstractById(id);
+            return new ResponseEntity<>("Đã xóa hợp đồng thành công", HttpStatus.OK);
+
+        } catch (Exception e) {
+            return new ResponseEntity<>("Lỗi khi xóa hợp đồng: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
-    @PostMapping(path = "/constract/", consumes = "application/json",produces = "application/json")
+    @PostMapping(path = "/constracts/add", consumes = "application/json", produces = "application/json")
     public ResponseEntity<Object> addConstract(@RequestBody Map<String, Object> params) {
         try {
             // Lấy dữ liệu từ params
@@ -78,11 +110,11 @@ public class ApiRentalConstractController {
             int roomId = (int) params.get("room_id");
             ApartmentResident resident = residentService.getResidentById(residentId);
             ApartmentRoom room = roomService.getRoomById(roomId);
-            if(room == null )
+            if (room == null)
                 return new ResponseEntity<>("Không thể tìm thấy phòng", HttpStatus.BAD_REQUEST);
-            
-            int finalPrice = params.get("final_price")!=null ? (int) params.get("final_price") : room.getPrice();
-            
+
+            int finalPrice = params.get("final_price") != null ? (int) params.get("final_price") : room.getPrice();
+
             if (room.getIsBlank() != 1)
                 return new ResponseEntity<>("Không thể cho thuê phòng đã có người thuê", HttpStatus.BAD_REQUEST);
             if (room.getIsActive() != 1)
@@ -102,39 +134,39 @@ public class ApiRentalConstractController {
             constract.setRoomId(room);
 
             constractService.addRentalConstract(constract);
-            room.setIsBlank((short)0);
+            room.setIsBlank((short) 0);
             roomService.updateRoom(room);
-            
+
             //ADD SERVICES
             boolean addAll = true;
             int len = (int) serviceService.countService();
             List<Integer> services_id = new ArrayList<>();
             List<ApartmentService> services = new ArrayList<>();
-            if (params.get("services")!= null){
+            if (params.get("services") != null) {
                 addAll = false;
-                services_id =  (List<Integer>) params.get("services");
+                services_id = (List<Integer>) params.get("services");
                 len = services_id.size();
+            } else {
+                services = serviceService.getAllServices();
+
             }
-//            else {
-//                services = serviceService.getService(params);
-//            }
-            
-            for(int i = 0; i<len; i++){
+
+            for (int i = 0; i < len; i++) {
                 ApartmentService temp;
-                if(!addAll){
+                if (!addAll) {
                     temp = serviceService.getServiceById(services_id.get(i));
-                }
-                else{
+                } else {
                     temp = services.get(i);
                 }
+
                 ApartmentServiceConstract sv = new ApartmentServiceConstract();
                 sv.setServiceId(temp);
                 sv.setApartmentId(constract);
                 serviceConstractService.addServiceConstract(sv);
             }
             //ADD OTHER MEMBER
-            if(params.get("other_members") != null){
-                List<Map<String,String>> other_members = (List<Map<String,String>>) params.get("other_members");
+            if (params.get("other_members") != null) {
+                List<Map<String, String>> other_members = (List<Map<String, String>>) params.get("other_members");
                 other_members.forEach(x -> System.out.println(x.get("name")));
                 other_members.forEach(x -> {
                     System.out.println(x.get("name"));
@@ -145,7 +177,7 @@ public class ApiRentalConstractController {
                     otherMemberService.addOtherMemberByApartmentId(temp);
                 });
             }
-            return new ResponseEntity<>(constract, HttpStatus.OK);
+            return new ResponseEntity<>("Tạo thành công", HttpStatus.OK);
 
 
         } catch (NumberFormatException e) {
@@ -156,7 +188,7 @@ public class ApiRentalConstractController {
     }
 
 
-    @PatchMapping(value = "/constract/{id}", produces = "application/json")
+    @PatchMapping(value = "/constract/edit/{id}/", produces = "application/json")
     public ResponseEntity<ApartmentRentalConstract> updateConstractById(@PathVariable int id, @RequestBody Map<String, String> updates) {
         // Lấy thông tin
         ApartmentRentalConstract constract = constractService.getConstractById(id);
@@ -173,36 +205,11 @@ public class ApiRentalConstractController {
                 case "status":
                     constract.setStatus(value);
                     break;
-                case "createdDate":
-                    // Cần xử lý chuyển đổi từ string sang định dạng ngày tháng nếu cần
-                    constract.setCreatedDate(new Date());
-                    break;
                 case "isActive":
-                    // Cần chuyển đổi từ string sang kiểu boolean nếu cần
                     constract.setIsActive(Short.parseShort(value));
                     break;
                 case "finalPrice":
-                    // Cần chuyển đổi từ string sang kiểu số nếu cần
                     constract.setFinalPrice(Integer.parseInt(value));
-                    break;
-                case "roomId":
-
-                        ApartmentRoom room = roomService.getRoomById(Integer.parseInt(value));
-                        if (room != null) {
-                            constract.setRoomId(room);
-                        } else {
-                            throw new IllegalArgumentException("Room with ID " + value + " not found");
-                        }
-
-                    break;
-                case "residentId":
-                        ApartmentResident resident = residentService.getResidentById(Integer.parseInt(value));
-                        if (resident != null) {
-                            constract.setResidentId(resident);
-                        } else {
-                            throw new IllegalArgumentException("Resident with ID " + value + " not found");
-                        }
-
                     break;
 
             }

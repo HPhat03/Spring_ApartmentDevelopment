@@ -21,6 +21,7 @@ public interface UserService extends UserDetailsService {
     void save(ApartmentUser user, boolean resetPassword);
     ApartmentUser ChangeOrInitialize(ApartmentUser user, Map<String, String> data, boolean isInit);
     boolean authUser(String username, String password);
+    public List<ApartmentUser> getUserByRole(String role) ;
 
     void deleteUserById(int id) ;
 }

@@ -1,5 +1,6 @@
 package com.mhp_btn.services;
 
+import com.mhp_btn.pojo.ApartmentService;
 import com.mhp_btn.pojo.ApartmentServiceConstract;
 
 import java.util.List;
@@ -15,4 +16,7 @@ public interface ServiceConstractService {
     void addServiceConstract(ApartmentServiceConstract constract) ;
 
     void updateServiceConstract(ApartmentServiceConstract constract) ;
+
+    public List<ApartmentService> getServicesByApartmentId(int apartmentId) ;
+    public void deleteServiceConstractByApartmentId(int apartmentId) ;
 }

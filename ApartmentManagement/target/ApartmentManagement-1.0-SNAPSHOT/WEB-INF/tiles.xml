@@ -62,4 +62,22 @@
         <put-attribute name="title" value="Chỉnh sửa người dùng" />
         <put-attribute name="content" value="/WEB-INF/pages/user/editUser.jsp" />
     </definition>
+
+<!--    hơpk đồng-->
+    <definition name="rentalConstract" extends="baseLayout">
+        <put-attribute name="title" value="Danh sách hợp đồng" />
+        <put-attribute name="content" value="/WEB-INF/pages/rentalConstract/index.jsp" />
+    </definition>
+    <definition name="addConstract" extends="baseLayout">
+        <put-attribute name="title" value="Thêm hợp đồng" />
+        <put-attribute name="content" value="/WEB-INF/pages/rentalConstract/addConstract.jsp" />
+    </definition>
+    <definition name="detailConstract" extends="baseLayout">
+        <put-attribute name="title" value="Chi tiết hợp đồng" />
+        <put-attribute name="content" value="/WEB-INF/pages/rentalConstract/detailConstract.jsp" />
+    </definition>
+    <definition name="editConstract" extends="baseLayout">
+        <put-attribute name="title" value="Chỉnh sửa hợp đồng" />
+        <put-attribute name="content" value="/WEB-INF/pages/rentalConstract/editConstract.jsp" />
+    </definition>
 </tiles-definitions>

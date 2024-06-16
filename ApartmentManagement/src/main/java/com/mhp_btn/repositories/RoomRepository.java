@@ -17,5 +17,6 @@ public interface RoomRepository {
     List<ApartmentRoom> getRoomByFloorId(int id);
 
     void updateRoom(ApartmentRoom room);
+    List<ApartmentRoom> getRoomsBlank ();
     public long countRoom() ;
 }

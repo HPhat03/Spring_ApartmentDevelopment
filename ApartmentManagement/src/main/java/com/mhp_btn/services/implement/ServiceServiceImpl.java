@@ -34,6 +34,15 @@ public class ServiceServiceImpl implements  ServiceService{
         this.repo.addOrUpdate(service);
     }
 
+    @Override
+    public List<ApartmentService> getServiceActive() {
+        return this.repo.getServiceActive();
+    }
+
+    @Override
+    public List<ApartmentService> getAllServices() {
+        return this.repo.getAllServices();
+    }
 
 
     @Override

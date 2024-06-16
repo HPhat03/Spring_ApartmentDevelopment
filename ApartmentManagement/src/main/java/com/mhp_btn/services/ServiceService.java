@@ -15,7 +15,8 @@ import java.util.Map;
 public interface ServiceService {
     List<ApartmentService> getService(Map<String, String> params) ;
         void addOrUpdate(ApartmentService service);
-
+    public List<ApartmentService> getServiceActive() ;
+    public List<ApartmentService> getAllServices() ;
     public ApartmentService getServiceById(int id);
 
     void deleteServiceById(int id);

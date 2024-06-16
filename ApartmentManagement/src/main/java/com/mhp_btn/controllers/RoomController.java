@@ -27,18 +27,24 @@ import java.util.Map;
 
 @Controller
 @RequestMapping("/rooms")
+@ControllerAdvice
 @PropertySource("classpath:configs.properties")
 public class RoomController {
     @Autowired
     private RoomService rs;
-    @Autowired
-    private FloorService floorSer;
+
     @Autowired
     private Environment env;
 
+    @ModelAttribute
+    public void commonRoom(Model model) {
+
+        model.addAttribute("rooms", this.rs.getRoomsBlank());
+    }
+
     @GetMapping("/")
     public String index(Model model,@RequestParam Map<String, String> params) {
-        int pageSize = Integer.parseInt(env.getProperty("services.pagesize"));
+        int pageSize = Integer.parseInt(env.getProperty("room.pagesize"));
 
         long totalRoom = this.rs.countRoom();
         int totalPages = (int) Math.ceil((double) totalRoom / pageSize);

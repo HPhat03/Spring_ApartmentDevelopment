@@ -16,5 +16,6 @@ public interface RoomService {
     List<ApartmentRoom> getRoomByFloorId(int id) ;
 
     void updateRoom(ApartmentRoom room);
+    public List<ApartmentRoom> getRoomsBlank() ;
     public long countRoom() ;
 }

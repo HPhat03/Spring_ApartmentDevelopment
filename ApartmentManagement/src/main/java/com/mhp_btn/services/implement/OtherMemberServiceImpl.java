@@ -40,4 +40,9 @@ public class OtherMemberServiceImpl implements OtherMemberService {
     public ApartmentOtherMember getOtherMemberById(int id) {
         return this.memberRepo.getOtherMemberById(id);
     }
+
+    @Override
+    public void deleteMembersByApartmentId(int apartmentId) {
+        this.memberRepo.deleteMembersByApartmentId(apartmentId);
+    }
 }

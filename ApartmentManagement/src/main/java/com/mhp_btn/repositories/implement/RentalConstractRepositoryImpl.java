@@ -52,10 +52,8 @@ public class RentalConstractRepositoryImpl implements RentalConstractRepository 
         Session session = factoryBean.getObject().getCurrentSession();
         ApartmentRentalConstract apartmentRentalConstract = session.get(ApartmentRentalConstract.class, id);
         if (apartmentRentalConstract != null) {
-            apartmentRentalConstract.setIsActive((short) 0); // Đặt isActive = 0
-            session.update(apartmentRentalConstract); // Cập nhật thay đổi vào cơ sở dữ liệu
-        } else {
-            throw new IllegalArgumentException("Không tìm thấy hợp đồng với ID: " + id);
+            apartmentRentalConstract.setIsActive((short) 0);
+            session.update(apartmentRentalConstract);
         }
     }
 

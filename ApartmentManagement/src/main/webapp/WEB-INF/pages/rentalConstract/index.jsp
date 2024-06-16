@@ -5,6 +5,7 @@
   Time: 12:11 AM
   To change this template use File | Settings | File Templates.
 --%>
+
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -16,7 +17,7 @@
                 <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
                     <h6 class="text-white text-capitalize ps-3">DANH SÁCH HỢP ĐỒNG THUÊ NHÀ</h6>
                 </div>
-                <a class="btn btn-success px-3 mt-3" href="<c:url value='' />">
+                <a class="btn btn-success px-3 mt-3" href="<c:url value='/constracts/add' />">
                     <i class="bi bi-plus"></i> Tạo hợp đồng
                 </a>
             </div>
@@ -59,12 +60,15 @@
                             </td>
 
                             <td>
-                                <a class="btn btn-sm btn-primary" href="<c:url value='/rooms/edit/${room.id}' />">
+                                <a class="btn btn-sm btn-success" href="<c:url value='/constracts/${con.id}' />">
+                                    <i class="bi bi-pencil"></i>Chi tiết
+                                </a>
+                                <a class="btn btn-sm btn-primary" href="<c:url value='/constracts/edit/${con.id}' />">
                                     <i class="bi bi-pencil"></i> Sửa
                                 </a>
-                                <c:url value="/rooms/${room.id}" var="urlDelete" />
+                                <c:url value="/constracts/${con.id}/" var="urlDelete" />
 
-                                <button class="btn btn-sm btn-danger removeRoom" data-id="${room.id}" onclick="deleteRoom('${urlDelete}', ${room.id})">
+                                <button class="btn btn-sm btn-danger delete-btn"  data-id="${conid}" onclick="deleteConstract('${urlDelete}', ${con.id})">
                                     <i class="bi bi-trash"></i> Xóa
                                 </button>
 
@@ -81,3 +85,29 @@
 
 
 </div>
+<script>
+    function deleteConstract(url, ID) {
+        console.log(url);
+        if (confirm("Bạn có chắc chắn muốn xóa hợp đồng này không?")) {
+            fetch(url, {
+                method: "DELETE",
+            })
+                .then(response => {
+                    if (response.status === 200) {
+                        alert("Xóa phòng thành công");
+                        location.reload();
+                    } else {
+                        console.log("id dich vu:", serviceId);
+                        alert("Xóa phòng thất bại");
+                    }
+                })
+                .catch(error => {
+                    console.log("id rooom:", roomId);
+                    console.error("Loi fetch api:", error);
+                    alert("Có lỗi xảy ra khi xóa phòng");
+                });
+        }
+    }
+
+
+</script>
