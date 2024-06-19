@@ -21,15 +21,15 @@ public class DetailReportRepositoryImpl implements DetailReportRepository {
 
 
     @Override
-    public ApartmentDetailReport getDetailReportByReportId(int id) {
-        Session session = factoryBean.getObject().getCurrentSession();
+    public List<ApartmentDetailReport> getDetailReportByReportId(int id) {
+    Session session = factoryBean.getObject().getCurrentSession();
 
         Query<ApartmentDetailReport> query = session.createQuery(
                 "FROM ApartmentDetailReport a WHERE a.reportId.id = :reportId",
                 ApartmentDetailReport.class
         );
         query.setParameter("reportId", id);
-        ApartmentDetailReport result = query.uniqueResult();
+        List<ApartmentDetailReport> result = query.getResultList();
         return result;
     }
 

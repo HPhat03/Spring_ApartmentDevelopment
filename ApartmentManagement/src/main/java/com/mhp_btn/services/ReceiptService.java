@@ -4,6 +4,7 @@ import com.mhp_btn.pojo.ApartmentReceipt;
 
 import java.util.List;
 import java.util.HashMap;
+import java.util.Map;
 
 public interface ReceiptService {
 
@@ -16,4 +17,6 @@ public interface ReceiptService {
     void addReceipt(ApartmentReceipt receipt) ;
 
     void updateReceipt(ApartmentReceipt receipt) ;
+    public List<ApartmentReceipt> getAll(Map<String, String> params) ;
+    public long countReceipt() ;
 }

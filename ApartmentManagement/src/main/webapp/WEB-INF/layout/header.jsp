@@ -43,14 +43,7 @@
                 </a>
             </li>
 
-            <li class="nav-item">
-                <a class="nav-link text-white" href="#">
-                    <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-                        <i class="material-icons opacity-10">person</i>
-                    </div>
-                    <span class="nav-link-text ms-1">Hồ sơ</span>
-                </a>
-            </li>
+
             <li class="nav-item">
                 <a class="nav-link text-white" href="<c:url value="/constracts/"/>">
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
@@ -59,12 +52,29 @@
                     <span class="nav-link-text ms-1">Hợp đồng</span>
                 </a>
             </li>
+
             <li class="nav-item">
-                <a class="nav-link text-white" href="#">
+                <a class="nav-link text-white"  href="<c:url value="/cabinets/"/>">
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="material-icons opacity-10">view_in_ar</i>
                     </div>
                     <span class="nav-link-text ms-1">Tủ đồ thông minh</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" href="<c:url value="/receipts/?page=1"/>">
+                    <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="material-icons opacity-10">receipt_long</i>
+                    </div>
+                    <span class="nav-link-text ms-1">Hoá đơn</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" href="<c:url value="/reports/"/>">
+                    <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="material-icons opacity-10">receipt_long</i>
+                    </div>
+                    <span class="nav-link-text ms-1">Báo cáo</span>
                 </a>
             </li>
             <li class="nav-item">
@@ -73,6 +83,14 @@
                         <i class="material-icons opacity-10">person</i>
                     </div>
                     <span class="nav-link-text ms-1">Người dùng </span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" href="<c:url value="/survey_request/?page=1"/>">
+                    <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="material-icons opacity-10">receipt_long</i>
+                    </div>
+                    <span class="nav-link-text ms-1">Phiếu khảo sát</span>
                 </a>
             </li>
             <li class="nav-item">

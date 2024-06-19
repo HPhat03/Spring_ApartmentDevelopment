@@ -75,12 +75,12 @@
                                 <c:choose>
                                 <c:when test="${room.isBlank == 0}">
                                     <a class="btn btn-sm border-radius-2xl btn-success"
-                                       href="<c:url value='/rooms/rent/${room.id}' />">
-                                        <i class="bi bi-person-plus"></i> Tạo hợp đồng
+                                       href="<c:url value='' />">
+                                        <i class="bi bi-person-plus"></i> Phòng trống
                                     </a></c:when>
                                 <c:otherwise>
                                 <a class="btn btn-sm border-radius-2xl btn-danger"
-                                   href="<c:url value='/rooms/rent/${room.id}' />">
+                                   href="<c:url value='' />">
                                     <i class="bi bi-person-plus"></i> Đã thuê
                                     </c:otherwise>
                                     </c:choose>

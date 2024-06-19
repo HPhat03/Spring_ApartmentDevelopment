@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class SurveyRequestServiceImpl implements SurveyRequestService {
@@ -15,8 +16,8 @@ public class SurveyRequestServiceImpl implements SurveyRequestService {
     private SurveyRequestRepository requestRepo;
 
     @Override
-    public List<ApartmentSurveyRequest> getAllSurveyRequest() {
-        return this.requestRepo.getAllSurveyRequest();
+    public List<ApartmentSurveyRequest> getAllSurveyRequest(Map<String, String> params)  {
+        return this.requestRepo.getAllSurveyRequest(params);
     }
 
     @Override
@@ -37,6 +38,11 @@ public class SurveyRequestServiceImpl implements SurveyRequestService {
     @Override
     public void updateSurveyRequest(ApartmentSurveyRequest surveyRequest) {
         this.requestRepo.updateSurveyRequest(surveyRequest);
+    }
+
+    @Override
+    public long countSurvey() {
+        return this.requestRepo.countSurvey();
     }
 
 

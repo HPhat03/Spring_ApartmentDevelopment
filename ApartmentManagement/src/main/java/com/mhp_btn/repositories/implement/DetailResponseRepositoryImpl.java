@@ -2,6 +2,7 @@ package com.mhp_btn.repositories.implement;
 
 import com.mhp_btn.pojo.ApartmentDetailRequest;
 import com.mhp_btn.pojo.ApartmentDetailResponse;
+import com.mhp_btn.pojo.ApartmentSurveyResponse;
 import com.mhp_btn.repositories.DetailResponseRepository;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
@@ -10,6 +11,7 @@ import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.criteria.*;
 import java.util.List;
 
 @Transactional
@@ -20,10 +22,17 @@ public class DetailResponseRepositoryImpl implements DetailResponseRepository {
 
     @Override
     public List<ApartmentDetailResponse> getAllDetailResponseByResponseID(int id) {
-        Session session = this.factoryBean.getObject().getCurrentSession();
-        Query query = session.createQuery("FROM ApartmentDetailResponse adr WHERE adr.responseId.id = :responseId");
-        query.setParameter("responseId", id);
-        return query.getResultList();
+        Session s = this.factoryBean.getObject().getCurrentSession();
+        CriteriaBuilder cb = s.getCriteriaBuilder();
+        CriteriaQuery<ApartmentDetailResponse> cq = cb.createQuery(ApartmentDetailResponse.class);
+        Root<ApartmentDetailResponse> root = cq.from(ApartmentDetailResponse.class);
+
+        Join<ApartmentDetailResponse, ApartmentSurveyResponse> responseJoin = root.join("responseId");
+
+        Predicate responseIdPredicate = cb.equal(responseJoin.get("id"), id);
+        cq.where(responseIdPredicate);
+
+        return s.createQuery(cq).getResultList();
     }
 
     @Override

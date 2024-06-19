@@ -24,7 +24,7 @@
         <div class="form-group">
             <label for="roomNumber">Số phòng:</label>
             <form:input path="roomNumber" id="roomNumber" class="form-control"/>
-        </div>
+        </div>h
 
         <div class="form-group">
             <label for="price">Giá:</label>
@@ -64,6 +64,7 @@
                 Cập nhật
             </c:otherwise>
         </c:choose></button>
+
     </form:form>
 </div>
 

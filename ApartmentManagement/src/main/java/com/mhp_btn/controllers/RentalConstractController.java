@@ -6,6 +6,8 @@ import com.mhp_btn.services.RentalConstractService;
 import com.mhp_btn.services.ServiceConstractService;
 import com.mhp_btn.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +18,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/constracts")
+@PropertySource("classpath:configs.properties")
 public class RentalConstractController {
     @Autowired
     private RentalConstractService rcs;
@@ -25,6 +28,8 @@ public class RentalConstractController {
     private ServiceConstractService scs;
     @Autowired
     private OtherMemberService otherService;
+    @Autowired
+    private Environment env;
 
     @GetMapping("/")
     public String index(Model model, @RequestParam HashMap<String, String> params) {
@@ -37,6 +42,13 @@ public class RentalConstractController {
             con.setCustomerName(nameCustomer);
         }
         model.addAttribute("constracts", constracts);
+        //phan trang
+        long totalConstracts = this.rcs.countConstracts();
+        int pageSize = Integer.parseInt(env.getProperty("contracts.pagesize"));
+        int totalPages = (int) Math.ceil((double) totalConstracts / pageSize);
+        int currentPage = params.get("page") != null ? Integer.parseInt(params.get("page")) : 1;
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("currentPage", currentPage);
         return "rentalConstract";
     }
 

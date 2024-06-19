@@ -20,6 +20,8 @@ public class UserController {
     public void common(Model model) {
         // phan header chung va gan @modelattribute
         model.addAttribute("residents", this.us.getUserByRole("RESIDENT"));
+        model.addAttribute("admins", this.us.getUserByRole("ADMIN"));
+
     }
 
     @GetMapping("/")

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class ReceiptServiceImpl implements ReceiptService {
@@ -36,5 +37,15 @@ public class ReceiptServiceImpl implements ReceiptService {
     @Override
     public void updateReceipt(ApartmentReceipt receipt) {
         this.receiptRepo.updateReceipt(receipt);
+    }
+
+    @Override
+    public List<ApartmentReceipt> getAll(Map<String, String> params) {
+        return this.receiptRepo.getAll(params);
+    }
+
+    @Override
+    public long countReceipt() {
+        return this.receiptRepo.countReceipt();
     }
 }

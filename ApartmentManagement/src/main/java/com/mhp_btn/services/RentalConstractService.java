@@ -18,4 +18,5 @@ public interface RentalConstractService {
     ApartmentRentalConstract getConstractById(int id);
 
     void updateConstract(ApartmentRentalConstract constract);
+    public long countConstracts() ;
 }

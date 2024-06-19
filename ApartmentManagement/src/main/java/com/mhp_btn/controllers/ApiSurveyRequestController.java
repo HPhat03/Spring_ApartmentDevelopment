@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api")
+//@RequestMapping("/api")
 public class ApiSurveyRequestController {
     @Autowired
     private SurveyRequestService requestService;
@@ -31,11 +31,11 @@ public class ApiSurveyRequestController {
     private DetailRequestService detailRequestService;
 
     //Lay tat ca khao sat
-        @GetMapping(path = "/survey_request", produces = "application/json")
-    public ResponseEntity<List<ApartmentSurveyRequest>> getAllSurveyRequest() {
-        List<ApartmentSurveyRequest> surveyRequests = requestService.getAllSurveyRequest();
-        return new ResponseEntity<>(surveyRequests, HttpStatus.OK);
-    }
+//        @GetMapping(path = "/api/survey_request", produces = "application/json")
+//    public ResponseEntity<List<ApartmentSurveyRequest>> getAllSurveyRequest() {
+//        List<ApartmentSurveyRequest> surveyRequests = requestService.getAllSurveyRequest();
+//        return new ResponseEntity<>(surveyRequests, HttpStatus.OK);
+//    }
 
     @DeleteMapping(path = "/survey_request/{surveyId}")
     public ResponseEntity<?> deleteSurveyRequestById(@PathVariable("surveyId") int surveyId) {
@@ -56,7 +56,8 @@ public class ApiSurveyRequestController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @PostMapping("/survey_request")
+
+    @PostMapping(path = "/survey_request/add/", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> addSurveyRequest(@RequestBody Map<String, Object> params) throws ParseException {
         try {
             // Lấy thông tin từ request body
@@ -102,14 +103,14 @@ public class ApiSurveyRequestController {
                 temp.setScoreBand(band != null ? band.toString() : ApartmentDetailRequest.ScoreBand.BAND_5.toString());
                 detailRequestService.addDetailRequest(temp);
             });
-            return new ResponseEntity<>(HttpStatus.CREATED);
+            return new ResponseEntity<>("SUCCESS", HttpStatus.CREATED);
         } catch (Exception e) {
             // Xử lý ngoại lệ và trả về lỗi nếu có
             return new ResponseEntity<>("Failed to create survey request: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @PatchMapping(value = "/survey_request/{id}", produces = "application/json")
+    @PatchMapping(value = "/api/survey_request/{id}", produces = "application/json")
     public ResponseEntity<Object> updateSurveyRequestById(@PathVariable int id,
                                                           @RequestBody Map<String, String> updates) {
         ApartmentSurveyRequest surveyRequest = requestService.getSurveyRequestById(id);

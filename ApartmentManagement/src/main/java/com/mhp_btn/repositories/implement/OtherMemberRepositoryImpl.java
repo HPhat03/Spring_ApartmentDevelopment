@@ -11,6 +11,10 @@ import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaDelete;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.util.List;
 
 @Transactional
@@ -21,10 +25,14 @@ public class OtherMemberRepositoryImpl implements OtherMemberRepository {
     @Override
     public List<ApartmentOtherMember> getOtherMembersByApartmentId(int id) {
         Session session = factoryBean.getObject().getCurrentSession();
-        Query<ApartmentOtherMember> query = session.createQuery(
-                "SELECT m FROM ApartmentOtherMember m WHERE m.apartmentId.id = :apartmentId",
-                ApartmentOtherMember.class);
-        query.setParameter("apartmentId", id);
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<ApartmentOtherMember> cq = cb.createQuery(ApartmentOtherMember.class);
+        Root<ApartmentOtherMember> root = cq.from(ApartmentOtherMember.class);
+
+        cq.select(root)
+                .where(cb.equal(root.get("apartmentId").get("id"), id));
+
+        Query<ApartmentOtherMember> query = session.createQuery(cq);
         return query.getResultList();
     }
 
@@ -60,10 +68,15 @@ public class OtherMemberRepositoryImpl implements OtherMemberRepository {
 
     @Override
     public void deleteMembersByApartmentId(int apartmentId) {
+
         Session session = factoryBean.getObject().getCurrentSession();
-        Query query = session.createQuery(
-                "DELETE FROM ApartmentOtherMember m WHERE m.apartmentId.id = :apartmentId");
-        query.setParameter("apartmentId", apartmentId);
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaDelete<ApartmentOtherMember> cd = cb.createCriteriaDelete(ApartmentOtherMember.class);
+        Root<ApartmentOtherMember> root = cd.from(ApartmentOtherMember.class);
+
+        cd.where(cb.equal(root.get("apartmentId").get("id"), apartmentId));
+
+        Query query = session.createQuery(cd);
         query.executeUpdate();
     }
 

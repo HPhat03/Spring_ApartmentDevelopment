@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api")
+//@RequestMapping("/api")
 public class ApiSmartCabinetController {
     @Autowired
     private SmartCabinetService cabinetService;
@@ -21,14 +21,14 @@ public class ApiSmartCabinetController {
     private RentalConstractService apartmentService;
 
     // Lay tat ca danh sach cac tu
-    @GetMapping(path = "/smart_cabinets", produces = "application/json")
-    public ResponseEntity<List<ApartmentSmartCabinet>> getAllSmartCabinet() {
-        List<ApartmentSmartCabinet> smartCabinets = cabinetService.getAllSmartCabinets();
-        return new ResponseEntity<>(smartCabinets, HttpStatus.OK);
-    }
+//    @GetMapping(path = "/api/smart_cabinets", produces = "application/json")
+//    public ResponseEntity<List<ApartmentSmartCabinet>> getAllSmartCabinet() {
+//        List<ApartmentSmartCabinet> smartCabinets = cabinetService.getAllSmartCabinets();
+//        return new ResponseEntity<>(smartCabinets, HttpStatus.OK);
+//    }
 
     // lay tu do thong minh theo id apartment
-    @GetMapping(path="/apartment/{apartmentId}/smart_cabinets", produces = "application/json")
+    @GetMapping(path="/api/apartment/{apartmentId}/smart_cabinets", produces = "application/json")
     public ResponseEntity<?> getAllCabinetsByApartmentId(@PathVariable int apartmentId) {
         ApartmentRentalConstract apartment = apartmentService.getConstractById(apartmentId);
         if (apartment == null) {
@@ -38,7 +38,7 @@ public class ApiSmartCabinetController {
         return new ResponseEntity<>(cabinets, HttpStatus.OK);
     }
     // Lấy thông tin một tủ thông minh cụ thể
-    @GetMapping(path="/apartment/{apartmentId}/smart_cabinets/{cabinetId}", produces = "application/json")
+    @GetMapping(path="/api/apartment/{apartmentId}/smart_cabinets/{cabinetId}", produces = "application/json")
     public ResponseEntity<?> getSmartCabinetById(@PathVariable int apartmentId, @PathVariable int cabinetId) {
         ApartmentRentalConstract apartment = apartmentService.getConstractById(apartmentId);
         if (apartment == null) {
@@ -52,7 +52,7 @@ public class ApiSmartCabinetController {
         return new ResponseEntity<>(cabinet, HttpStatus.OK);
     }
 
-    @DeleteMapping(path = "/smart_cabinets/{cabinetId}")
+    @DeleteMapping(path = "/cabinets/{cabinetId}")
     public ResponseEntity<?> deleteCabinetById(@PathVariable("cabinetId") int cabinetId) {
         ApartmentSmartCabinet cabinet = cabinetService.getSmartCabinetById(cabinetId);
         if(cabinet == null)
@@ -64,7 +64,7 @@ public class ApiSmartCabinetController {
         return new ResponseEntity<>( HttpStatus.NO_CONTENT);
     }
 
-    @PostMapping("/smart_cabinets/")
+    @PostMapping("/api/smart_cabinets/")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> addSmartCabinet(@RequestBody Map<String, String> params) {
 

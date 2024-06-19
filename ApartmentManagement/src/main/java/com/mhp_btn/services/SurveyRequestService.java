@@ -4,9 +4,10 @@ import com.mhp_btn.pojo.ApartmentSurveyRequest;
 import com.mhp_btn.pojo.ApartmentUser;
 
 import java.util.List;
+import java.util.Map;
 
 public interface SurveyRequestService {
-    List<ApartmentSurveyRequest> getAllSurveyRequest() ;
+    public List<ApartmentSurveyRequest> getAllSurveyRequest(Map<String, String> params)  ;
 
     ApartmentSurveyRequest getSurveyRequestById(int id) ;
 
@@ -15,4 +16,5 @@ public interface SurveyRequestService {
     void addSurveyRequest(ApartmentSurveyRequest request) ;
 
     void updateSurveyRequest(ApartmentSurveyRequest surveyRequest) ;
+    public long countSurvey() ;
 }

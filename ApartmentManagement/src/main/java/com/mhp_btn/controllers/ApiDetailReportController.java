@@ -41,7 +41,7 @@ public class ApiDetailReportController {
         if(report == null){
             return new ResponseEntity<>("Report not found with ID: " + reportId, HttpStatus.NOT_FOUND);
         }
-        ApartmentDetailReport detail = detailService.getDetailReportByReportId(reportId);
+        List<ApartmentDetailReport> detail = detailService.getDetailReportByReportId(reportId);
         return new ResponseEntity<>(detail, HttpStatus.OK);
     }
     @PostMapping("/apartment/{apartmentId}/reports/{reportId}")
@@ -81,7 +81,7 @@ public class ApiDetailReportController {
         if(report == null){
             return new ResponseEntity<>("Report not found with ID: " + reportId, HttpStatus.NOT_FOUND);
         }
-        ApartmentDetailReport detailReport = detailService.getDetailReportByReportId(reportId);
+        List<ApartmentDetailReport> detailReport = detailService.getDetailReportByReportId(reportId);
         if(detailReport == null){
             return new ResponseEntity<>("Report detail not found ", HttpStatus.NOT_FOUND);
         }
@@ -89,11 +89,11 @@ public class ApiDetailReportController {
         // Cập nhật thông tin của báo cáo từ dữ liệu được gửi lên
         // Cập nhật thông tin của báo cáo từ dữ liệu được gửi lên
         if (updateFields.containsKey("content")) {
-            detailReport.setContent((String) updateFields.get("content"));
+//            detailReport.setContent((String) updateFields.get("content"));
         }
 
 
-        detailService.updateDetailReport(detailReport);
+//        detailService.updateDetailReport(detailReport);
 
         return new ResponseEntity<>(detailReport, HttpStatus.OK);
     }
@@ -110,12 +110,12 @@ public class ApiDetailReportController {
         if(report == null){
             return new ResponseEntity<>("Report not found with ID: " + reportId, HttpStatus.NOT_FOUND);
         }
-        ApartmentDetailReport detailReport = detailService.getDetailReportByReportId(reportId);
+        List<ApartmentDetailReport> detailReport = detailService.getDetailReportByReportId(reportId);
         if(detailReport == null){
             return new ResponseEntity<>("Report detail not found ", HttpStatus.NOT_FOUND);
         }
         // Thực hiện xóa báo cáo
-        detailService.deteleDetailReport(detailReport);
+//        detailService.deteleDetailReport(detailReport);
         return new ResponseEntity<>( HttpStatus.NO_CONTENT);
     }
 

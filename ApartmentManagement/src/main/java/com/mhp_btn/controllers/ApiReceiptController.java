@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.Set;
 
 @RestController
-@RequestMapping("/api")
+//@RequestMapping("/api")
 public class ApiReceiptController {
     @Autowired
     private ReceiptService receiptService;
@@ -32,7 +32,7 @@ public class ApiReceiptController {
     @Autowired
     private DetailReceiptService detailReceiptService;
 
-    @GetMapping(path = "/receipt/", produces = "application/json")
+    @GetMapping(path = "/api/receipt/", produces = "application/json")
     public ResponseEntity<Object> list(@RequestParam HashMap<String, String> params) {
         List<ApartmentReceipt> receipts = this.receiptService.getAllReceipt(params);
         if (receipts.isEmpty()) {
@@ -62,7 +62,7 @@ public class ApiReceiptController {
     }
 
 
-    @PostMapping("/receipt/")
+    @PostMapping("/api/receipt/")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> addReceipt(@RequestBody Map<String, String> params) {
         if (params.containsKey("month") && 
@@ -151,7 +151,7 @@ public class ApiReceiptController {
     }
 
 
-    @PatchMapping(value = "/receipt/{id}", produces = "application/json")
+    @PatchMapping(value = "/api/receipt/{id}", produces = "application/json")
     public ResponseEntity<ApartmentReceipt> updateReceiptById(@PathVariable int id, @RequestBody Map<String, String> updates) {
         ApartmentReceipt receipt = receiptService.getReceiptById(id);
 

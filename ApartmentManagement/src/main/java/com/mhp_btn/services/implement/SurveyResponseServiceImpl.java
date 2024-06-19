@@ -24,6 +24,11 @@ public class SurveyResponseServiceImpl implements SurveyResponseService {
     }
 
     @Override
+    public List<ApartmentSurveyResponse> getAllBySurveyId(Integer surveyId) {
+        return this.responseRepo.getAllBySurveyId(surveyId);
+    }
+
+    @Override
     public void deleteSurveyResponseById(int id) {
         this.responseRepo.deleteSurveyResponseById(id);
     }

@@ -92,33 +92,5 @@ public class ServicesController {
         return "addService";
     }
 
-//    @PatchMapping(value = "/service/{id}", consumes = "application/json", produces = "application/json")
-//    public ResponseEntity<ApartmentService> updateServiceById(@PathVariable int id, @RequestBody Map<String, Object> updates) {
-//        ApartmentService service = ss.getServiceById(id);
-//        if (service == null) {
-//            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy dịch vụ với ID " + id);
-//        }
-//        for (Map.Entry<String, Object> entry : updates.entrySet()) {
-//            String key = entry.getKey();
-//            Object value = entry.getValue();
-//            switch (key) {
-//                case "name":
-//                    service.setName((String) value);
-//                    break;
-//                case "price":
-//                    service.setPrice((int) value);
-//                    break;
-//                case "is_active":
-//                    service.setIsActive((short) value);
-//                    break;
-//                default:
-//                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Trường không hợp lệ: " + key);
-//            }
-//        }
-//
-//        ss.updateervice(service);
-//        return new ResponseEntity<>(service, HttpStatus.OK);
-//    }
-
 
 }

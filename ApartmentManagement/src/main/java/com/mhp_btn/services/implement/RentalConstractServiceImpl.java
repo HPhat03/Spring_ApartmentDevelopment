@@ -43,5 +43,10 @@ public class RentalConstractServiceImpl implements RentalConstractService {
         this.rentalConstractRepo.updateConstract(constract);
     }
 
+    @Override
+    public long countConstracts() {
+        return this.rentalConstractRepo.countConstracts();
+    }
+
 
 }

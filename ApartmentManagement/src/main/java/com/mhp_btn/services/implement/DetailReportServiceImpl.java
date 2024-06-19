@@ -6,13 +6,15 @@ import com.mhp_btn.services.DetailReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class DetailReportServiceImpl implements DetailReportService {
     @Autowired
     private DetailReportRepository reportRepo;
 
     @Override
-    public ApartmentDetailReport getDetailReportByReportId(int id) {
+    public List<ApartmentDetailReport> getDetailReportByReportId(int id) {
         return this.reportRepo.getDetailReportByReportId(id);
     }
 

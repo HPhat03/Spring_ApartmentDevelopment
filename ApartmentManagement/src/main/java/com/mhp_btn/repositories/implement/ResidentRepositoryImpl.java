@@ -37,7 +37,7 @@ public class ResidentRepositoryImpl implements ResidentRepository{
     public ApartmentResident getResidentById(int id) {
         Session s = this.factory.getObject().getCurrentSession();
         Query q = s.createNamedQuery("ApartmentResident.findByUserId");
-        q.setParameter("userId", id); // Đặt tên tham số là 'userId'
+        q.setParameter("userId", id);
         List<ApartmentResident> result = q.getResultList();
         return result.isEmpty() ? null : result.get(0);
     }

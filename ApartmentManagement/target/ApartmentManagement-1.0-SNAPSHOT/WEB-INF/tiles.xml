@@ -80,4 +80,57 @@
         <put-attribute name="title" value="Chỉnh sửa hợp đồng" />
         <put-attribute name="content" value="/WEB-INF/pages/rentalConstract/editConstract.jsp" />
     </definition>
+<!--    report- baos cao-->
+    <definition name="reports" extends="baseLayout">
+        <put-attribute name="title" value="Danh sách báo cáo" />
+        <put-attribute name="content" value="/WEB-INF/pages/reports/index.jsp" />
+    </definition>
+    <definition name="detailReport" extends="baseLayout">
+        <put-attribute name="title" value="Chi tiết báo cáo" />
+        <put-attribute name="content" value="/WEB-INF/pages/reports/detailReport.jsp" />
+    </definition>
+
+<!--    survey request-->
+    <definition name="surveyRequest" extends="baseLayout">
+        <put-attribute name="title" value="Các phiếu khảo sát" />
+        <put-attribute name="content" value="/WEB-INF/pages/Survey/index.jsp" />
+    </definition>
+    <definition name="detailRequest" extends="baseLayout">
+        <put-attribute name="title" value="Các phiếu khảo sát" />
+        <put-attribute name="content" value="/WEB-INF/pages/Survey/detailRequest.jsp" />
+    </definition>
+    <definition name="addRequest" extends="baseLayout">
+        <put-attribute name="title" value="Tạo phiếu khảo sát" />
+        <put-attribute name="content" value="/WEB-INF/pages/Survey/addRequest.jsp" />
+    </definition>
+
+<!--    reponse detail-->
+    <definition name="detailResponse" extends="baseLayout">
+        <put-attribute name="title" value="Chi tiết phanr hồi" />
+        <put-attribute name="content" value="/WEB-INF/pages/Survey/detailResponse.jsp" />
+    </definition>
+<!--    tu thong minh-->
+    <definition name="cabinets" extends="baseLayout">
+        <put-attribute name="title" value="Quản lí tủ thông minh" />
+        <put-attribute name="content" value="/WEB-INF/pages/cabinet/index.jsp" />
+    </definition>
+
+    <definition name="addCabinet" extends="baseLayout">
+        <put-attribute name="title" value="Thêm đơn cho tủ thông minh" />
+        <put-attribute name="content" value="/WEB-INF/pages/cabinet/addCabinet.jsp" />
+    </definition>
+
+<!--    hóa đơn-->
+    <definition name="receipts" extends="baseLayout">
+        <put-attribute name="title" value="Danh sách hóa đơn" />
+        <put-attribute name="content" value="/WEB-INF/pages/receipt/index.jsp" />
+    </definition>
+    <definition name="detailReceipt" extends="baseLayout">
+        <put-attribute name="title" value="Chi tiết hóa đơn" />
+        <put-attribute name="content" value="/WEB-INF/pages/receipt/detailReceipt.jsp" />
+    </definition>
+    <definition name="addReceipt" extends="baseLayout">
+        <put-attribute name="title" value="Thêm hóa đơn" />
+        <put-attribute name="content" value="/WEB-INF/pages/receipt/addReceipt.jsp" />
+    </definition>
 </tiles-definitions>

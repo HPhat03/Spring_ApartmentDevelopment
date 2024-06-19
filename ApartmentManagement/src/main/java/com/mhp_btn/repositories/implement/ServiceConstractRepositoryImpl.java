@@ -9,10 +9,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.Query;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.util.List;
 
 @Transactional
@@ -77,10 +74,13 @@ public class ServiceConstractRepositoryImpl implements ServiceConstractRepositor
     @Override
     public void deleteServiceConstractByApartmentId(int apartmentId) {
         Session session = factoryBean.getObject().getCurrentSession();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaDelete<ApartmentServiceConstract> criteriaDelete = cb.createCriteriaDelete(ApartmentServiceConstract.class);
+        Root<ApartmentServiceConstract> root = criteriaDelete.from(ApartmentServiceConstract.class);
 
-        String hql = "DELETE FROM ApartmentServiceConstract constract WHERE constract.apartmentId.id = :apartmentId";
-        Query query = session.createQuery(hql);
-        query.setParameter("apartmentId", apartmentId);
+        criteriaDelete.where(cb.equal(root.get("apartmentId").get("id"), apartmentId));
+
+        Query query = session.createQuery(criteriaDelete);
         int deletedCount = query.executeUpdate();
     }
 

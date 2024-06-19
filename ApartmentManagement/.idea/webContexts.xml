@@ -4,6 +4,8 @@
     <option name="state">
       <map>
         <entry key="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/layout/base.jsp" value="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/layout" />
+        <entry key="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/pages/cabinet/editCabinet.jsp" value="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/pages/cabinet" />
+        <entry key="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/pages/cabinet/index.jsp" value="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/pages/cabinet" />
         <entry key="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/pages/index.jsp" value="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/pages" />
         <entry key="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/pages/rentalConstract/addConstract.jsp" value="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/pages/rentalConstract" />
         <entry key="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/pages/rooms/index.jsp" value="file://$PROJECT_DIR$/src/main/webapp/WEB-INF/pages/rooms" />

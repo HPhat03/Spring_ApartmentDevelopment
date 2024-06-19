@@ -14,6 +14,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.util.List;
 
 @Transactional
@@ -37,6 +41,19 @@ public class SurveyResponseRepositoryImpl implements SurveyResponseRepository {
         q.setParameter("id", id); // Thiết lập giá trị của tham số ID
         List<ApartmentSurveyResponse> result = q.getResultList();
         return result.isEmpty() ? null :result.get(0);
+    }
+
+    @Override
+    public List<ApartmentSurveyResponse> getAllBySurveyId(Integer surveyId) {
+        Session s = this.factoryBean.getObject().getCurrentSession();
+        CriteriaBuilder cb = s.getCriteriaBuilder();
+        CriteriaQuery<ApartmentSurveyResponse> cq = cb.createQuery(ApartmentSurveyResponse.class);
+        Root<ApartmentSurveyResponse> root = cq.from(ApartmentSurveyResponse.class);
+
+        Predicate surveyIdPredicate = cb.equal(root.get("surveyId").get("id"), surveyId);
+        cq.where(surveyIdPredicate);
+
+        return s.createQuery(cq).getResultList();
     }
 
     @Override
