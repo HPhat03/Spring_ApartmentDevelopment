@@ -187,37 +187,82 @@ public class ApiRentalConstractController {
         }
     }
 
-
     @PatchMapping(value = "/constract/edit/{id}/", produces = "application/json")
-    public ResponseEntity<ApartmentRentalConstract> updateConstractById(@PathVariable int id, @RequestBody Map<String, String> updates) {
-        // Lấy thông tin
+    public ResponseEntity<Object> updateConstractById(@PathVariable int id, @RequestBody Map<String, Object> updates) {
+        // Lấy thông tin hợp đồng
         ApartmentRentalConstract constract = constractService.getConstractById(id);
 
         if (constract == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Không tìm thấy hợp đồng với ID " + id, HttpStatus.NOT_FOUND);
         }
 
-        for (Map.Entry<String, String> entry : updates.entrySet()) {
-            String key = entry.getKey();
-            String value = entry.getValue();
+        try {
+            for (Map.Entry<String, Object> entry : updates.entrySet()) {
+                String key = entry.getKey();
+                Object value = entry.getValue();
 
-            switch (key) {
-                case "status":
-                    constract.setStatus(value);
-                    break;
-                case "isActive":
-                    constract.setIsActive(Short.parseShort(value));
-                    break;
-                case "finalPrice":
-                    constract.setFinalPrice(Integer.parseInt(value));
-                    break;
+                switch (key) {
+                    case "status":
+                        constract.setStatus((String) value);
+                        break;
+                    case "isActive":
+                        constract.setIsActive(Short.parseShort(value.toString()));
+                        break;
+                    case "finalPrice":
+                        constract.setFinalPrice(Integer.parseInt(value.toString()));
+                        break;
+                    case "services":
+                        List<Integer> services_id = (List<Integer>) value;
+                        List<ApartmentService> existingServices = scs.getServicesByApartmentId(constract.getId());
 
+                        // Xóa các dịch vụ không còn trong danh sách mới
+                        existingServices.forEach(s -> {
+                            if (!services_id.contains(s.getId())) {
+                                scs.deleteServiceConstractById(s.getId());
+                            }
+                        });
+
+                        // Thêm các dịch vụ mới
+                        services_id.forEach(sid -> {
+                            boolean exists = existingServices.stream().anyMatch(es -> es.getId().equals(sid));
+                            if (!exists) {
+                                ApartmentService service = serviceService.getServiceById(sid);
+                                ApartmentServiceConstract serviceConstract = new ApartmentServiceConstract();
+                                serviceConstract.setServiceId(service);
+                                serviceConstract.setApartmentId(constract);
+                                scs.addServiceConstract(serviceConstract);
+                            }
+                        });
+                        break;
+                    case "other_members":
+                        List<Map<String, String>> other_members = (List<Map<String, String>>) value;
+                        List<ApartmentOtherMember> existingMembers = otherMemberService.getOtherMembersByApartmentId(constract.getId());
+
+                        // Xóa các thành viên khác cũ
+                        existingMembers.forEach(member -> otherMemberService.deleteMemberById(member.getId()));
+
+                        // Thêm các thành viên khác mới
+                        other_members.forEach(memberData -> {
+                            ApartmentOtherMember member = new ApartmentOtherMember();
+                            member.setApartmentId(constract);
+                            member.setName(memberData.get("name"));
+                            member.setRelationship(memberData.get("relationship"));
+                            otherMemberService.addOtherMemberByApartmentId(member);
+                        });
+                        break;
+                    default:
+                        break;
+                }
             }
-        }
-        constractService.updateConstract(constract);
-        return new ResponseEntity<>(constract, HttpStatus.OK);
-    }
 
+            constractService.updateConstract(constract);
+            return new ResponseEntity<>(RentalConstractSerializer.RentalConstractDetail(constract), HttpStatus.OK);
+        } catch (NumberFormatException e) {
+            return new ResponseEntity<>("Dữ liệu không hợp lệ: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Lỗi khi cập nhật hợp đồng: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
 }
 

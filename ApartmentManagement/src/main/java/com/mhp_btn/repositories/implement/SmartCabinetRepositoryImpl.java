@@ -35,23 +35,29 @@ public class SmartCabinetRepositoryImpl implements SmartCabinetRepository {
 
         List<Predicate> predicates = new ArrayList<>();
 
-//        if (params.containsKey("status")) {
-//            String status = params.get("status");
-//            switch (status) {
-//                case "active":
-//                    predicates.add(criteriaBuilder.equal(root.get("status"), "RECEIVED"));
-//                    break;
-//                case "inactive":
-//                    predicates.add(criteriaBuilder.equal(root.get("status"), "PENDING"));
-//                    break;
-//                default:
-//                    break;
-//            }
-//        }
+        // Lấy tham số status từ params và tạo Predicate
+        if (params.containsKey("status")) {
+            String status = params.get("status");
+            if ("RECEIVED'".equalsIgnoreCase(status)) {
+                predicates.add(criteriaBuilder.equal(root.get("status"), "RECEIVED"));
+            } else if ("PENDING".equalsIgnoreCase(status)) {
+                predicates.add(criteriaBuilder.equal(root.get("status"), "PENDING"));
+            }
+        }
 
         criteriaQuery.where(predicates.toArray(new Predicate[0]));
 
         Query query = session.createQuery(criteriaQuery);
+
+//        // Phân trang
+//        String page = params.get("page");
+//        if (page != null && !page.isEmpty()) {
+//            int pagesize = Integer.parseInt(Objects.requireNonNull(env.getProperty("services.pagesize")));
+//            int start = (Integer.parseInt(page) - 1) * pagesize;
+//            query.setFirstResult(start);
+//            query.setMaxResults(pagesize);
+//        }
+
         return query.getResultList();
     }
 

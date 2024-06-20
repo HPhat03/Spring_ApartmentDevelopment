@@ -55,12 +55,9 @@
                                 <a class="btn btn-sm btn-success" href="<c:url value='/receipts/${re.id}' />">
                                     <i class="bi bi-pencil"></i> Chi tiết
                                 </a>
-                                <a class="btn btn-sm btn-primary" href="<c:url value='' />">
-                                    <i class="bi bi-pencil"></i> Sửa
-                                </a>
-                                <c:url value="/cabinets/${re.id}" var="urlDelete" />
+                                <c:url value="/receipts/${re.id}" var="urlDelete" />
 
-                                <button class="btn btn-sm btn-danger removeRoom" data-id="${re.id}" onclick="deleteCabinet('${urlDelete}', ${re.id})">
+                                <button class="btn btn-sm btn-danger removeRoom" data-id="${re.id}" onclick="deleteReceipt('${urlDelete}', ${re.id})">
                                     <i class="bi bi-trash"></i> Xóa
                                 </button>
 
@@ -96,4 +93,26 @@
         </c:if>
     </ul>
 </div>
+<script>
+    function deleteReceipt(url, ID) {
+        console.log(url);
+        if (confirm("Bạn có chắc chắn muốn xóa hóa đơn này không?")) {
+            fetch(url, {
+                method: "DELETE",
+            })
+                .then(response => {
+                    if (response.status === 204) {
+                        alert("Xóa hóa đơn thành công");
+                        location.reload();
+                    } else {
+                        alert("Xóa hóa đơn thất bại");
+                    }
+                })
+                .catch(error => {
+                    alert("Có lỗi xảy ra khi xóa hợp đơn");
+                });
+        }
+    }
 
+
+</script>

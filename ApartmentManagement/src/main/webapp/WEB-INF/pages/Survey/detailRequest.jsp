@@ -180,7 +180,7 @@
             </tbody>
         </table>
     </div>
-    <h1> Danh sách phản hồi</h1>
+    <h4> Danh sách phản hồi</h4>
     <c:choose>
         <c:when test="${empty responses}">
             <p>Chưa có ai phản hồi khảo sát.</p>

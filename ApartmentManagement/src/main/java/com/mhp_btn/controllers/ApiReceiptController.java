@@ -41,28 +41,25 @@ public class ApiReceiptController {
         return new ResponseEntity<>(ReceiptSerializer.ReceiptList(receipts), HttpStatus.OK);
     }
 
-    @DeleteMapping(path = "/receipt/{id}")
+    @DeleteMapping(path = "/receipts/{id}")
     public ResponseEntity<?> deleteReceiptById(@PathVariable int id) {
         ApartmentReceipt receipt = receiptService.getReceiptById(id);
         if (receipt == null) {
             return new ResponseEntity<>("Can not find receipt with ID " + id, HttpStatus.NOT_FOUND);
         }
 
-        // Lấy danh sách chi tiết hóa đơn
         List<ApartmentDetailReceipt> detailReceipts = detailReceiptService.getDetailReceiptsByReceiptId(id);
         // Xóa từng chi tiết hóa đơn
         for (ApartmentDetailReceipt detailReceipt : detailReceipts) {
             detailReceiptService.deleteDetailReceiptById(detailReceipt.getId());
         }
-
-        // Xóa hóa đơn
         receiptService.deleteReiptById(id);
 
-        return new ResponseEntity<>("Delete success with receipt ID " + id + " and its details.", HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>("Xóa thành công", HttpStatus.NO_CONTENT);
     }
 
 
-    @PostMapping("/api/receipt/")
+    @PostMapping("/receipts/add")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> addReceipt(@RequestBody Map<String, String> params) {
         if (params.containsKey("month") && 
@@ -143,7 +140,7 @@ public class ApiReceiptController {
             water_usage.setReceiptId(receipt);
             water_usage.setNumber(cur_water);
             usageNumberService.saveOrUpdate(water_usage);
-            
+
             return ResponseEntity.status(HttpStatus.CREATED).build();
         } else {
            return new ResponseEntity<>("Thiếu các thông tin cần thiết", HttpStatus.BAD_REQUEST);
@@ -151,52 +148,52 @@ public class ApiReceiptController {
     }
 
 
-    @PatchMapping(value = "/api/receipt/{id}", produces = "application/json")
-    public ResponseEntity<ApartmentReceipt> updateReceiptById(@PathVariable int id, @RequestBody Map<String, String> updates) {
-        ApartmentReceipt receipt = receiptService.getReceiptById(id);
-
-        if (receipt == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
-        // Cập nhật thông tin hóa đơn nếu có
-        for (Map.Entry<String, String> entry : updates.entrySet()) {
-            String key = entry.getKey();
-            String value = entry.getValue();
-
-            switch (key) {
-                case "month":
-                    receipt.setMonth(Integer.parseInt(value));
-                    break;
-                case "createdDate":
-                    try {
-                        Date createdDate = StringUtil.dateFormater().parse(value);
-                        receipt.setCreatedDate(createdDate);
-                    } catch (ParseException e) {
-                        throw new IllegalArgumentException("Định dạng ngày tháng không hợp lệ: " + value);
-                    }
-                    break;
-                case "total":
-                    receipt.setTotal(Integer.parseInt(value));
-                    break;
-                case "apartmentId":
-                    ApartmentRentalConstract constract = constractService.getConstractById(Integer.parseInt(value));
-                    if (constract != null) {
-                        receipt.setApartmentId(constract);
-                    } else {
-                        throw new IllegalArgumentException("Apartment with ID " + value + " not found");
-                    }
-                    break;
-                default:
-                    // Nếu trường cập nhật không hợp lệ, bạn có thể xử lý tùy ý
-                    throw new IllegalArgumentException("Trường cập nhật không hợp lệ: " + key);
-            }
-        }
-
-        receiptService.updateReceipt(receipt);
-
-        return new ResponseEntity<>(receipt, HttpStatus.OK);
-    }
+//    @PatchMapping(value = "/api/receipt/{id}", produces = "application/json")
+//    public ResponseEntity<ApartmentReceipt> updateReceiptById(@PathVariable int id, @RequestBody Map<String, String> updates) {
+//        ApartmentReceipt receipt = receiptService.getReceiptById(id);
+//
+//        if (receipt == null) {
+//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//        }
+//
+//        // Cập nhật thông tin hóa đơn nếu có
+//        for (Map.Entry<String, String> entry : updates.entrySet()) {
+//            String key = entry.getKey();
+//            String value = entry.getValue();
+//
+//            switch (key) {
+//                case "month":
+//                    receipt.setMonth(Integer.parseInt(value));
+//                    break;
+//                case "createdDate":
+//                    try {
+//                        Date createdDate = StringUtil.dateFormater().parse(value);
+//                        receipt.setCreatedDate(createdDate);
+//                    } catch (ParseException e) {
+//                        throw new IllegalArgumentException("Định dạng ngày tháng không hợp lệ: " + value);
+//                    }
+//                    break;
+//                case "total":
+//                    receipt.setTotal(Integer.parseInt(value));
+//                    break;
+//                case "apartmentId":
+//                    ApartmentRentalConstract constract = constractService.getConstractById(Integer.parseInt(value));
+//                    if (constract != null) {
+//                        receipt.setApartmentId(constract);
+//                    } else {
+//                        throw new IllegalArgumentException("Apartment with ID " + value + " not found");
+//                    }
+//                    break;
+//                default:
+//                    // Nếu trường cập nhật không hợp lệ, bạn có thể xử lý tùy ý
+//                    throw new IllegalArgumentException("Trường cập nhật không hợp lệ: " + key);
+//            }
+//        }
+//
+//        receiptService.updateReceipt(receipt);
+//
+//        return new ResponseEntity<>(receipt, HttpStatus.OK);
+//    }
 
 
 

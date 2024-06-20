@@ -75,7 +75,7 @@
                                     <a class="btn btn-sm btn-secondary" href="<c:url value='/survey_request/${r.id}' />">
                                         <i class="bi bi-pencil"></i> Xem chi tiết
                                     </a>
-                                    <a class="btn btn-sm btn-primary" href="<c:url value='/services/edit/${r.id}' />">
+                                    <a class="btn btn-sm btn-primary" href="<c:url value='' />">
                                         <i class="bi bi-pencil"></i> Sửa
                                     </a>
                                     <c:url value="/survey_request/${r.id}" var="urlDelete" />

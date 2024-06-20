@@ -132,18 +132,6 @@ public class ApiSurveyRequestController {
                     }
                     surveyRequest.setAdminId(user.getApartmentAdmin());
                     break;
-                case "startDate":
-                    try {
-                        Date startDate = StringUtil.dateFormater().parse(value);
-                        if (surveyRequest.getEndDate() != null && startDate.after(surveyRequest.getEndDate())) {
-                            throw new IllegalArgumentException("Start date cannot be after end date");
-                        }
-                        surveyRequest.setStartDate(startDate);
-                    } catch (ParseException e) {
-                        throw new IllegalArgumentException("Invalid start date format");
-                    }
-                    break;
-
                 case "endDate":
                     try {
                         Date endDate = StringUtil.dateFormater().parse(value);

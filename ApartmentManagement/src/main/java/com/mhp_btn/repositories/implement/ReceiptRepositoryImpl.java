@@ -48,9 +48,9 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
     @Override
     public void deleteReceiptById(int id) {
         Session session = factoryBean.getObject().getCurrentSession();
-        ApartmentRelativeRegistry relativeRegistry = session.get(ApartmentRelativeRegistry.class, id);
-        if (relativeRegistry != null) {
-            session.delete(relativeRegistry);
+        ApartmentReceipt receipt = session.get(ApartmentReceipt.class, id);
+        if (receipt != null) {
+            session.delete(receipt);
         }
     }
 
@@ -78,7 +78,7 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
 
 
         q.where(predicates.toArray(new Predicate[0]));
-
+        q.orderBy(b.desc(r.get("id")));
         Query query = s.createQuery(q);
         //phan trang
         String page = params.get("page");

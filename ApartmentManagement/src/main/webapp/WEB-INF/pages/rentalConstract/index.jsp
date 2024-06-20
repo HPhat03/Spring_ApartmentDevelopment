@@ -116,17 +116,14 @@
             })
                 .then(response => {
                     if (response.status === 200) {
-                        alert("Xóa phòng thành công");
+                        alert("Xóa hợp đồng thành công");
                         location.reload();
                     } else {
-                        console.log("id dich vu:", serviceId);
-                        alert("Xóa phòng thất bại");
+                        alert("Xóa hợp đồng thất bại");
                     }
                 })
                 .catch(error => {
-                    console.log("id rooom:", roomId);
-                    console.error("Loi fetch api:", error);
-                    alert("Có lỗi xảy ra khi xóa phòng");
+                    alert("Có lỗi xảy ra khi xóa hợp đồng");
                 });
         }
     }

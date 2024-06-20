@@ -64,6 +64,9 @@ public class SurveyRequestController {
     }
     @GetMapping("/{idRequest}/response/{id}")
     public String detailResponse(@PathVariable int id,@PathVariable int idRequest,Model model) {
+        model.addAttribute("requests", this.requestService.getSurveyRequestById(idRequest));
+        model.addAttribute("detail_requests", this.detailRequestService.getAllDetailRequestByRequestID(idRequest));
+
         model.addAttribute("responses",this.surveyResponseService.getSurveyResponseById(idRequest));
         model.addAttribute("detail_responses", this.detailResponseService.getAllDetailResponseByResponseID(id));
         return "detailResponse";

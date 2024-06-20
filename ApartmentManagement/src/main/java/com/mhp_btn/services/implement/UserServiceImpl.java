@@ -91,4 +91,9 @@ public class UserServiceImpl implements UserService {
         this.up.deleteUserById(id);
     }
 
+    @Override
+    public long countUser() {
+        return this.up.countUser();
+    }
+
 }

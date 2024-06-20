@@ -26,6 +26,8 @@ import javax.persistence.criteria.Root;
 
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Repository;
@@ -38,6 +40,7 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @Repository
 @Transactional
+@PropertySource("classpath:configs.properties")
 public class UserRepositoryImpl implements UserRepository{
     
     @Autowired
@@ -46,6 +49,8 @@ public class UserRepositoryImpl implements UserRepository{
     private Cloudinary cloudinary;
     @Autowired
     private BCryptPasswordEncoder encoder;
+    @Autowired
+    private Environment env;
 
     @Override
     public List<ApartmentUser> getUsers(Map<String, String> params) {
@@ -69,6 +74,14 @@ public class UserRepositoryImpl implements UserRepository{
         }
         q.where(predicates.toArray(Predicate[]::new));
         Query query = s.createQuery(q);
+
+        String page = params.get("page");
+        if(page != null && !page.isEmpty() ){
+            int pagesize = Integer.parseInt(env.getProperty("services.pagesize"));
+            int start = (Integer.parseInt(page)-1) * pagesize;
+            query.setFirstResult(start);
+            query.setMaxResults(pagesize);
+        }
         return (List<ApartmentUser>) query.getResultList();
     }
 
@@ -211,6 +224,19 @@ public class UserRepositoryImpl implements UserRepository{
             return (List<ApartmentUser>) q.getResultList();
         else
             return null;
+    }
+
+    @Override
+    public long countUser() {
+
+        Session s = this.factory.getObject().getCurrentSession();
+            CriteriaBuilder cb = s.getCriteriaBuilder();
+            CriteriaQuery<Long> q = cb.createQuery(Long.class);
+            q.select(cb.count(q.from(ApartmentUser.class)));
+            Query rq = s.createQuery(q);
+            return (long) rq.getSingleResult();
+
+
     }
 
 }

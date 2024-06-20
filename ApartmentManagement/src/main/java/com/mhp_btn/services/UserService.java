@@ -24,4 +24,5 @@ public interface UserService extends UserDetailsService {
     public List<ApartmentUser> getUserByRole(String role) ;
 
     void deleteUserById(int id) ;
+    public long countUser() ;
 }

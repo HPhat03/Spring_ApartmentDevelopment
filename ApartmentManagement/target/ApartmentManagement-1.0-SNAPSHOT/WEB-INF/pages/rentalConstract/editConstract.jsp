@@ -9,12 +9,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Chỉnh sửa thông tin hợp đồng</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <style>
         body {
             background-color: #f8f9fa;
@@ -68,7 +62,6 @@
             row.remove();
         }
     </script>
-</head>
 <body>
 <div class="container">
     <div class="card">
@@ -78,7 +71,7 @@
         <div class="card-body">
             <h6 class="mb-4"><strong>Thông tin hợp đồng phòng:</strong> ${constract.roomId.roomNumber}</h6>
             <h6 class="mb-4"><strong>Tên khách hàng:</strong> ${constract.customerName}</h6>
-            <form method="post" action="updateContract">
+            <form method="post" >
                 <div class="form-group mb-4">
                     <label for="contractPrice"><strong>Giá hợp đồng:</strong></label>
                     <input type="number" id="contractPrice" name="final_price" class="form-control" value="${constract.finalPrice}" required>
@@ -141,4 +134,4 @@
     </div>
 </div>
 </body>
-</html>
+

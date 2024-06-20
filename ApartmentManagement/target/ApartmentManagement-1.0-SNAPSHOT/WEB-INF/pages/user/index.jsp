@@ -123,26 +123,26 @@
                 </div>
             </div>
 
-<%--            <div class="d-flex justify-content-center">--%>
-<%--                <ul class="pagination align-items-center">--%>
-<%--                    <c:if test="${currentPage > 1}">--%>
-<%--                        <li class="page-item"><a class="page-link" href="?page=${currentPage - 1}">Previous</a></li>--%>
-<%--                    </c:if>--%>
-<%--                    <c:forEach begin="1" end="${totalPages}" var="pageNumber">--%>
-<%--                        <c:choose>--%>
-<%--                            <c:when test="${pageNumber == currentPage}">--%>
-<%--                                <li class="page-item active"><a class="page-link" href="?page=${pageNumber}">${pageNumber}</a></li>--%>
-<%--                            </c:when>--%>
-<%--                            <c:otherwise>--%>
-<%--                                <li class="page-item"><a class="page-link" href="?page=${pageNumber}">${pageNumber}</a></li>--%>
-<%--                            </c:otherwise>--%>
-<%--                        </c:choose>--%>
-<%--                    </c:forEach>--%>
-<%--                    <c:if test="${currentPage < totalPages}">--%>
-<%--                        <li class="page-item"><a class="page-link" href="?page=${currentPage + 1}">Next</a></li>--%>
-<%--                    </c:if>--%>
-<%--                </ul>--%>
-<%--            </div>--%>
+            <div class="d-flex justify-content-center">
+                <ul class="pagination align-items-center">
+                    <c:if test="${currentPage > 1}">
+                        <li class="page-item"><a class="page-link" href="?page=${currentPage - 1}">Previous</a></li>
+                    </c:if>
+                    <c:forEach begin="1" end="${totalPages}" var="pageNumber">
+                        <c:choose>
+                            <c:when test="${pageNumber == currentPage}">
+                                <li class="page-item active"><a class="page-link" href="?page=${pageNumber}">${pageNumber}</a></li>
+                            </c:when>
+                            <c:otherwise>
+                                <li class="page-item"><a class="page-link" href="?page=${pageNumber}">${pageNumber}</a></li>
+                            </c:otherwise>
+                        </c:choose>
+                    </c:forEach>
+                    <c:if test="${currentPage < totalPages}">
+                        <li class="page-item"><a class="page-link" href="?page=${currentPage + 1}">Next</a></li>
+                    </c:if>
+                </ul>
+            </div>
         </div>
     </div>
 </div>
