@@ -35,8 +35,9 @@ public class UserServiceImpl implements UserService {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     
     @Override
-    public List<ApartmentUser> getUsers() {
-        return up.getUsers();
+    public List<ApartmentUser> getUsers(Map<String, String> params) {
+
+        return up.getUsers(params);
     }
 
     @Override
@@ -83,4 +84,20 @@ public class UserServiceImpl implements UserService {
     public boolean authResident(String username, String password) {
         return this.up.authResident(username, password);
     }
+
+    @Override
+    public List<ApartmentUser> getUserByRole(String role) {
+        return this.up.getUserByRole(role);
+    }
+
+    @Override
+    public void deleteUserById(int id) {
+        this.up.deleteUserById(id);
+    }
+
+    @Override
+    public long countUser() {
+        return this.up.countUser();
+    }
+
 }

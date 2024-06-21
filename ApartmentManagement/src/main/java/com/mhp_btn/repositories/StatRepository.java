@@ -13,4 +13,6 @@ import java.util.List;
 public interface StatRepository {
     List<Object[]> statSurveybyId(int id);
     List<Object[]> statRevenue(int year, String filter);
+
+
 }

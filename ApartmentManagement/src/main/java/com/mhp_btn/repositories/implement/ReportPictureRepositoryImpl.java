@@ -12,6 +12,12 @@ import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.util.List;
+
 /**
  *
  * @author Admin
@@ -30,5 +36,18 @@ public class ReportPictureRepositoryImpl implements ReportPictureRepository{
         else
             s.update(p);
     }
-    
+
+    @Override
+    public List<ApartmentReportPicture> getPicturesByReportId(int reportId) {
+        Session s = this.factory.getObject().getCurrentSession();
+
+        CriteriaBuilder cb = s.getCriteriaBuilder();
+        CriteriaQuery<ApartmentReportPicture> cq = cb.createQuery(ApartmentReportPicture.class);
+        Root<ApartmentReportPicture> root = cq.from(ApartmentReportPicture.class);
+
+        Predicate reportIdPredicate = cb.equal(root.get("reportId").get("id"), reportId);
+        cq.where(reportIdPredicate);
+        return s.createQuery(cq).getResultList();
+    }
+
 }

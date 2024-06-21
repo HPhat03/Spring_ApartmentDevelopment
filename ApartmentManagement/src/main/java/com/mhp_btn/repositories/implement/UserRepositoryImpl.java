@@ -6,19 +6,28 @@ package com.mhp_btn.repositories.implement;
 
 import com.cloudinary.Cloudinary;
 import com.mhp_btn.components.CloudinaryUtil;
+import com.mhp_btn.pojo.ApartmentService;
 import com.mhp_btn.pojo.ApartmentUser;
 import com.mhp_btn.repositories.UserRepository;
 import com.mhp_btn.utils.StringUtil;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Repository;
@@ -31,6 +40,7 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @Repository
 @Transactional
+@PropertySource("classpath:configs.properties")
 public class UserRepositoryImpl implements UserRepository{
     
     @Autowired
@@ -39,12 +49,40 @@ public class UserRepositoryImpl implements UserRepository{
     private Cloudinary cloudinary;
     @Autowired
     private BCryptPasswordEncoder encoder;
+    @Autowired
+    private Environment env;
 
     @Override
-    public List<ApartmentUser> getUsers() {
-       Session s = this.factory.getObject().getCurrentSession();
-       Query q = s.createNamedQuery("ApartmentUser.findAll");
-       return q.getResultList();
+    public List<ApartmentUser> getUsers(Map<String, String> params) {
+        Session s = this.factory.getObject().getCurrentSession();
+        CriteriaBuilder b = s.getCriteriaBuilder();
+        CriteriaQuery<ApartmentUser> q = b.createQuery(ApartmentUser.class);
+        Root<ApartmentUser> r = q.from(ApartmentUser.class);
+        q.select(r);
+
+        List<Predicate> predicates = new ArrayList<>();
+
+        String kw = params.get("kw");
+        if (kw != null && !kw.isEmpty()) {
+            predicates.add(b.like(r.get("username"), String.format("%%%s%%", kw)));
+        }
+        String role = params.get("role");
+        if (role != null && role.equals("RESIDENT")) {
+            predicates.add(b.equal(r.get("role"), "RESIDENT"));
+        } else if(role !=null && role.equals("ADMIN")) {
+            predicates.add(b.equal(r.get("role"), "ADMIN"));
+        }
+        q.where(predicates.toArray(Predicate[]::new));
+        Query query = s.createQuery(q);
+
+        String page = params.get("page");
+        if(page != null && !page.isEmpty() ){
+            int pagesize = Integer.parseInt(env.getProperty("services.pagesize"));
+            int start = (Integer.parseInt(page)-1) * pagesize;
+            query.setFirstResult(start);
+            query.setMaxResults(pagesize);
+        }
+        return (List<ApartmentUser>) query.getResultList();
     }
 
     @Override
@@ -139,6 +177,14 @@ public class UserRepositoryImpl implements UserRepository{
                 return new ApartmentUser();
             }
         }
+        if (!isInit) {
+            if (user.getIsActive() == 0) {
+                user.setIsActive((short) 1);
+            } else {
+                user.setIsActive((short) 0);
+            }
+        }
+
         try {
                 if (file!=null && !file.isEmpty()) {
                     user.setAvatar(CloudinaryUtil.upload(file, cloudinary));
@@ -169,4 +215,38 @@ public class UserRepositoryImpl implements UserRepository{
         return this.encoder.matches(password, u.getPassword()) && u.getRole().equals(ApartmentUser.RESIDENT);
     }
     
+
+    @Override
+    public void deleteUserById(int id) {
+        Session s = this.factory.getObject().getCurrentSession();
+        ApartmentUser u = s.get(ApartmentUser.class, id);
+        if(u!=null){
+            s.delete(u);
+        }
+    }
+
+    @Override
+    public List<ApartmentUser> getUserByRole(String role) {
+        Session s = this.factory.getObject().getCurrentSession();
+        Query q = s.createNamedQuery("ApartmentUser.findByRole");
+        q.setParameter("role", role);
+        if (!q.getResultList().isEmpty())
+            return (List<ApartmentUser>) q.getResultList();
+        else
+            return null;
+    }
+
+    @Override
+    public long countUser() {
+
+        Session s = this.factory.getObject().getCurrentSession();
+            CriteriaBuilder cb = s.getCriteriaBuilder();
+            CriteriaQuery<Long> q = cb.createQuery(Long.class);
+            q.select(cb.count(q.from(ApartmentUser.class)));
+            Query rq = s.createQuery(q);
+            return (long) rq.getSingleResult();
+
+
+    }
+
 }

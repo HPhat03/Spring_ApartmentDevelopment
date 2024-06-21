@@ -11,6 +11,10 @@ import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.util.List;
 
 @Transactional
@@ -21,10 +25,16 @@ public class DetailRequestRepositoryImpl implements DetailRequestRepository {
 
     @Override
     public List<ApartmentDetailRequest> getAllDetailRequestByRequestID(int id) {
-        Session session = this.factoryBean.getObject().getCurrentSession();
-        Query query = session.createQuery("FROM ApartmentDetailRequest adr WHERE adr.requestId.id = :requestId");
-        query.setParameter("requestId", id);
-        return query.getResultList();
+        Session s = this.factoryBean.getObject().getCurrentSession();
+        CriteriaBuilder criteriaBuilder = s.getCriteriaBuilder();
+        CriteriaQuery<ApartmentDetailRequest> criteriaQuery = criteriaBuilder.createQuery(ApartmentDetailRequest.class);
+        Root<ApartmentDetailRequest> root = criteriaQuery.from(ApartmentDetailRequest.class);
+
+        Predicate condition = criteriaBuilder.equal(root.get("requestId"), id);
+
+        criteriaQuery.select(root).where(condition);
+
+        return s.createQuery(criteriaQuery).getResultList();
     }
 
     @Override

@@ -15,11 +15,15 @@ import org.springframework.web.multipart.MultipartFile;
  * @author Admin
  */
 public interface UserService extends UserDetailsService {
-    List<ApartmentUser> getUsers();
+    List<ApartmentUser> getUsers(Map<String, String> params) ;
     ApartmentUser getUserByID(int id);
     ApartmentUser getUsersByUsername(String username);
     void save(ApartmentUser user, boolean resetPassword);
     ApartmentUser ChangeOrInitialize(ApartmentUser user, Map<String, String> data, boolean isInit);
     boolean authUser(String username, String password);
     boolean authResident(String username, String password) ;
+    public List<ApartmentUser> getUserByRole(String role) ;
+
+    void deleteUserById(int id) ;
+    public long countUser() ;
 }

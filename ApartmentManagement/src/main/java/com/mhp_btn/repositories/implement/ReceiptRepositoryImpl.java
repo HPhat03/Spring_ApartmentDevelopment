@@ -5,17 +5,21 @@ import com.mhp_btn.pojo.ApartmentPayment;
 import com.mhp_btn.pojo.ApartmentReceipt;
 import com.mhp_btn.pojo.ApartmentRelativeRegistry;
 
+// import com.mhp_btn.pojo.*;
+//import com.mhp_btn.pojo.ApartmentPayment_;
 import com.mhp_btn.repositories.ReceiptRepository;
-import java.util.ArrayList;
+
+import java.util.*;
+
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.Query;
-import java.util.List;
-import java.util.HashMap;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -24,20 +28,23 @@ import javax.persistence.criteria.Subquery;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 
+import org.springframework.security.core.context.SecurityContextHolder;
+
 @Transactional
 @Repository
 @PropertySource("classpath:config.properties")
 public class ReceiptRepositoryImpl implements ReceiptRepository {
     @Autowired
-    private  LocalSessionFactoryBean factoryBean;
+    private LocalSessionFactoryBean factoryBean;
     @Autowired
     private Environment env;
+
     @Override
     public ApartmentReceipt getReceiptById(int id) {
-        
+
         Session s = this.factoryBean.getObject().getCurrentSession();
         Query q = s.createNamedQuery("ApartmentReceipt.findById");
-        q.setParameter("id", id); // Đặt tên tham số là 'userId'
+        q.setParameter("id", id);
         List<ApartmentReceipt> result = q.getResultList();
         return result.isEmpty() ? null : result.get(0);
     }
@@ -45,9 +52,9 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
     @Override
     public void deleteReceiptById(int id) {
         Session session = factoryBean.getObject().getCurrentSession();
-        ApartmentRelativeRegistry relativeRegistry = session.get(ApartmentRelativeRegistry.class, id);
-        if (relativeRegistry != null) {
-            session.delete(relativeRegistry);
+        ApartmentReceipt receipt = session.get(ApartmentReceipt.class, id);
+        if (receipt != null) {
+            session.delete(receipt);
         }
     }
 
@@ -64,33 +71,77 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
     }
 
     @Override
+    public List<ApartmentReceipt> getAll(Map<String, String> params) {
+        Session s = Objects.requireNonNull(this.factoryBean.getObject()).getCurrentSession();
+        CriteriaBuilder b = s.getCriteriaBuilder();
+        CriteriaQuery<ApartmentReceipt> q = b.createQuery(ApartmentReceipt.class);
+        Root<ApartmentReceipt> r = q.from(ApartmentReceipt.class);
+
+        q.select(r);
+        List<Predicate> predicates = new ArrayList<>();
+
+
+        q.where(predicates.toArray(new Predicate[0]));
+        q.orderBy(b.desc(r.get("id")));
+        Query query = s.createQuery(q);
+        //phan trang
+        String page = params.get("page");
+        if (page != null && !page.isEmpty()) {
+            int pagesize = Integer.parseInt(Objects.requireNonNull(env.getProperty("room.pagesize")));
+            int start = (Integer.parseInt(page) - 1) * pagesize;
+            query.setFirstResult(start);
+            query.setMaxResults(pagesize);
+        }
+        return (List<ApartmentReceipt>) query.getResultList();
+    }
+
+    @Override
+    public long countReceipt() {
+
+        Session session = this.factoryBean.getObject().getCurrentSession();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<Long> q = cb.createQuery(Long.class);
+        q.select(cb.count(q.from(ApartmentReceipt.class)));
+        Query rq = session.createQuery(q);
+        return (long) rq.getSingleResult();
+
+    }
+
+    @Override
     public List<ApartmentReceipt> getAllReceipt(HashMap<String, String> params) {
         Session s = this.factoryBean.getObject().getCurrentSession();
         
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Query uq = s.createQuery("FROM ApartmentUser U WHERE U.username=:un");
+        uq.setParameter("un", username);
+        ApartmentUser user = (ApartmentUser) uq.getSingleResult();
+
         CriteriaBuilder cb = s.getCriteriaBuilder();
         CriteriaQuery<ApartmentReceipt> q = cb.createQuery(ApartmentReceipt.class);
-        Root r = q.from(ApartmentReceipt.class);
+        Root<ApartmentReceipt> r = q.from(ApartmentReceipt.class);
         q.select(r);
-        
-        List<Predicate> predicates =  new ArrayList<>();
-        
+
+        List<Predicate> predicates = new ArrayList<>();
+
         String month = params.get("month");
-        if(month!=null && !month.isEmpty())
+        if (month != null && !month.isEmpty()) {
             predicates.add(cb.equal(r.get("month"), Integer.parseInt(month)));
-        
+        }
+
         String year = params.get("year");
-        if(year!=null && !year.isEmpty())
+        if (year != null && !year.isEmpty()) {
             predicates.add(cb.equal(r.get("year"), year));
-        
+        }
+
         String filter = params.get("filter");
-        if(filter!=null){
+        if (filter != null) {
             Subquery<ApartmentPayment> sq = q.subquery(ApartmentPayment.class);
             Root<ApartmentPayment> sr = sq.from(ApartmentPayment.class);
             sq.select(sr).where(cb.equal(r.get("id"), sr.get("receipt")));
-            if(filter.equals("PAID"))
-            {            
-                predicates.add(cb.exists(sq));   
-            }else if(filter.equals("UNPAID")){
+            if (filter.equals("PAID")) {
+                predicates.add(cb.exists(sq));
+            } else if (filter.equals("UNPAID")) {
                 predicates.add(cb.not(cb.exists(sq)));
             }
         }
@@ -98,11 +149,15 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
         String apartment = params.get("apartment");
         if(apartment!=null && !apartment.isEmpty()){
             predicates.add(cb.equal(r.get("apartmentId"), Integer.parseInt(apartment)));
+
+        if (user.getRole().equals(ApartmentUser.RESIDENT)) {
+            Join<ApartmentReceipt, ApartmentRentalConstract> rc = r.join("apartmentId"); // Join với apartmentId của ApartmentReceipt
+            predicates.add(cb.equal(rc.get("residentId"), user.getId()));
         }
-        
-        q.where(predicates.toArray(Predicate[]::new));
+
+        q.where(predicates.toArray(new Predicate[0]));
         q.orderBy(cb.desc(r.get("id")));
-        
+
         Query rs = s.createQuery(q);
         String page = params.get("page");
         if(page!=null && !page.isEmpty())
@@ -114,7 +169,8 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
             rs.setMaxResults(pageSize);
         }
         List<ApartmentReceipt> receipts = rs.getResultList();
-        
+
         return receipts;
     }
+
 }

@@ -36,7 +36,6 @@ public class ApartmentSmartCabinet implements Serializable {
     @Id
     @Basic(optional = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @NotNull
     @Column(name = "id")
     private Integer id;
     @Basic(optional = false)
@@ -53,7 +52,7 @@ public class ApartmentSmartCabinet implements Serializable {
     @Basic(optional = false)
     @NotNull
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern ="dd/MM/yyyy")
-    @Column(name = "created_date")
+    @Column(name = "created_date", updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdDate;
     @Basic(optional = false)
@@ -107,18 +106,25 @@ public class ApartmentSmartCabinet implements Serializable {
     }
 
     public Date getCreatedDate() {
-        this.createdDate.setDate(this.createdDate.getDate() + 1);
-        return createdDate;
+        if (this.createdDate != null) {
+            return new Date(this.createdDate.getTime());
+        }
+        return null;
     }
+
+    public Date getUpdatedDate() {
+        if (this.updatedDate != null) {
+            return new Date(this.updatedDate.getTime());
+        }
+        return null;
+    }
+
 
     public void setCreatedDate(Date createdDate) {
         this.createdDate = createdDate;
     }
 
-    public Date getUpdatedDate() {
-        this.updatedDate.setDate(this.updatedDate.getDate() );
-        return updatedDate;
-    }
+
 
     public void setUpdatedDate(Date updatedDate) {
         this.updatedDate = updatedDate;

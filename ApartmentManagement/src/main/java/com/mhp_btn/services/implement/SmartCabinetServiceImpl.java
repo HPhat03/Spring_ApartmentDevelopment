@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class SmartCabinetServiceImpl implements SmartCabinetService {
@@ -15,8 +16,8 @@ public class SmartCabinetServiceImpl implements SmartCabinetService {
 
 
     @Override
-    public List<ApartmentSmartCabinet> getAllSmartCabinets() {
-        return this.cabinetRepo.getAllSmartCabinets();
+    public List<ApartmentSmartCabinet> getAllSmartCabinets(Map<String, String> params)  {
+        return this.cabinetRepo.getAllSmartCabinets(params);
     }
 
     @Override
@@ -42,6 +43,11 @@ public class SmartCabinetServiceImpl implements SmartCabinetService {
     @Override
     public void updateCabinet(ApartmentSmartCabinet cabinet) {
         this.cabinetRepo.updateCabinet(cabinet);
+    }
+
+    @Override
+    public void addOrUpdate(ApartmentSmartCabinet c) {
+        this.cabinetRepo.addOrUpdate(c);
     }
 
 

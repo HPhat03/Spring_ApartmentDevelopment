@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class RoomServiceImpl implements RoomService {
@@ -18,8 +19,13 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public void addRoom(ApartmentRoom room) {
-        this.roomRepo.addRoom(room);
+    public void addOrUpdateRoom(ApartmentRoom room) {
+        this.roomRepo.addOrUpdateRoom(room);
+    }
+
+    @Override
+    public List<ApartmentRoom> getRoomFilter(Map<String, String> params) {
+        return roomRepo.getRoomFilter(params);
     }
 
     @Override
@@ -32,25 +38,7 @@ public class RoomServiceImpl implements RoomService {
         this.roomRepo.deleteRoomById(id);
     }
 
-    @Override
-    public List<ApartmentRoom> getActiveRooms() {
-        return this.roomRepo.getActiveRooms();
-    }
 
-    @Override
-    public List<ApartmentRoom> getEmptyRoom() {
-        return this.roomRepo.getEmptyRoom();
-    }
-
-    @Override
-    public List<ApartmentRoom> getRentedRoom() {
-        return this.roomRepo.getRentedRoom();
-    }
-
-    @Override
-    public List<ApartmentRoom> getInactiveRooms() {
-        return this.roomRepo.getInactiveRooms();
-    }
 
     @Override
     public List<ApartmentRoom> getRoomByFloorId(int id) {
@@ -60,6 +48,16 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public void updateRoom(ApartmentRoom room) {
         this.roomRepo.updateRoom(room);
+    }
+    @Override
+    public List<ApartmentRoom> getRoomsBlank() {
+        return this.roomRepo.getRoomsBlank();
+    }
+
+
+    @Override
+    public long countRoom() {
+        return this.roomRepo.countRoom();
     }
 
 

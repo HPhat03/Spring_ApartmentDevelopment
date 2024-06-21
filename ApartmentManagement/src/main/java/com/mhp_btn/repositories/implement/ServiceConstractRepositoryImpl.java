@@ -1,8 +1,6 @@
 package com.mhp_btn.repositories.implement;
 
-import com.mhp_btn.pojo.ApartmentReport;
-import com.mhp_btn.pojo.ApartmentResident;
-import com.mhp_btn.pojo.ApartmentServiceConstract;
+import com.mhp_btn.pojo.*;
 import com.mhp_btn.repositories.ServiceConstractRepository;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.Query;
+import javax.persistence.criteria.*;
 import java.util.List;
 
 @Transactional
@@ -55,6 +54,36 @@ public class ServiceConstractRepositoryImpl implements ServiceConstractRepositor
         Session session = this.factoryBean.getObject().getCurrentSession();
         session.update(constract);
     }
+
+    @Override
+    public List<ApartmentService> getServicesByApartmentId(int apartmentId) {
+        Session s = this.factoryBean.getObject().getCurrentSession();
+        CriteriaBuilder cb = s.getCriteriaBuilder();
+        CriteriaQuery<ApartmentService> cq = cb.createQuery(ApartmentService.class);
+
+        Root<ApartmentServiceConstract> root = cq.from(ApartmentServiceConstract.class);
+        Join<ApartmentServiceConstract, ApartmentRentalConstract> apartmentJoin = root.join("apartmentId");
+        Join<ApartmentServiceConstract, ApartmentService> serviceJoin = root.join("serviceId");
+
+        cq.select(serviceJoin)
+                .where(cb.equal(apartmentJoin.get("id"), apartmentId));
+        Query query = s.createQuery(cq);
+        return query.getResultList();
+    }
+
+    @Override
+    public void deleteServiceConstractByApartmentId(int apartmentId) {
+        Session session = factoryBean.getObject().getCurrentSession();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaDelete<ApartmentServiceConstract> criteriaDelete = cb.createCriteriaDelete(ApartmentServiceConstract.class);
+        Root<ApartmentServiceConstract> root = criteriaDelete.from(ApartmentServiceConstract.class);
+
+        criteriaDelete.where(cb.equal(root.get("apartmentId").get("id"), apartmentId));
+
+        Query query = session.createQuery(criteriaDelete);
+        int deletedCount = query.executeUpdate();
+    }
+
 
 
 }

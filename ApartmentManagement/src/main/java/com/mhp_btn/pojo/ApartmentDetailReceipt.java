@@ -49,7 +49,7 @@ public class ApartmentDetailReceipt implements Serializable {
     private String content;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 45)
+//    @Size(min = 1, max = 45)
     @Column(name = "price")
     private int price;
     @JoinColumn(name = "receipt_id", referencedColumnName = "id")

@@ -8,6 +8,7 @@ public interface SurveyResponseRepository {
 
     List<ApartmentSurveyResponse> getAllSurveyResponse();
     ApartmentSurveyResponse getSurveyResponseById(int id);
+    List<ApartmentSurveyResponse> getAllBySurveyId(Integer surveyId) ;
 
     void deleteSurveyResponseById(int id);
 

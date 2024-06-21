@@ -19,6 +19,10 @@
                 <h1>${c.name}</h1>
             </c:forEach>
             <a href="<c:url value="/login"/>">DANG NHAP</a>
+    <p>
+        ${pageContext.request.userPrincipal}
+    </p>
+
           
                
             

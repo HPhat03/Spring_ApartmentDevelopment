@@ -1,5 +1,6 @@
 package com.mhp_btn.services.implement;
 
+import com.mhp_btn.pojo.ApartmentService;
 import com.mhp_btn.pojo.ApartmentServiceConstract;
 import com.mhp_btn.repositories.ServiceConstractRepository;
 import com.mhp_btn.services.ServiceConstractService;
@@ -36,6 +37,16 @@ public class ServiceConstractServiceImpl implements ServiceConstractService {
     @Override
     public void updateServiceConstract(ApartmentServiceConstract constract) {
         this.serviceRepo.updateServiceConstract(constract);
+    }
+
+    @Override
+    public List<ApartmentService> getServicesByApartmentId(int apartmentId) {
+        return this.serviceRepo.getServicesByApartmentId(apartmentId);
+    }
+
+    @Override
+    public void deleteServiceConstractByApartmentId(int apartmentId) {
+        this.serviceRepo.deleteServiceConstractByApartmentId(apartmentId);
     }
 
 }

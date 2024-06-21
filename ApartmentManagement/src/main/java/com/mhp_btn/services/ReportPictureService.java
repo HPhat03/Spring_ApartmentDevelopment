@@ -6,10 +6,13 @@ package com.mhp_btn.services;
 
 import com.mhp_btn.pojo.ApartmentReportPicture;
 
+import java.util.List;
+
 /**
  *
  * @author Admin
  */
 public interface ReportPictureService {
     void addOrUpdate(ApartmentReportPicture p);
+    public List<ApartmentReportPicture> getPicturesByReportId(int reportId) ;
 }

@@ -7,6 +7,8 @@ import java.util.List;
 public interface ReportRepository {
 
     List<ApartmentReport> getAllReportByApartmentId(int id, int page);
+    List<ApartmentReport> getAllReport();
+    List<ApartmentReport> getAllReportByApartmentId(int id);
 
     void deleteReportById(int id);
 

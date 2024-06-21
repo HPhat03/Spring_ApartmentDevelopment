@@ -13,11 +13,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import javax.persistence.criteria.Subquery;
+import javax.persistence.criteria.*;
 
 @Transactional
 @Repository
@@ -29,11 +25,15 @@ public class DetailReceiptRepositoryImpl implements DetailReceiptRepository {
     @Override
     public List<ApartmentDetailReceipt> getDetailReceiptsByReceiptId(int id) {
         Session session = factoryBean.getObject().getCurrentSession();
-        Query<ApartmentDetailReceipt> query = session.createQuery(
-                "SELECT d FROM ApartmentDetailReceipt d WHERE d.receiptId.id = :receiptId",
-                ApartmentDetailReceipt.class);
-        query.setParameter("receiptId", id);
-        return query.getResultList();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<ApartmentDetailReceipt> cq = cb.createQuery(ApartmentDetailReceipt.class);
+        Root<ApartmentDetailReceipt> root = cq.from(ApartmentDetailReceipt.class);
+
+        Join<ApartmentDetailReceipt, ApartmentReceipt> joinReceipt = root.join("receiptId");
+
+        Predicate predicate = cb.equal(joinReceipt.get("id"), id);
+        cq.where(predicate);
+        return session.createQuery(cq).getResultList();
     }
 
     @Override

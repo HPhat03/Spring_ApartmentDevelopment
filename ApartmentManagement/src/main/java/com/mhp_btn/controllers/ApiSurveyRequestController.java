@@ -22,7 +22,7 @@ import java.util.Map;
 import javax.ws.rs.PathParam;
 
 @RestController
-
+//@RequestMapping("/api")
 public class ApiSurveyRequestController {
     @Autowired
     private SurveyRequestService requestService;
@@ -58,7 +58,8 @@ public class ApiSurveyRequestController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @PostMapping("/survey_request")
+
+    @PostMapping(path = "/survey_request/add/", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> addSurveyRequest(@RequestBody Map<String, Object> params) throws ParseException {
         try {
             // Lấy thông tin từ request body
@@ -104,14 +105,14 @@ public class ApiSurveyRequestController {
                 temp.setScoreBand(band != null ? band.toString() : ApartmentDetailRequest.ScoreBand.BAND_5.toString());
                 detailRequestService.addDetailRequest(temp);
             });
-            return new ResponseEntity<>(HttpStatus.CREATED);
+            return new ResponseEntity<>("SUCCESS", HttpStatus.CREATED);
         } catch (Exception e) {
             // Xử lý ngoại lệ và trả về lỗi nếu có
             return new ResponseEntity<>("Failed to create survey request: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @PatchMapping(value = "/survey_request/{id}", produces = "application/json")
+    @PatchMapping(value = "/api/survey_request/{id}", produces = "application/json")
     public ResponseEntity<Object> updateSurveyRequestById(@PathVariable int id,
                                                           @RequestBody Map<String, String> updates) {
         ApartmentSurveyRequest surveyRequest = requestService.getSurveyRequestById(id);
@@ -133,18 +134,6 @@ public class ApiSurveyRequestController {
                     }
                     surveyRequest.setAdminId(user.getApartmentAdmin());
                     break;
-                case "startDate":
-                    try {
-                        Date startDate = StringUtil.dateFormater().parse(value);
-                        if (surveyRequest.getEndDate() != null && startDate.after(surveyRequest.getEndDate())) {
-                            throw new IllegalArgumentException("Start date cannot be after end date");
-                        }
-                        surveyRequest.setStartDate(startDate);
-                    } catch (ParseException e) {
-                        throw new IllegalArgumentException("Invalid start date format");
-                    }
-                    break;
-
                 case "endDate":
                     try {
                         Date endDate = StringUtil.dateFormater().parse(value);

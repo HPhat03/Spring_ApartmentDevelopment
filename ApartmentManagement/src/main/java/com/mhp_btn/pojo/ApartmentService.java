@@ -47,12 +47,12 @@ public class ApartmentService implements Serializable {
     @Column(name = "id")
     private Integer id;
     @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 45)
+    @NotNull(message = "{service.name.nullError}")
+    @Size(min = 1, max = 45,message = "{service.name.sizeError}")
     @Column(name = "name")
     private String name;
     @Basic(optional = false)
-    @NotNull
+    @NotNull(message = "{service.price.nullError}")
     @Column(name = "price")
     private int price;
     @Basic(optional = false)

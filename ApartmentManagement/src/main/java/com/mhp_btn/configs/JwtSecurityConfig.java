@@ -8,6 +8,10 @@ import com.mhp_btn.pojo.ApartmentUser;
 import com.mhp_btn.serializers.CustomAccessDeniedHandler;
 import com.mhp_btn.serializers.JwtAuthenticationTokenFilter;
 import com.mhp_btn.serializers.RestAuthenticationEntryPoint;
+<<<<<<< HEAD
+=======
+//import static com.sun.tools.javac.tree.TreeInfo.args;
+>>>>>>> HPhat
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;

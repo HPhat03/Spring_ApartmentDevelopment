@@ -2,9 +2,12 @@ package com.mhp_btn.repositories;
 
 import com.mhp_btn.pojo.ApartmentDetailReport;
 
+import java.util.List;
+
 public interface DetailReportRepository {
 
-    ApartmentDetailReport getDetailReportByReportId(int id) ;
+    List<ApartmentDetailReport> getDetailReportByReportId(int id) ;
+
 
     void addDetailReport(ApartmentDetailReport newDetail);
 

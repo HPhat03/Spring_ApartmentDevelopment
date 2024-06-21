@@ -9,9 +9,14 @@ import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.util.List;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import java.util.Objects;
 
 @Transactional
 @Repository
@@ -37,8 +42,24 @@ public class ReportRepositoryImpl implements ReportRepository {
             query.setMaxResults(pageSize);
         }
         return query.getResultList();
-
+    public List<ApartmentReport> getAllReport() {
+        Session s = Objects.requireNonNull(this.factoryBean.getObject()).getCurrentSession();
+        javax.persistence.Query q = s.createNamedQuery("ApartmentReport.findAll");
+        return q.getResultList();
     }
+
+    // @Override
+    // public List<ApartmentReport> getAllReportByApartmentId(int id) {
+    //     Session session = factoryBean.getObject().getCurrentSession();
+    //     CriteriaBuilder cb = session.getCriteriaBuilder();
+    //     CriteriaQuery<ApartmentReport> cq = cb.createQuery(ApartmentReport.class);
+    //     Root<ApartmentReport> root = cq.from(ApartmentReport.class);
+    //     Predicate predicate = cb.equal(root.get("apartmentId").get("id"), id);
+    //     cq.select(root).where(predicate);
+
+    //     Query<ApartmentReport> query = session.createQuery(cq);
+    //     return query.getResultList();
+    // }
 
     @Override
     public void deleteReportById(int id) {
@@ -65,7 +86,7 @@ public class ReportRepositoryImpl implements ReportRepository {
     public ApartmentReport getReportById(int id) {
         Session s = this.factoryBean.getObject().getCurrentSession();
         Query q = s.createNamedQuery("ApartmentReport.findById");
-        q.setParameter("id", id); // Đặt tên tham số là 'userId'
+        q.setParameter("id", id);
         List<ApartmentReport> result = q.getResultList();
         return result.isEmpty() ? null : result.get(0);
     }

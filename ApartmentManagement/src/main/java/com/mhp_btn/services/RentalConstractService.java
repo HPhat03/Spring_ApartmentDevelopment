@@ -20,4 +20,5 @@ public interface RentalConstractService {
     void updateConstract(ApartmentRentalConstract constract);
     
     boolean checkRenter(int id, String username);
+    public long countConstracts() ;
 }

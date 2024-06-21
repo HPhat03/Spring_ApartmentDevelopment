@@ -10,6 +10,8 @@ import com.mhp_btn.services.ReportPictureService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  *
  * @author Admin
@@ -23,5 +25,10 @@ public class ReportPictureServiceImpl implements ReportPictureService{
     public void addOrUpdate(ApartmentReportPicture p) {
         rp.addOrUpdateReportPicture(p);
     }
-    
+
+    @Override
+    public List<ApartmentReportPicture> getPicturesByReportId(int reportId) {
+        return this.rp.getPicturesByReportId(reportId);
+    }
+
 }

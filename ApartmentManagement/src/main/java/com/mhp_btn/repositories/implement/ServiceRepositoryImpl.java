@@ -7,18 +7,24 @@ package com.mhp_btn.repositories.implement;
 import com.mhp_btn.pojo.ApartmentRoom;
 import com.mhp_btn.pojo.ApartmentService;
 import com.mhp_btn.repositories.ServiceRepository;
+
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
+
 
 /**
  *
@@ -26,27 +32,73 @@ import org.springframework.web.server.ResponseStatusException;
  */
 @Repository
 @Transactional
+@PropertySource("classpath:configs.properties")
 public class ServiceRepositoryImpl implements ServiceRepository{
     @Autowired
     private LocalSessionFactoryBean f;
+    @Autowired
+    private Environment env;
     @Override
-    public List<ApartmentService> getService() {
+    public List<ApartmentService> getService(Map<String, String> params) {
+        Session s = this.f.getObject().getCurrentSession();
+        CriteriaBuilder b = s.getCriteriaBuilder();
+        CriteriaQuery<ApartmentService> q = b.createQuery(ApartmentService.class);
+        Root<ApartmentService> r = q.from(ApartmentService.class);
+        q.select(r);
+
+        List<Predicate> predicates = new ArrayList<>();
+
+        String kw = params.get("kw");
+        if (kw != null && !kw.isEmpty()) {
+            predicates.add(b.like(r.get("name"), String.format("%%%s%%", kw)));
+        }
+        q.where(predicates.toArray(Predicate[]::new));
+        Query query = s.createQuery(q);
+
+        // phan trang
+        String page = params.get("page");
+        if(page != null && !page.isEmpty() ){
+            int pagesize = Integer.parseInt(env.getProperty("services.pagesize"));
+            int start = (Integer.parseInt(page)-1) * pagesize;
+            query.setFirstResult(start);
+            query.setMaxResults(pagesize);
+        }
+        return (List<ApartmentService>) query.getResultList();
+    }
+
+    @Override
+    public List<ApartmentService> getServiceActive() {
+        Session s = Objects.requireNonNull(this.f.getObject()).getCurrentSession();
+        Query q = s.createNamedQuery("ApartmentService.findByIsActive", ApartmentService.class);
+        q.setParameter("isActive", (short) 1);
+        return q.getResultList();
+    }
+
+    @Override
+    public List<ApartmentService> getAllServices() {
         Session s = this.f.getObject().getCurrentSession();
         Query q = s.createNamedQuery("ApartmentService.findAll");
         return q.getResultList();
     }
 
     @Override
-    public void addService(ApartmentService service) {
-        Session session = f.getObject().getCurrentSession();
-        session.save(service);
+    public void addOrUpdate(ApartmentService service) {
+        Session s = this.f.getObject().getCurrentSession();
+        if(service.getId() != null && service.getId() > 0) {
+            s.update(service);
+        } else {
+            s.save(service);
+        }
     }
+
+
+
 
     @Override
     public ApartmentService getServiceById(int id) {
         Session s = this.f.getObject().getCurrentSession();
         Query q = s.createNamedQuery("ApartmentService.findById");
-        q.setParameter("id", id); // Thiết lập giá trị của tham số ID
+        q.setParameter("id", id);
         List<ApartmentService> result = q.getResultList();
         return result.isEmpty() ? null :result.get(0);
 
@@ -54,14 +106,10 @@ public class ServiceRepositoryImpl implements ServiceRepository{
 
     @Override
     public void deleteServiceById(int id) {
-        Session s = f.getObject().getCurrentSession();
-        ApartmentService service = s.get(ApartmentService.class, id);
-        if (service != null) {
-            // Cập nhật cờ isActive thành 0
-            service.setIsActive((short) 0);
-            s.update(service);
-        } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Room not found with id: " + id);
+        Session s = this.f.getObject().getCurrentSession();
+        ApartmentService sv = s.get(ApartmentService.class, id);
+        if(sv!=null){
+            s.delete(sv);
         }
     }
 

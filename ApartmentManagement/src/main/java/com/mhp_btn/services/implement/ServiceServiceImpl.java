@@ -8,6 +8,8 @@ import com.mhp_btn.pojo.ApartmentService;
 import com.mhp_btn.repositories.ServiceRepository;
 import com.mhp_btn.services.ServiceService;
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,15 +22,28 @@ public class ServiceServiceImpl implements  ServiceService{
     
     @Autowired
     private ServiceRepository repo;
+
+
     @Override
-    public List<ApartmentService> getServices() {
-        return this.repo.getService();
+    public List<ApartmentService> getService(Map<String, String> params) {
+        return this.repo.getService(params);
     }
 
     @Override
-    public void addService(ApartmentService service) {
-        this.repo.addService(service);
+    public void addOrUpdate(ApartmentService service) {
+        this.repo.addOrUpdate(service);
     }
+
+    @Override
+    public List<ApartmentService> getServiceActive() {
+        return this.repo.getServiceActive();
+    }
+
+    @Override
+    public List<ApartmentService> getAllServices() {
+        return this.repo.getAllServices();
+    }
+
 
     @Override
     public ApartmentService getServiceById(int id) {
