@@ -64,11 +64,12 @@
 
 <body>
 <div class="container">
-    <h1>Chi tiết hóa đơn</h1>
+    <h1>Chi tiết hóa đơn tháng ${receipt.month} -  ${receipt.year}</h1>
 
     <div class="detail-section">
         <h2>Mã hóa đơn: ${receipt.id}</h2>
         <p>Số phòng: ${receipt.apartmentId.roomId.roomNumber}</p>
+        <p> </p>
     </div>
     <div class="detail-section">
         <h3>Chi tiết các dịch vụ</h3>
