@@ -11,17 +11,27 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.Query;
 import java.util.List;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 
 @Transactional
 @Repository
+@PropertySource("classpath:config.properties")
 public class SurveyRequestRepositoryImpl implements SurveyRequestRepository {
     @Autowired
     private LocalSessionFactoryBean factoryBean;
-
+    @Autowired
+    private Environment env;
     @Override
-    public List<ApartmentSurveyRequest> getAllSurveyRequest() {
+    public List<ApartmentSurveyRequest> getAllSurveyRequest(int page) {
         Session s = this.factoryBean.getObject().getCurrentSession();
         Query q = s.createNamedQuery("ApartmentSurveyRequest.findAll");
+        if(page > 0 ){
+            int pageSize = Integer.parseInt(env.getProperty("receipt.clientPageSize").toString());
+            int start = (page - 1) * pageSize;
+            q.setFirstResult(start);
+            q.setMaxResults(pageSize);
+        }
         return q.getResultList();
     }
 

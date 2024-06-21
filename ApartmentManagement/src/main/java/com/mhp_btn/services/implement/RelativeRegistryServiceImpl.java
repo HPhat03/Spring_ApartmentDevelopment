@@ -3,6 +3,7 @@ package com.mhp_btn.services.implement;
 import com.mhp_btn.pojo.ApartmentRelativeRegistry;
 import com.mhp_btn.repositories.RelativeRegistryRepository;
 import com.mhp_btn.services.RelativeRegistryService;
+import java.util.HashMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,5 +36,10 @@ public class RelativeRegistryServiceImpl implements RelativeRegistryService {
     @Override
     public void updateRelativeRegistry(ApartmentRelativeRegistry relativeRegistry) {
         this.registryRepository.updateRelativeRegistry(relativeRegistry);
+    }
+
+    @Override
+    public List<ApartmentRelativeRegistry> getRRByApartmentId(int id, HashMap<String, String> params) {
+        return this.registryRepository.getRRbyApartmentId(id, params);
     }
 }

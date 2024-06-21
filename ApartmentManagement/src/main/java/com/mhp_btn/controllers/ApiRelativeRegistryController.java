@@ -51,12 +51,13 @@ public class ApiRelativeRegistryController {
 
     @PostMapping("/relative_registries/")
     @ResponseStatus(HttpStatus.CREATED)
+    @CrossOrigin
     public ResponseEntity<?> addRelativeRegistry(@RequestBody Map<String, String> params, Principal p) {
         if (params.containsKey("name") && params.containsKey("startDate")
-                && params.containsKey("endDate")&& params.containsKey("isActive")) {
+                && params.containsKey("endDate")) {
 
             String name = params.get("name");
-            int isActive = Integer.parseInt(params.get("isActive"));
+            
             int apartmentId = Integer.parseInt(params.get("apartmentId"));
             Date startDate;
             Date endDate;
@@ -68,19 +69,19 @@ public class ApiRelativeRegistryController {
             }
             // Kiểm tra nếu ngày bắt đầu lớn hơn ngày kết thúc
             if (startDate.after(endDate)) {
-                return new ResponseEntity<>("Ngày bắt đầu không thể trước ngày kết thúc", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("Ngày bắt đầu không thể trước ngày kết thúc", HttpStatus.OK);
             }
-            if (startDate.getTime() - (new Date().getTime()) >60000){
-                return new ResponseEntity<>("Không thể đăng kí trước thời điểm hiện tại", HttpStatus.BAD_REQUEST);
+            if (startDate.before(new Date())){
+                return new ResponseEntity<>("Không thể đăng kí trước thời điểm hiện tại", HttpStatus.OK);
             }
             ApartmentRentalConstract apartmentRental = apartmentService.getRentalConstractById(apartmentId);
             if(apartmentRental==null)
-                return new ResponseEntity<>("Không tìm thấy chung cư với mã: " +apartmentId, HttpStatus.NOT_FOUND);
-            if(apartmentRental.getResidentUser().getUsername().equals(p.getName()))
-                return new ResponseEntity<>("Không thể đăng kí cho chung cư khác", HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>("Không tìm thấy chung cư với mã: " +apartmentId, HttpStatus.OK);
+            if(!apartmentService.checkRenter(apartmentId, p.getName()))
+                return new ResponseEntity<>("Không thể đăng kí cho chung cư khác", HttpStatus.OK);
             
             ApartmentRelativeRegistry apartmentRelativeRegistry = new ApartmentRelativeRegistry();
-            apartmentRelativeRegistry.setActive((short) isActive);
+            apartmentRelativeRegistry.setActive((short) 1);
             apartmentRelativeRegistry.setName(name);
             apartmentRelativeRegistry.setStartDate(startDate);
             apartmentRelativeRegistry.setEndDate(endDate);

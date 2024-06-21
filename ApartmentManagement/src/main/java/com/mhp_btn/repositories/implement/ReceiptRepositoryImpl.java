@@ -104,7 +104,6 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
         q.orderBy(cb.desc(r.get("id")));
         
         Query rs = s.createQuery(q);
-        System.out.println(env.getProperty("receipt.clientPageSize"));
         String page = params.get("page");
         if(page!=null && !page.isEmpty())
         {

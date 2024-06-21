@@ -71,6 +71,7 @@ public class ApartmentDetailRequest implements Serializable {
     private String scoreBand;
     @JoinColumn(name = "request_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
+    @JsonIgnore
     private ApartmentSurveyRequest requestId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "questionId")
     @JsonIgnore

@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface SurveyRequestRepository {
 
-    List<ApartmentSurveyRequest> getAllSurveyRequest();
+    List<ApartmentSurveyRequest> getAllSurveyRequest(int page);
 
     ApartmentSurveyRequest getSurveyRequestById(int id);
 

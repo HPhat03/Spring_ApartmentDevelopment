@@ -14,6 +14,7 @@ F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\
 F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\java\com\mhp_btn\pojo\ApartmentUsageNumber.java
 F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\java\com\mhp_btn\repositories\implement\AdminRepositoryImpl.java
 F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\java\com\mhp_btn\services\implement\UsageNumberServiceImpl.java
+F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\java\com\mhp_btn\pojo\VNPayCashier.java
 F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\java\com\mhp_btn\repositories\ServiceRepository.java
 F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\java\com\mhp_btn\services\OtherMemberService.java
 F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\java\com\mhp_btn\services\ServiceConstractService.java
@@ -43,8 +44,10 @@ F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\
 F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\java\com\mhp_btn\pojo\ApartmentRentalConstract.java
 F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\java\com\mhp_btn\pojo\ApartmentDetailReceipt.java
 F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\java\com\mhp_btn\repositories\ServiceConstractRepository.java
+F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\java\com\mhp_btn\serializers\ReportSerializer.java
 F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\java\com\mhp_btn\pojo\ApartmentServiceConstract.java
 F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\java\com\mhp_btn\repositories\ReportRepository.java
+F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\java\com\mhp_btn\configs\VnPayConfig.java
 F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\java\com\mhp_btn\configs\DispatcherServletInitConfig.java
 F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\java\com\mhp_btn\services\implement\ReportServiceImpl.java
 F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\java\com\mhp_btn\configs\SecurityWebApplicationInitializer.java
@@ -54,6 +57,7 @@ F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\
 F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\java\com\mhp_btn\services\implement\RentalConstractServiceImpl.java
 F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\java\com\mhp_btn\repositories\RoomRepository.java
 F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\java\com\mhp_btn\services\implement\SmartCabinetServiceImpl.java
+F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\java\com\mhp_btn\controllers\ApiVNPayController.java
 F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\java\com\mhp_btn\configs\WebAppContextConfig.java
 F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\java\com\mhp_btn\services\implement\ServiceServiceImpl.java
 F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\java\com\mhp_btn\repositories\ReceiptRepository.java
@@ -85,6 +89,7 @@ F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\
 F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\java\com\mhp_btn\utils\StringUtil.java
 F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\java\com\mhp_btn\services\SmartCabinetService.java
 F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\java\com\mhp_btn\repositories\implement\FloorRepositoryImpl.java
+F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\java\com\mhp_btn\repositories\implement\PaymentRepositoryImpl.java
 F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\java\com\mhp_btn\services\ResidentService.java
 F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\java\com\mhp_btn\repositories\UsageNumberRepository.java
 F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\java\com\mhp_btn\repositories\RelativeRegistryRepository.java
@@ -106,11 +111,13 @@ F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\
 F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\java\com\mhp_btn\controllers\ApiDetailReceiptController.java
 F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\java\com\mhp_btn\repositories\implement\ServiceRepositoryImpl.java
 F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\java\com\mhp_btn\repositories\implement\SurveyRequestRepositoryImpl.java
+F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\java\com\mhp_btn\services\PaymentService.java
 F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\java\com\mhp_btn\pojo\ApartmentService.java
 F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\java\com\mhp_btn\services\implement\SurveyRequestServiceImpl.java
 F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\java\com\mhp_btn\repositories\RentalConstractRepository.java
 F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\java\com\mhp_btn\services\implement\AdminServiceImpl.java
 F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\java\com\mhp_btn\pojo\ApartmentDetailRequest.java
+F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\java\com\mhp_btn\repositories\PaymentRepository.java
 F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\java\com\mhp_btn\repositories\implement\RelativeRegistryRepositoryImpl.java
 F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\java\com\mhp_btn\services\implement\DetailReportServiceImpl.java
 F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\java\com\mhp_btn\repositories\implement\ReportRepositoryImpl.java
@@ -124,6 +131,7 @@ F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\
 F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\java\com\mhp_btn\configs\HibernateConfig.java
 F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\java\com\mhp_btn\services\UsageNumberService.java
 F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\java\com\mhp_btn\controllers\ApiSurveyRequestController.java
+F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\java\com\mhp_btn\services\implement\PaymentServiceImpl.java
 F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\java\com\mhp_btn\services\ReportPictureService.java
 F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\java\com\mhp_btn\repositories\FloorRepository.java
 F:\Sofware Engineering\Spring_ApartmentDevelopment\ApartmentManagement\src\main\java\com\mhp_btn\pojo\ApartmentReportPicture.java

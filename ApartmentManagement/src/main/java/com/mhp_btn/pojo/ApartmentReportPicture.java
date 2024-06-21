@@ -4,6 +4,7 @@
  */
 package com.mhp_btn.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -38,6 +39,7 @@ public class ApartmentReportPicture implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
+    @JsonIgnore
     private Integer id;
     @Basic(optional = false)
     @NotNull
@@ -46,6 +48,7 @@ public class ApartmentReportPicture implements Serializable {
     private String picture;
     @JoinColumn(name = "report_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
+    @JsonIgnore
     private ApartmentDetailReport reportId;
 
     public ApartmentReportPicture() {

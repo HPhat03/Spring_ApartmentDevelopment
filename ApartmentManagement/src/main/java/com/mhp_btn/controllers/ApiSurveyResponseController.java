@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 @RestController
-@RequestMapping("/api")
+
 public class ApiSurveyResponseController {
     @Autowired
     private SurveyResponseService responseService;
@@ -54,28 +54,30 @@ public class ApiSurveyResponseController {
     }
 
 // Tạo một phản hồi mới từ khảo sát về căn hộ.
-    @PostMapping("/survey_response/")
+    @PostMapping("/api/survey_response/")
+    @CrossOrigin
     public ResponseEntity<?> addSurveyResponse(@RequestBody Map<String, Object> params, Principal p) {
-        try {
+//        try {
+            if(params.get("name")==null || params.get("apartmentId")==null || params.get("surveyId")==null || params.get("answers")==null)
+                return new ResponseEntity<>("Thiếu thông tin.", HttpStatus.OK);
             // Lấy thông tin từ request body
             String name = (String) params.get("name");
             int apartmentId = (int) params.get("apartmentId");
             int surveyId = (int) params.get("surveyId");
             
-            
             ApartmentRentalConstract apartment = apartmentService.getConstractById(apartmentId);
             if (apartment == null || apartment.getIsActive() == 0) {
-                return new ResponseEntity<>("Căn hộ không khả dụng", HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>("Căn hộ không khả dụng", HttpStatus.OK);
             }
-            if (!apartment.getResidentUser().getUsername().equals(p.getName()))
-                return new ResponseEntity<>("Không thể trả lời khảo sát cho chung cư khác", HttpStatus.BAD_REQUEST);
+            if (!this.apartmentService.checkRenter(apartmentId, p.getName()))
+                return new ResponseEntity<>("Không thể trả lời khảo sát cho chung cư khác", HttpStatus.OK);
             ApartmentSurveyRequest request = surveyService.getSurveyRequestById(surveyId);
             if (request == null) {
-                return new ResponseEntity<>("Không thể tìm thấy khảo sát id: " + surveyId, HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>("Không thể tìm thấy khảo sát id: " + surveyId, HttpStatus.OK);
             }
             Date currentDate = new Date();
             if(currentDate.after(request.getEndDate())){
-                return new ResponseEntity<>("Khảo sát đã hết hiệu lực!", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("Khảo sát đã hết hiệu lực!", HttpStatus.OK);
             }
             if (!name.equals(apartment.getResidentId().getApartmentUser().getName())) {
                 boolean valid = false;
@@ -87,7 +89,7 @@ public class ApiSurveyResponseController {
                     }
                 }
                 if (!valid) {
-                    return new ResponseEntity<>("Bạn không phải thành viên trong căn hộ này", HttpStatus.BAD_REQUEST);
+                    return new ResponseEntity<>("Bạn không phải thành viên trong căn hộ này", HttpStatus.OK);
                 }
             }
             ApartmentSurveyResponse surveyResponse = new ApartmentSurveyResponse();
@@ -108,9 +110,9 @@ public class ApiSurveyResponseController {
                 detailResponseService.addDetailResponse(temp);
             });
             return new ResponseEntity<>(HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Failed to create survey response: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+//        } catch (Exception e) {
+//            return new ResponseEntity<>("Failed to create survey response: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
     }
 
     // Cập nhật thông tin của một phản hồi cụ thể dựa trên ID.

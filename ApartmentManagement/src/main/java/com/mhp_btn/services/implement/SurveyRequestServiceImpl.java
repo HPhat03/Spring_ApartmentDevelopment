@@ -15,8 +15,8 @@ public class SurveyRequestServiceImpl implements SurveyRequestService {
     private SurveyRequestRepository requestRepo;
 
     @Override
-    public List<ApartmentSurveyRequest> getAllSurveyRequest() {
-        return this.requestRepo.getAllSurveyRequest();
+    public List<ApartmentSurveyRequest> getAllSurveyRequest(int page) {
+        return this.requestRepo.getAllSurveyRequest(page);
     }
 
     @Override

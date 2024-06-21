@@ -6,6 +6,7 @@ package com.mhp_btn.pojo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -90,7 +91,10 @@ public class ApartmentSurveyRequest implements Serializable {
         this.endDate = endDate;
         this.isActive = isActive;
     }
-
+    @JsonProperty("name")
+    public String getName() {
+        return String.format("Khảo sát định kì thứ %s", this.id);
+    }
     public Integer getId() {
         return id;
     }

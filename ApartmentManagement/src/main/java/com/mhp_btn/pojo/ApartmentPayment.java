@@ -40,6 +40,10 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "ApartmentPayment.findByCreatedDate", query = "SELECT a FROM ApartmentPayment a WHERE a.createdDate = :createdDate")})
 public class ApartmentPayment implements Serializable {
 
+    @Size(max = 100)
+    @Column(name = "transaction_id")
+    private String transactionId;
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -129,6 +133,14 @@ public class ApartmentPayment implements Serializable {
     @Override
     public String toString() {
         return "com.mhp_btn.pojo.ApartmentPayment[ id=" + id + " ]";
+    }
+
+    public String getTransactionId() {
+        return transactionId;
+    }
+
+    public void setTransactionId(String transactionId) {
+        this.transactionId = transactionId;
     }
     
 }

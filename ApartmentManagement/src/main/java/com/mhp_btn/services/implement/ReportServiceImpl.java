@@ -14,8 +14,8 @@ public class ReportServiceImpl implements ReportService {
     private ReportRepository reportRepo;
 
     @Override
-    public List<ApartmentReport> getAllReportByApartmentId(int id) {
-        return this.reportRepo.getAllReportByApartmentId(id);
+    public List<ApartmentReport> getAllReportByApartmentId(int id, int page) {
+        return this.reportRepo.getAllReportByApartmentId(id, page);
     }
 
     @Override

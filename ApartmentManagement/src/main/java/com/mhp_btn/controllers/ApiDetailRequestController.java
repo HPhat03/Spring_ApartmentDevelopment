@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api")
 public class ApiDetailRequestController {
     @Autowired
     private DetailRequestService detailService;
@@ -23,17 +22,17 @@ public class ApiDetailRequestController {
     private SurveyRequestService requestService;
 
     //Lấy tất cả chi tiết theo request id
-    @GetMapping(path="survey_request/{requestId}/details", produces = "application/json")
+    @GetMapping(path="/api/survey_request/{requestId}/details/", produces = "application/json")
+    @CrossOrigin
     public ResponseEntity<?> getDetailReportByReportId(@PathVariable int requestId) {
         // kiem tra su ton tai cua id request
-        ApartmentSurveyRequest surveyRequest = requestService.getSurveyRequestById(requestId);
-        if (surveyRequest == null) {
-            return new ResponseEntity<>("Survey request not found with ID: " + requestId, HttpStatus.NOT_FOUND);
-        }
         List<ApartmentDetailRequest> detailRequest = detailService.getAllDetailRequestByRequestID(requestId);
-
+        if (detailRequest == null || detailRequest.isEmpty()) {
+            return new ResponseEntity<>("Không tìm thấy khảo sát hoặc khảo sát trống với mã: " + requestId, HttpStatus.OK);
+        }
         return new ResponseEntity<>(detailRequest, HttpStatus.OK);
     }
+    
     @DeleteMapping(path = "/survey_request/{surveyId}/details/{detailId}")
     public ResponseEntity<?> deleteDetailRequestById(@PathVariable("surveyId") int surveyId,
                                                        @PathVariable("detailId") int detailId) {

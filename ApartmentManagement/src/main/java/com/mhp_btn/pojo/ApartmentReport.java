@@ -4,8 +4,10 @@
  */
 package com.mhp_btn.pojo;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -20,6 +22,7 @@ import javax.xml.bind.annotation.XmlTransient;
  *
  * @author Admin
  */
+@JsonFilter("REPORT_FILTER")
 @Entity
 @Table(name = "apartment_report")
 @XmlRootElement
@@ -45,7 +48,7 @@ public class ApartmentReport implements Serializable {
     @Column(name = "created_date")
     @Temporal(TemporalType.DATE)
     private Date createdDate;
-    @OneToMany(mappedBy = "reportId")
+    @OneToMany(mappedBy = "reportId", fetch = FetchType.EAGER)
     @JsonIgnore
     private Set<ApartmentDetailReport> apartmentDetailReportSet;
     @JoinColumn(name = "apartment_id", referencedColumnName = "id")
@@ -91,6 +94,7 @@ public class ApartmentReport implements Serializable {
     }
 
     @XmlTransient
+    @JsonProperty("details")
     public Set<ApartmentDetailReport> getApartmentDetailReportSet() {
         return apartmentDetailReportSet;
     }

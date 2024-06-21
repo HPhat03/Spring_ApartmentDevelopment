@@ -1,5 +1,6 @@
 package com.mhp_btn.controllers;
 
+import com.google.common.collect.HashBiMap;
 import com.mhp_btn.pojo.ApartmentFloor;
 import com.mhp_btn.pojo.ApartmentOtherMember;
 import com.mhp_btn.pojo.ApartmentReceipt;
@@ -11,14 +12,18 @@ import com.mhp_btn.pojo.ApartmentServiceConstract;
 import com.mhp_btn.pojo.ApartmentUser;
 import com.mhp_btn.serializers.ReceiptSerializer;
 import com.mhp_btn.serializers.RentalConstractSerializer;
+import com.mhp_btn.serializers.ReportSerializer;
 import com.mhp_btn.serializers.ServiceSerializer;
 import com.mhp_btn.services.OtherMemberService;
 import com.mhp_btn.services.ReceiptService;
+import com.mhp_btn.services.RelativeRegistryService;
 import com.mhp_btn.services.RentalConstractService;
+import com.mhp_btn.services.ReportService;
 import com.mhp_btn.services.ResidentService;
 import com.mhp_btn.services.RoomService;
 import com.mhp_btn.services.ServiceConstractService;
 import com.mhp_btn.services.ServiceService;
+import com.mhp_btn.services.SmartCabinetService;
 import java.security.Principal;
 import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +36,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.ws.rs.PathParam;
 import org.springframework.http.MediaType;
 
 
@@ -52,6 +58,12 @@ public class ApiRentalConstractController {
     private OtherMemberService otherMemberService;
     @Autowired
     private ReceiptService receiptService;
+    @Autowired
+    private RelativeRegistryService RRService;
+    @Autowired
+    private SmartCabinetService SCService;
+    @Autowired
+    private ReportService reportService;
     
     @GetMapping(path = "/my_constract/", produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin
@@ -92,13 +104,36 @@ public class ApiRentalConstractController {
     @CrossOrigin
     public ResponseEntity<Object> getReceiptOfConstract(@PathVariable int id, @RequestParam HashMap<String, String> params, Principal p) {
         params.put("apartment", String.format("%d", id));
-        System.out.println("Start.....");
         if(!this.constractService.checkRenter(id, p.getName()))
             return new ResponseEntity<>("Không thể xem của người khác", HttpStatus.OK);
-        System.out.println("Start.....");
         List<ApartmentReceipt> receipts = this.receiptService.getAllReceipt(params);
         return new ResponseEntity<>(ReceiptSerializer.ReceiptList(receipts), HttpStatus.OK);
     }
+    
+    @GetMapping(path = "/constract/{id}/relative_registry/", produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin
+    public ResponseEntity<?> getRelativeRegistryOfConstract(@PathVariable int id, @RequestParam HashMap<String, String> params, Principal p){
+        if(!this.constractService.checkRenter(id, p.getName()))
+            return new ResponseEntity<>("Không thể xem của người khác", HttpStatus.OK);
+        return ResponseEntity.ok(this.RRService.getRRByApartmentId(id, params));
+    }
+    
+    @GetMapping(path = "/constract/{id}/smart_cabinets/", produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin
+    public ResponseEntity<?> getCabinetOfConstract(@PathVariable int id, Principal p){
+        if(!this.constractService.checkRenter(id, p.getName()))
+            return new ResponseEntity<>("Không thể xem của người khác", HttpStatus.OK);
+        return ResponseEntity.ok(this.SCService.getAllSmartCabinetByApartmentId(id));
+    }
+    
+    @GetMapping(path = "/constract/{id}/reports/", produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin
+    public ResponseEntity<?> getReportsOfConstract(@PathVariable int id, @PathParam(value = "page") int page, Principal p){
+        if(!this.constractService.checkRenter(id, p.getName()))
+            return new ResponseEntity<>("Không thể xem của người khác", HttpStatus.OK);
+        return ResponseEntity.ok(ReportSerializer.ReportList(this.reportService.getAllReportByApartmentId(id, page)));
+    }
+    
     @PostMapping(path = "/constract/", consumes = "application/json",produces = "application/json")
     public ResponseEntity<Object> addConstract(@RequestBody Map<String, Object> params) {
         try {
@@ -174,7 +209,7 @@ public class ApiRentalConstractController {
                     otherMemberService.addOtherMemberByApartmentId(temp);
                 });
             }
-            return new ResponseEntity<>(constract, HttpStatus.OK);
+            return new ResponseEntity<>(RentalConstractSerializer.RentalConstractDetail(constract), HttpStatus.OK);
 
 
         } catch (NumberFormatException e) {

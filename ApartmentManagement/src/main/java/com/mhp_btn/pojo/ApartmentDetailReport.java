@@ -4,14 +4,19 @@
  */
 package com.mhp_btn.pojo;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -34,6 +39,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @Entity
 @Table(name = "apartment_detail_report")
 @XmlRootElement
+@JsonFilter("DETAIL_REPORT_FILTER")
 @NamedQueries({
     @NamedQuery(name = "ApartmentDetailReport.findAll", query = "SELECT a FROM ApartmentDetailReport a"),
     @NamedQuery(name = "ApartmentDetailReport.findById", query = "SELECT a FROM ApartmentDetailReport a WHERE a.id = :id")})
@@ -55,7 +61,7 @@ public class ApartmentDetailReport implements Serializable {
     @JsonIgnore
     @ManyToOne
     private ApartmentReport reportId;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "reportId")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "reportId", fetch = FetchType.EAGER)
     @JsonIgnore
     private Set<ApartmentReportPicture> apartmentReportPictureSet;
 
@@ -96,8 +102,13 @@ public class ApartmentDetailReport implements Serializable {
     }
 
     @XmlTransient
-    public Set<ApartmentReportPicture> getApartmentReportPictureSet() {
-        return apartmentReportPictureSet;
+    @JsonProperty("pictures")
+    public List<String> getApartmentReportPictureSet() {
+        List<String> pic = new ArrayList<>();
+        for(ApartmentReportPicture p : this.apartmentReportPictureSet){
+            pic.add(p.getPicture());
+        }
+        return pic;
     }
 
     public void setApartmentReportPictureSet(Set<ApartmentReportPicture> apartmentReportPictureSet) {

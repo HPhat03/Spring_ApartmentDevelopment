@@ -6,6 +6,7 @@ import com.mhp_btn.pojo.ApartmentDetailReport;
 import com.mhp_btn.pojo.ApartmentRentalConstract;
 import com.mhp_btn.pojo.ApartmentReport;
 import com.mhp_btn.pojo.ApartmentReportPicture;
+import com.mhp_btn.serializers.ReportSerializer;
 import com.mhp_btn.services.DetailReportService;
 import com.mhp_btn.services.RentalConstractService;
 import com.mhp_btn.services.ReportPictureService;
@@ -23,11 +24,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import javax.ws.rs.PathParam;
 import org.springframework.http.MediaType;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("/api")
+//@RequestMapping("/api")
 public class ApiReportController {
     @Autowired
     private ReportService reportService;
@@ -41,12 +43,12 @@ public class ApiReportController {
     private Cloudinary cloudinary;
 
     @GetMapping(path="/apartment/{apartmentId}/reports", produces = "application/json")
-    public ResponseEntity<?> getAllReportByApartmentId(@PathVariable int apartmentId) {
+    public ResponseEntity<?> getAllReportByApartmentId(@PathVariable int apartmentId ) {
         ApartmentRentalConstract apartment = apartmentService.getConstractById(apartmentId);
         if (apartment == null) {
             return new ResponseEntity<>("Apartment not found with ID: " + apartmentId, HttpStatus.NOT_FOUND);
         }
-        List<ApartmentReport> reports = reportService.getAllReportByApartmentId(apartmentId);
+        List<ApartmentReport> reports = reportService.getAllReportByApartmentId(apartmentId, -1);
         return new ResponseEntity<>(reports, HttpStatus.OK);
     }
 
@@ -59,7 +61,7 @@ public class ApiReportController {
             return new ResponseEntity<>("Apartment not found with ID: " + apartmentId, HttpStatus.NOT_FOUND);
         }
         // Kiểm tra xem báo cáo có tồn tại trong căn hộ không
-        List<ApartmentReport> reports = reportService.getAllReportByApartmentId(apartmentId);
+        List<ApartmentReport> reports = reportService.getAllReportByApartmentId(apartmentId, -1);
         boolean reportExists = false;
         for (ApartmentReport report : reports) {
             if (report.getId() == reportId) {
@@ -75,19 +77,21 @@ public class ApiReportController {
         return new ResponseEntity<>( HttpStatus.NO_CONTENT);
     }
 
-    @PostMapping("/apartment/{apartmentId}/reports/")
-    public ResponseEntity<?> createReportByApartmentId(@PathVariable("apartmentId") int apartmentId,
-                                                       @RequestBody Map<String, Object> params,
+    @PostMapping("/api/reports/")
+    @CrossOrigin
+    public ResponseEntity<?> createReportByApartmentId(@RequestBody Map<String, Object> params,
                                                        Principal p) {
+        
+        if(params.get("apartmentId")==null || params.get("title") == null){
+            return new ResponseEntity<>("thiếu thông tin", HttpStatus.OK);
+        }
+        int apartmentId  = (int) params.get("apartmentId");
         ApartmentRentalConstract apartment = apartmentService.getConstractById(apartmentId);
         if (apartment == null) {
-            return new ResponseEntity<>("Không tìm thầy chung cư với mã: " + apartmentId, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Không tìm thầy chung cư với mã: " + apartmentId, HttpStatus.OK);
         }
-        if (!apartment.getResidentUser().getUsername().equals(p.getName()))
-            return new ResponseEntity<>("Không thể báo cáo cho chung cư khác", HttpStatus.BAD_REQUEST);
-        if (params.get("title") == null) {
-            return new ResponseEntity<>("Thiếu thông tin.", HttpStatus.BAD_REQUEST);
-        }
+        if (!apartmentService.checkRenter(apartmentId, p.getName()))
+            return new ResponseEntity<>("Không thể báo cáo cho chung cư khác", HttpStatus.OK);
 
         
         ApartmentReport newReport = new ApartmentReport();
@@ -153,10 +157,11 @@ public class ApiReportController {
         return new ResponseEntity<>(existingReport, HttpStatus.OK);
     }
     
-    @PostMapping(path = "/upload/", consumes = {
+    @PostMapping(path = "/api/upload/", consumes = {
         MediaType.APPLICATION_JSON_VALUE,
         MediaType.MULTIPART_FORM_DATA_VALUE
     }, produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin
     public ResponseEntity<Object> uploadImg(@RequestPart MultipartFile[] files) throws IOException {
         if(files.length == 0)
             return new ResponseEntity<>("File trống", HttpStatus.BAD_REQUEST);
@@ -172,5 +177,18 @@ public class ApiReportController {
         }
         return new ResponseEntity<>(res,HttpStatus.OK);
     }
-
+    
+    @GetMapping(path = "/api/reports/{id}/", produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin
+    public ResponseEntity<?> getReportById(@PathVariable int id, Principal p)
+    {
+        System.out.println("jeeee");
+        ApartmentReport rp = this.reportService.getReportById(id);
+        if(rp==null)
+            return new ResponseEntity<>("Không tìm thấy", HttpStatus.OK);
+        if(!this.apartmentService.checkRenter(rp.getApartmentId().getId(), p.getName()))
+            return new ResponseEntity<>("Không thể xem của người khác", HttpStatus.OK);
+        else
+            return new ResponseEntity<>(ReportSerializer.ReportDetail(rp), HttpStatus.OK);
+    }
 }

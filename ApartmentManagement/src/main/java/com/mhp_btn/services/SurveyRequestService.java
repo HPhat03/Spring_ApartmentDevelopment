@@ -6,7 +6,7 @@ import com.mhp_btn.pojo.ApartmentUser;
 import java.util.List;
 
 public interface SurveyRequestService {
-    List<ApartmentSurveyRequest> getAllSurveyRequest() ;
+    List<ApartmentSurveyRequest> getAllSurveyRequest(int page) ;
 
     ApartmentSurveyRequest getSurveyRequestById(int id) ;
 

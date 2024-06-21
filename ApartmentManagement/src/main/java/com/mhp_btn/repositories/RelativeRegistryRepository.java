@@ -2,6 +2,7 @@ package com.mhp_btn.repositories;
 
 import com.mhp_btn.pojo.ApartmentReceipt;
 import com.mhp_btn.pojo.ApartmentRelativeRegistry;
+import java.util.HashMap;
 
 import java.util.List;
 
@@ -15,4 +16,6 @@ public interface RelativeRegistryRepository {
     void addRelativeRegistry(ApartmentRelativeRegistry relativeRegistry);
 
     void updateRelativeRegistry(ApartmentRelativeRegistry relativeRegistry);
+    
+    List<ApartmentRelativeRegistry> getRRbyApartmentId(int id, HashMap<String,String> params);
 }

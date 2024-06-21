@@ -4,6 +4,8 @@ import com.mhp_btn.pojo.ApartmentReceipt;
 import com.mhp_btn.pojo.ApartmentRelativeRegistry;
 import com.mhp_btn.pojo.ApartmentRentalConstract;
 import com.mhp_btn.repositories.RelativeRegistryRepository;
+import java.util.ArrayList;
+import java.util.HashMap;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
@@ -12,6 +14,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.Query;
 import java.util.List;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 @Transactional
 @Repository
@@ -54,6 +60,29 @@ public class RelativeRegistryRepositoryImpl implements RelativeRegistryRepositor
     public void updateRelativeRegistry(ApartmentRelativeRegistry relativeRegistry) {
         Session session = this.factoryBean.getObject().getCurrentSession();
         session.update(relativeRegistry);
+    }
+
+    @Override
+    public List<ApartmentRelativeRegistry> getRRbyApartmentId(int id, HashMap<String, String> params) {
+        Session s = this.factoryBean.getObject().getCurrentSession();
+        
+        CriteriaBuilder cb = s.getCriteriaBuilder();
+        CriteriaQuery<ApartmentRelativeRegistry> q = cb.createQuery(ApartmentRelativeRegistry.class);
+        Root r = q.from(ApartmentRelativeRegistry.class);
+        Root rc = q.from(ApartmentRentalConstract.class);
+        q.select(r);
+        List<Predicate> preds = new ArrayList<>();
+        
+        String kw = params.get("kw");
+        if(kw!=null && !kw.isEmpty()){
+            preds.add(cb.like(r.get("name"), String.format("%%%s%%", kw)));
+        }
+        preds.add(cb.and(cb.equal(rc.get("id"), id), cb.equal(r.get("apartmentId"), rc.get("id"))));
+        q.where(preds.toArray(Predicate[]::new));
+        q.orderBy(cb.desc(r.get("id")));
+        Query Q = s.createQuery(q);
+   
+        return Q.getResultList();
     }
 
 

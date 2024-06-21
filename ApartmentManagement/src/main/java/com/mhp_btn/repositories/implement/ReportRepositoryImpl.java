@@ -10,20 +10,32 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 
 @Transactional
 @Repository
+@PropertySource("classpath:config.properties")
 public class ReportRepositoryImpl implements ReportRepository {
     @Autowired
     private LocalSessionFactoryBean factoryBean;
+    @Autowired
+    private Environment env;
 
     @Override
-    public List<ApartmentReport> getAllReportByApartmentId(int id) {
+    public List<ApartmentReport> getAllReportByApartmentId(int id, int page) {
         Session session = factoryBean.getObject().getCurrentSession();
         Query<ApartmentReport> query = session.createQuery(
-                "SELECT m FROM ApartmentReport m WHERE m.apartmentId.id = :apartmentId",
+                "SELECT m FROM ApartmentReport m WHERE m.apartmentId.id = :apartmentId ORDER BY m.id DESC",
                 ApartmentReport.class);
         query.setParameter("apartmentId", id);
+        
+        if(page > 0 ){
+            int pageSize = Integer.parseInt(env.getProperty("receipt.clientPageSize").toString());
+            int start = (page - 1) * pageSize;
+            query.setFirstResult(start);
+            query.setMaxResults(pageSize);
+        }
         return query.getResultList();
 
     }

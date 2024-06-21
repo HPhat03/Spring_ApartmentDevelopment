@@ -19,9 +19,10 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import javax.ws.rs.PathParam;
 
 @RestController
-@RequestMapping("/api")
+
 public class ApiSurveyRequestController {
     @Autowired
     private SurveyRequestService requestService;
@@ -31,9 +32,10 @@ public class ApiSurveyRequestController {
     private DetailRequestService detailRequestService;
 
     //Lay tat ca khao sat
-        @GetMapping(path = "/survey_request", produces = "application/json")
-    public ResponseEntity<List<ApartmentSurveyRequest>> getAllSurveyRequest() {
-        List<ApartmentSurveyRequest> surveyRequests = requestService.getAllSurveyRequest();
+    @GetMapping(path = "/api/survey_request", produces = "application/json")
+    @CrossOrigin
+    public ResponseEntity<List<ApartmentSurveyRequest>> getAllSurveyRequest(@PathParam("page") int page) {
+        List<ApartmentSurveyRequest> surveyRequests = requestService.getAllSurveyRequest(page);
         return new ResponseEntity<>(surveyRequests, HttpStatus.OK);
     }
 
@@ -162,6 +164,7 @@ public class ApiSurveyRequestController {
         requestService.updateSurveyRequest(surveyRequest);
         return ResponseEntity.ok(surveyRequest);
     }
-
+    
+    
 
 }
