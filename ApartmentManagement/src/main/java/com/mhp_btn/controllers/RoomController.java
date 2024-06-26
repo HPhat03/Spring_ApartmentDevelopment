@@ -15,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -68,15 +70,27 @@ public class RoomController {
         return "addRoom";
     }
 
-    //    chưa bắt lỗi nhập liệu
-    @PostMapping(path = "/add")
-    public String addRoom(@ModelAttribute("room") ApartmentRoom room) {
-        System.out.println("Room: " + room);
-        room.setCreatedDate(new Date());
-        room.setIsBlank((short) 1);
-        this.rs.addOrUpdateRoom(room);
 
-        return "redirect:/admin/rooms/";
+    @PostMapping(path = "/add")
+    public String addRoom(@ModelAttribute("room")@Valid ApartmentRoom room, BindingResult rs) {
+        System.out.println("Room: " + room.getFloor());
+
+
+        if (!rs.hasErrors()) {
+            try {
+                System.out.println("Room: " + room.getFloor());
+                room.setCreatedDate(new Date());
+                room.setIsBlank((short) 1);
+                this.rs.addOrUpdateRoom(room);
+
+                return "redirect:/admin/rooms/?page=1";
+            }catch (Exception ex) {
+                System.out.println("Lỗi ");
+                System.err.println(ex.getMessage());
+            }
+        }
+        return "addRoom";
+
 
     }
 

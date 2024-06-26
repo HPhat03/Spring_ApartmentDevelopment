@@ -36,6 +36,7 @@
                     <tr>
                         <th scope="col">Mã hóa đơn</th>
                         <th scope="col">Số phòng</th>
+                        <th scope="col">Cư dân</th>
                         <th scope="col">Ngày tạo</th>
                         <th scope="col">Thành tiền</th>
                         <th scope="col">Hành động</th>
@@ -46,6 +47,7 @@
                         <tr>
                             <td>${re.id}</td>
                             <td>${re.apartmentId.roomId.roomNumber}</td>
+                            <td>${re.apartmentId.residentId.apartmentUser.name}</td>
                             <td><fmt:formatDate value="${re.createdDate}" pattern="dd/MM/yyyy" /></td>
 
                             <td>${String.format("%,d", re.total)} VNĐ</td>

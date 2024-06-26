@@ -7,6 +7,8 @@ import com.mhp_btn.pojo.ApartmentSmartCabinet;
 import com.mhp_btn.repositories.SmartCabinetRepository;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,9 +22,12 @@ import java.util.*;
 
 @Transactional
 @Repository
+@PropertySource("classpath:configs.properties")
 public class SmartCabinetRepositoryImpl implements SmartCabinetRepository {
     @Autowired
     private LocalSessionFactoryBean factoryBean;
+    @Autowired
+    private Environment env;
 
     @Override
     public List<ApartmentSmartCabinet> getAllSmartCabinets(Map<String, String> params) {
@@ -50,13 +55,13 @@ public class SmartCabinetRepositoryImpl implements SmartCabinetRepository {
         Query query = session.createQuery(criteriaQuery);
 
 //        // Phân trang
-//        String page = params.get("page");
-//        if (page != null && !page.isEmpty()) {
-//            int pagesize = Integer.parseInt(Objects.requireNonNull(env.getProperty("services.pagesize")));
-//            int start = (Integer.parseInt(page) - 1) * pagesize;
-//            query.setFirstResult(start);
-//            query.setMaxResults(pagesize);
-//        }
+        String page = params.get("page");
+        if (page != null && !page.isEmpty()) {
+            int pagesize = Integer.parseInt(Objects.requireNonNull(env.getProperty("services.pagesize")));
+            int start = (Integer.parseInt(page) - 1) * pagesize;
+            query.setFirstResult(start);
+            query.setMaxResults(pagesize);
+        }
 
         return query.getResultList();
     }
@@ -111,6 +116,17 @@ public class SmartCabinetRepositoryImpl implements SmartCabinetRepository {
         }
     }
 
+    @Override
+    public long countCabinets() {
+
+            Session session = this.factoryBean.getObject().getCurrentSession();
+            CriteriaBuilder cb = session.getCriteriaBuilder();
+            CriteriaQuery<Long> q = cb.createQuery(Long.class);
+            q.select(cb.count(q.from(ApartmentSmartCabinet.class)));
+            Query rq = session.createQuery(q);
+            return (long) rq.getSingleResult();
+
+    }
 
 
 }

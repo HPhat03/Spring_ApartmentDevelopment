@@ -19,5 +19,6 @@ public interface SmartCabinetService {
 
     void updateCabinet(ApartmentSmartCabinet cabinet) ;
     public void addOrUpdate(ApartmentSmartCabinet c) ;
+    public long countCabinets() ;
 
-}
+    }

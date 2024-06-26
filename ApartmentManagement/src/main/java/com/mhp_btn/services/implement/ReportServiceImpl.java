@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ReportServiceImpl implements ReportService {
@@ -18,8 +19,8 @@ public class ReportServiceImpl implements ReportService {
         return this.reportRepo.getAllReportByApartmentId(id, page);
     }
     @Override
-    public List<ApartmentReport> getAllReport() {
-        return this.reportRepo.getAllReport();
+    public List<ApartmentReport> getAllReport(Map<String, String> params)  {
+        return this.reportRepo.getAllReport(params);
     }
 
 //    @Override
@@ -45,5 +46,10 @@ public class ReportServiceImpl implements ReportService {
     @Override
     public ApartmentReport getReportById(int id) {
         return this.reportRepo.getReportById(id);
+    }
+
+    @Override
+    public long countReport() {
+        return this.reportRepo.countReport();
     }
 }

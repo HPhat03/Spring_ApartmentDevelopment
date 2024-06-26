@@ -66,10 +66,9 @@ public class ServicesController {
         model.addAttribute("service", new ApartmentService());
         return "addService";
     }
-    // Chưa bắt looi cac truong nhap lieu
+
     @PostMapping(path = "/add")
     public String addService(@ModelAttribute("service") @Valid ApartmentService service, BindingResult rs)  {
-        // Kiểm tra xem có lỗi không
         if (!rs.hasErrors()) {
             try {
                 if (service.getId() == null) {

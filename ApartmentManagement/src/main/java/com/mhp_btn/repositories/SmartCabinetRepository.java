@@ -1,7 +1,12 @@
 package com.mhp_btn.repositories;
 
+import com.mhp_btn.pojo.ApartmentRoom;
 import com.mhp_btn.pojo.ApartmentSmartCabinet;
+import org.hibernate.Session;
 
+import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
 import java.util.List;
 import java.util.Map;
 
@@ -20,4 +25,6 @@ public interface SmartCabinetRepository {
     void updateCabinet(ApartmentSmartCabinet cabinet);
 
     public void addOrUpdate(ApartmentSmartCabinet c) ;
+
+    public long countCabinets() ;
 }

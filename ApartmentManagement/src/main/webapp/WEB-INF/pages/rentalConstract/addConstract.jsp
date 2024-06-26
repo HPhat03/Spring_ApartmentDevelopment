@@ -35,6 +35,11 @@
             font-size: 20px;
             cursor: pointer;
         }
+        .error-message {
+            color: red;
+            font-size: 16px;
+            /*margin-bottom: 15px;*/
+        }
     </style>
 </head>
 
@@ -43,6 +48,7 @@
     <form id="contractForm" onsubmit="handleSubmit(event)">
 
         <div class="form-group">
+            <div id="residentError" class="error-message"></div>
             <label for="resident">Cư dân:</label>
             <select id="resident" name="resident_id" class="form-control" required>
                 <option value="" label="-- Chọn cư dân --"></option>
@@ -53,6 +59,7 @@
         </div>
 
         <div class="form-group">
+            <div id="roomError" class="error-message"></div>
             <label for="room">Số phòng:</label>
             <select id="room" name="room_id" class="form-control" required>
                 <option value="" label="-- Chọn phòng --"></option>
@@ -63,6 +70,7 @@
         </div>
 
         <div class="form-group">
+            <div id="priceError" class="error-message"></div>
             <label for="contractPrice">Giá hợp đồng:</label>
             <input type="number" id="contractPrice" name="final_price" class="form-control" required>
         </div>
@@ -90,6 +98,7 @@
         </div>
 
         <div class="form-group">
+            <div id="relativesError" class="error-message"></div>
             <label>Thêm người thân:</label>
             <button type="button" class="btn btn-success mb-2" onclick="addRelative()"><i class="fa-solid fa-square-plus"></i></button>
             <div id="relatives-container">
@@ -97,9 +106,13 @@
             </div>
         </div>
 
-        <button type="submit" class="btn btn-primary">Tạo hợp đồng</button>
+        <c:url value="/admin/constract/" var="urlAdd"/>
+        <c:url value="/admin/constracts/" var="urlIndex"/>
+
+        <button type="button" class="btn btn-primary mt-4" onclick="createConstract('${urlAdd}', '${urlIndex}')">Tạo phiếu khảo sát</button>
     </form>
 </div>
+<script src="<c:url value="/js/constract.js" />"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Select all checkboxes for services by default
@@ -109,99 +122,5 @@
         });
     });
 
-    function addRelative() {
-        var container = document.getElementById('relatives-container');
-        var div = document.createElement('div');
-        div.classList.add('relative-input-group');
 
-        var nameInput = document.createElement('input');
-        nameInput.type = 'text';
-        nameInput.name = 'other_members.name';
-        nameInput.placeholder = 'Tên người thân';
-        nameInput.classList.add('form-control');
-
-        var relationshipInput = document.createElement('input');
-        relationshipInput.type = 'text';
-        relationshipInput.name = 'other_members.relationship';
-        relationshipInput.placeholder = 'Mối quan hệ';
-        relationshipInput.classList.add('form-control');
-
-        var removeButton = document.createElement('button');
-        removeButton.type = 'button';
-        removeButton.innerHTML = '<i class="fa-solid fa-trash"></i>';
-        removeButton.classList.add('remove-relative');
-        removeButton.onclick = function() {
-            container.removeChild(div);
-        };
-        div.appendChild(nameInput);
-        div.appendChild(relationshipInput);
-        div.appendChild(removeButton);
-
-        container.appendChild(div);
-    }
-
-    function handleSubmit(event) {
-        event.preventDefault();
-        var form = event.target;
-        var jsonData = {};
-
-        // Lấy dữ liệu từ các trường input của form
-        var residentId = parseInt(form.querySelector('#resident').value);
-        var roomId = parseInt(form.querySelector('#room').value);
-        var finalPrice = parseInt(form.querySelector('#contractPrice').value);
-
-        // Thêm các dịch vụ đã chọn vào mảng services (nếu có)
-        var services = [];
-        var serviceCheckboxes = form.querySelectorAll('.service-checkbox:checked');
-        if (serviceCheckboxes.length > 0) {
-            serviceCheckboxes.forEach(function(checkbox) {
-                services.push(parseInt(checkbox.value));
-            });
-        }
-
-        // Thêm các thành viên khác vào mảng other_members
-        var otherMembers = [];
-        var relativeGroups = form.querySelectorAll('.relative-input-group');
-        relativeGroups.forEach(function(group) {
-            var nameInput = group.querySelector('input[name="other_members.name"]').value;
-            var relationshipInput = group.querySelector('input[name="other_members.relationship"]').value;
-            otherMembers.push({
-                name: nameInput,
-                relationship: relationshipInput
-            });
-        });
-
-        // Kiểm tra nếu tất cả các dịch vụ đã được chọn, loại bỏ trường services khỏi json
-        if (serviceCheckboxes.length !== document.querySelectorAll('.service-checkbox').length) {
-            jsonData.services = services;
-        }
-
-        jsonData.resident_id = residentId;
-        jsonData.room_id = roomId;
-        jsonData.final_price = finalPrice;
-        jsonData.other_members = otherMembers;
-        console.log('JSON DATA:', jsonData);
-
-        fetch('/ApartmentManagement/admin/constract/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(jsonData)
-        })
-            .then(function(response) {
-                if (!response.ok) {
-                    throw new Error('Có lỗi xảy ra khi tạo hợp đồng. Vui lòng thử lại sau.');
-                }
-            })
-            .then(function(data) {
-                console.log('Response:', data);
-                alert('Hợp đồng đã được tạo thành công!');
-                window.location.href = '/ApartmentManagement/admin/constracts/';
-            })
-            .catch(function(error) {
-                console.error('Error:', error);
-                alert('Đã xảy ra lỗi khi tạo hợp đồng. Vui lòng thử lại!');
-            });
-    }
 </script>

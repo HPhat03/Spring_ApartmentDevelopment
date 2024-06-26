@@ -50,5 +50,10 @@ public class SmartCabinetServiceImpl implements SmartCabinetService {
         this.cabinetRepo.addOrUpdate(c);
     }
 
+    @Override
+    public long countCabinets() {
+        return this.cabinetRepo.countCabinets();
+    }
+
 
 }

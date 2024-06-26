@@ -51,6 +51,11 @@
         input[type="submit"]:hover {
             background-color: #0056b3;
         }
+        .error-message {
+            color: red;
+            font-size: 16px;
+            /*margin-bottom: 15px;*/
+        }
     </style>
 
 <body>
@@ -58,6 +63,7 @@
     <h1>Tạo hóa đơn mới</h1>
 
     <form id="receiptForm">
+        <div id="apartmentIdError" class="error-message"></div>
         <label for="apartmentId">Số phòng:</label>
         <select id="apartmentId" name="apartmentId" required>
             <option value="" label="-- Chọn phòng --"></option>
@@ -65,62 +71,29 @@
                 <option value="${con.id}">[${con.id}] ${con.roomId.roomNumber} - ${con.residentId.apartmentUser.name}</option>
             </c:forEach>
         </select>
-        <label for="electric_usage">Tháng:</label>
+        <div id="monthError" class="error-message"></div>
+        <label for="month">Tháng:</label>
         <input type="number" id="month" name="month" min="1" max="12" required>
 
-        <label for="electric_usage">Năm:</label>
+        <div id="yearError" class="error-message"></div>
+        <label for="year">Năm:</label>
         <input type="number" id="year" name="year" min="0" max="2024" required>
-        
+
+        <div id="electricUsageError" class="error-message"></div>
         <label for="electric_usage">Tiêu thụ điện (kWh):</label>
         <input type="number" id="electric_usage" name="electric_usage" required>
 
+        <div id="waterUsageError" class="error-message"></div>
         <label for="water_usage">Tiêu thụ nước (m3):</label>
         <input type="number" id="water_usage" name="water_usage" required>
 
-        <input type="submit" value="Tạo hóa đơn">
+
+        <c:url value="/admin/receipts/add" var="urlAdd"/>
+        <c:url value="/admin/receipts/?page=1" var="urlIndex"/>
+        <button type="button" class="btn btn-primary mt-4" onclick="createReceipt('${urlAdd}', '${urlIndex}')">Tạo hóa đơn</button>
     </form>
 </div>
 
-<script>
-    document.getElementById('receiptForm').addEventListener('submit', function(event) {
-        event.preventDefault(); // Ngăn chặn form gửi mặc định
-
-        const formData = new FormData(event.target);
-        const data = {
-           month: Number(formData.get('month')),
-           year:Number(formData.get('year')),
-           electric_usage: Number(formData.get('electric_usage')),
-           water_usage: Number(formData.get('water_usage')),
-           apartmentId: Number(formData.get('apartmentId'))
-        };
-
-        fetch('/ApartmentManagement/admin/receipts/add', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        })
-            .then(response => {
-                if (response.status === 201) {
-                    alert('Hóa đơn đã được tạo thành công!');
-
-                    window.location.href = '/ApartmentManagement/admin/receipts/';
-                } else if (response.status === 400) {
-                    alert('Thiếu các thông tin cần thiết');
-                } else if (response.status === 404) {
-                    alert('Không tìm thấy phòng với ID đã chọn');
-                } else {
-                    return response.json().then(errorData => {
-                        throw new Error(errorData.message || 'Có lỗi xảy ra');
-                    });
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Có lỗi xảy ra khi tạo hóa đơn: ' + error.message);
-            });
-    });
-</script>
+<script src="<c:url value="/js/receipt.js" />"></script>
 </body>
 

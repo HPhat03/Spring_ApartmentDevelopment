@@ -39,18 +39,18 @@ public class ApartmentSmartCabinet implements Serializable {
     @Column(name = "id")
     private Integer id;
     @Basic(optional = false)
-    @NotNull
+    @NotNull(message="{cabinet.desc.nullErr}")
     @Lob
-    @Size(min = 1, max = 65535)
+    @Size(min = 1, max = 65535,message="{cabinet.desc.nullErr}")
     @Column(name = "decription")
     private String decription;
     @Basic(optional = false)
-    @NotNull
+    @NotNull(message="{cabinet.status.nullErr}")
     @Size(min = 1, max = 9)
     @Column(name = "status")
     private String status;
     @Basic(optional = false)
-    @NotNull
+    @NotNull(message = "{cabinet.status.nullErr}")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern ="dd/MM/yyyy")
     @Column(name = "created_date", updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
@@ -64,6 +64,7 @@ public class ApartmentSmartCabinet implements Serializable {
     @JoinColumn(name = "apartment_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     @JsonIgnore
+    @NotNull(message= "{cabinet.apartmentId.nullErr}")
     private ApartmentRentalConstract apartmentId;
 
     public ApartmentSmartCabinet() {

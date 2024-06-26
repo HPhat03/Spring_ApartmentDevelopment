@@ -92,5 +92,5 @@
     </ul>
 </div>
 </div>
-<script src="<c:url value="/js/rooms.js" /> "></script>
+<%--<script src="<c:url value="/js/rooms.js" /> "></script>--%>
 

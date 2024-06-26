@@ -21,13 +21,18 @@
         </c:otherwise>
     </c:choose></h1>
     <form:form action="${action}" method="post" modelAttribute="room">
+<%--        <form:errors path="*" element="div" cssClass="alert alert-danger "/>--%>
         <div class="form-group">
+
             <label for="roomNumber">Số phòng:</label>
+            <form:errors path="roomNumber" element="div" cssClass="text-danger "/>
             <form:input path="roomNumber" id="roomNumber" class="form-control"/>
         </div>
 
         <div class="form-group">
+
             <label for="price">Giá:</label>
+            <form:errors path="price" element="div" cssClass="text-danger"/>
             <form:input path="price" id="price" class="form-control"/>
         </div>
         <div class="form-check mb-3">
@@ -40,16 +45,18 @@
         </div>
 
         <div class="form-group">
+
             <label for="floor">Tầng:</label>
-            <form:select path="floor.id" id="floor" class="form-control">
+            <form:errors path="floor" element="div" cssClass="text-danger "/>
+            <form:select path="floor" id="floor" class="form-control">
                 <form:option value="" label="-- Chọn tầng --"/>
                 <c:forEach items="${floors}" var="floor">
                     <c:choose>
                         <c:when test="${floor.id == room.floor.id}">
-                            <form:option value="${floor.id}" label="${floor.name}" selected="selected"/>
+                            <form:option value="${floor}" label="${floor.name}" selected="selected"/>
                         </c:when>
                         <c:otherwise>
-                            <form:option value="${floor.id}" label="${floor.name}"/>
+                            <form:option value="${floor}" label="${floor.name}"/>
                         </c:otherwise>
                     </c:choose>
                 </c:forEach>

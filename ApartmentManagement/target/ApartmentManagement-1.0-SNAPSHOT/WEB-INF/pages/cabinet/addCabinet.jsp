@@ -75,6 +75,7 @@
                 <form:hidden path="id"/>
 <%--                <p>${contract}</p>--%>
                 <div class="card-body mx-3">
+                    <form:errors path="apartmentId" element="div" cssClass="text-danger "/>
                     <div class="form-group">
                         <label for="apartmentId">Phòng:</label>
                         <c:choose>
@@ -83,7 +84,7 @@
                                 <input id="apartmentId" class="form-control" value="${contract.roomId.roomNumber}" readonly="true"/>
                             </c:when>
                             <c:otherwise>
-                                <form:select path="apartmentId.id" id="apartmentId" class="form-control">
+                                <form:select path="apartmentId" id="apartmentId" class="form-control">
                                     <option value="" label="-- Chọn phòng --"></option>
                                     <c:forEach items="${contracts}" var="con">
                                         <option value="${con.id}" ${contract.id == con.id ? 'selected' : ''}>${con.roomId.roomNumber} - ${con.residentId.apartmentUser.name}</option>
@@ -93,16 +94,16 @@
                         </c:choose>
                     </div>
 
-
+                    <form:errors path="decription" element="div" cssClass="text-danger "/>
                     <div class="form-group">
                         <label for="decription">Mô tả:</label>
                         <form:input path="decription" id="decription" class="form-control"/>
                     </div>
 
-<%--                    <p> ${cabinet.status}</p>--%>
+                    <form:errors path="status" element="div" cssClass="text-danger "/>
                     <div class="form-check mb-3">
                         <form:radiobutton path="status" id="isPending" value="PENDING" />
-                        <label class="form-check-label" for="isPending">Đang chờ nhận</label>
+                        <label class="form-check-label" for="isPending" >Đang chờ nhận</label>
                     </div>
 
                     <div class="form-check mb-3">

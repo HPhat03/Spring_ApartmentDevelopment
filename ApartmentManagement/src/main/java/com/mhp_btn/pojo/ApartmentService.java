@@ -19,6 +19,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -48,11 +49,12 @@ public class ApartmentService implements Serializable {
     private Integer id;
     @Basic(optional = false)
     @NotNull(message = "{service.name.nullError}")
-    @Size(min = 1, max = 45,message = "{service.name.sizeError}")
+    @Size(min = 1, max = 45,message = "{service.size.sizeError}")
     @Column(name = "name")
     private String name;
     @Basic(optional = false)
     @NotNull(message = "{service.price.nullError}")
+    @Min(value=3000, message="{service.price.minError}")
     @Column(name = "price")
     private int price;
     @Basic(optional = false)

@@ -42,40 +42,6 @@ public class ApiReportController {
     @Autowired
     private Cloudinary cloudinary;
 
-    @GetMapping(path="/apartment/{apartmentId}/reports", produces = "application/json")
-    public ResponseEntity<?> getAllReportByApartmentId(@PathVariable int apartmentId ) {
-        ApartmentRentalConstract apartment = apartmentService.getConstractById(apartmentId);
-        if (apartment == null) {
-            return new ResponseEntity<>("Apartment not found with ID: " + apartmentId, HttpStatus.NOT_FOUND);
-        }
-        List<ApartmentReport> reports = reportService.getAllReportByApartmentId(apartmentId, -1);
-        return new ResponseEntity<>(reports, HttpStatus.OK);
-    }
-
-    @DeleteMapping(path = "/apartment/{apartmentId}/reports/{reportId}")
-    public ResponseEntity<?> deleteReportByApartmentId(@PathVariable("apartmentId") int apartmentId,
-                                                       @PathVariable("reportId") int reportId) {
-        // Kiểm tra xem căn hộ có tồn tại không
-        ApartmentRentalConstract apartment = apartmentService.getConstractById(apartmentId);
-        if (apartment == null) {
-            return new ResponseEntity<>("Apartment not found with ID: " + apartmentId, HttpStatus.NOT_FOUND);
-        }
-        // Kiểm tra xem báo cáo có tồn tại trong căn hộ không
-        List<ApartmentReport> reports = reportService.getAllReportByApartmentId(apartmentId, -1);
-        boolean reportExists = false;
-        for (ApartmentReport report : reports) {
-            if (report.getId() == reportId) {
-                reportExists = true;
-                break;
-            }
-        }
-        if (!reportExists) {
-            return new ResponseEntity<>("Report not found with ID: " + reportId + " in Apartment with ID: " + apartmentId, HttpStatus.NOT_FOUND);
-        }
-        // Thực hiện xóa báo cáo
-        reportService.deleteReportById(reportId);
-        return new ResponseEntity<>( HttpStatus.NO_CONTENT);
-    }
 
     @PostMapping("/api/reports/")
     @CrossOrigin
@@ -122,41 +88,7 @@ public class ApiReportController {
     }
 
 
-    @PatchMapping(value="/apartment/{apartmentId}/reports/{reportId}" , produces = "application/json")
-    public ResponseEntity<?> updateReportByReportId(@PathVariable("apartmentId") int apartmentId,
-                                                    @PathVariable("reportId") int reportId,
-                                                    @RequestBody Map<String, Object> updateFields) {
-        // Kiểm tra xem căn hộ có tồn tại không
-        ApartmentRentalConstract apartment = apartmentService.getConstractById(apartmentId);
-        if (apartment == null) {
-            return new ResponseEntity<>("Apartment not found with ID: " + apartmentId, HttpStatus.NOT_FOUND);
-        }
 
-        // Kiểm tra xem báo cáo có tồn tại trong căn hộ không
-        ApartmentReport existingReport = reportService.getReportById(reportId);
-        if (existingReport == null) {
-            return new ResponseEntity<>("Report not found with ID: " + reportId + " in Apartment with ID: " + apartmentId, HttpStatus.NOT_FOUND);
-        }
-
-        // Cập nhật thông tin của báo cáo từ dữ liệu được gửi lên
-        if (updateFields.containsKey("title")) {
-            existingReport.setTitle((String) updateFields.get("title"));
-        }
-
-        if (updateFields.containsKey("createdDate")) {
-            try {
-                Date createdDate = StringUtil.dateFormater().parse((String) updateFields.get("createdDate"));
-                existingReport.setCreatedDate(createdDate);
-            } catch (ParseException e) {
-                return new ResponseEntity<>("Invalid createdDate format", HttpStatus.BAD_REQUEST);
-            }
-        }
-        existingReport.setApartmentId(apartment);
-        reportService.updateReport(existingReport);
-
-        return new ResponseEntity<>(existingReport, HttpStatus.OK);
-    }
-    
     @PostMapping(path = "/api/upload/", consumes = {
         MediaType.APPLICATION_JSON_VALUE,
         MediaType.MULTIPART_FORM_DATA_VALUE

@@ -20,12 +20,7 @@ public class ApiSmartCabinetController {
     @Autowired
     private RentalConstractService apartmentService;
 
-    // Lay tat ca danh sach cac tu
-//    @GetMapping(path = "/api/smart_cabinets", produces = "application/json")
-//    public ResponseEntity<List<ApartmentSmartCabinet>> getAllSmartCabinet() {
-//        List<ApartmentSmartCabinet> smartCabinets = cabinetService.getAllSmartCabinets();
-//        return new ResponseEntity<>(smartCabinets, HttpStatus.OK);
-//    }
+
 
     // lay tu do thong minh theo id apartment
     @GetMapping(path="/api/apartment/{apartmentId}/smart_cabinets", produces = "application/json")

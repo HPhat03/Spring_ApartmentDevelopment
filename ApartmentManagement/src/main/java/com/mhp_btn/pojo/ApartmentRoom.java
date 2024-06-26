@@ -25,6 +25,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -55,23 +56,24 @@ public class ApartmentRoom implements Serializable {
     @Column(name = "id")
     private Integer id;
     @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 3)
+    @NotNull(message = "{room.roomNumber.nullError}")
+    @Size(min = 1, max = 3, message = "{room.size.sizeError}")
     @Column(name = "room_number")
     private String roomNumber;
     @Basic(optional = false)
-    @NotNull
+//    @NotNull
     @Column(name = "is_blank")
     private short isBlank;
     @Basic(optional = false)
-    @NotNull
+    @NotNull(message = "{room.price.nullError}")
+    @Min(value=2000000, message = "{room.price.nullError}")
     @Column(name = "price")
     private int price;
     @Column(name = "is_active")
     private Short isActive;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     @Basic(optional = false)
-    @NotNull
+//    @NotNull
     @Column(name = "created_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdDate;
@@ -81,6 +83,7 @@ public class ApartmentRoom implements Serializable {
     @JsonIgnore
     @JoinColumn(name = "floor", referencedColumnName = "id")
     @ManyToOne(optional = false)
+    @NotNull(message = "{room.floor.nullError}")
     private ApartmentFloor floor;
 
     public ApartmentRoom() {

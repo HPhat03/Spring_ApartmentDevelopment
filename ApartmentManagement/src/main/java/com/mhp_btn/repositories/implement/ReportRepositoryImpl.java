@@ -1,6 +1,7 @@
 package com.mhp_btn.repositories.implement;
 
 import com.mhp_btn.pojo.ApartmentReport;
+import com.mhp_btn.pojo.ApartmentRoom;
 import com.mhp_btn.repositories.ReportRepository;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
@@ -9,9 +10,16 @@ import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.util.Map;
 import java.util.Objects;
 
 @Transactional
@@ -41,10 +49,27 @@ public class ReportRepositoryImpl implements ReportRepository {
     }
     
     @Override
-    public List<ApartmentReport> getAllReport() {
+    public List<ApartmentReport> getAllReport(Map<String, String> params) {
         Session s = Objects.requireNonNull(this.factoryBean.getObject()).getCurrentSession();
-        javax.persistence.Query q = s.createQuery("SELECT m FROM ApartmentReport m ORDER BY m.id DESC");
-        return q.getResultList();
+        CriteriaBuilder b = s.getCriteriaBuilder();
+        CriteriaQuery<ApartmentReport> q = b.createQuery(ApartmentReport.class);
+        Root<ApartmentReport> r = q.from(ApartmentReport.class);
+
+        q.select(r);
+        List<Predicate> predicates = new ArrayList<>();
+
+        q.where(predicates.toArray(new Predicate[0]));
+
+        javax.persistence.Query query = s.createQuery(q);
+        //phan trang
+        String page = params.get("page");
+        if(page != null && !page.isEmpty() ){
+            int pagesize = Integer.parseInt(Objects.requireNonNull(env.getProperty("room.pagesize")));
+            int start = (Integer.parseInt(page)-1) * pagesize;
+            query.setFirstResult(start);
+            query.setMaxResults(pagesize);
+        }
+        return (List<ApartmentReport>) query.getResultList();
     }
 
 
@@ -76,5 +101,15 @@ public class ReportRepositoryImpl implements ReportRepository {
         q.setParameter("id", id);
         List<ApartmentReport> result = q.getResultList();
         return result.isEmpty() ? null : result.get(0);
+    }
+
+    @Override
+    public long countReport() {
+        Session session = this.factoryBean.getObject().getCurrentSession();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<Long> q = cb.createQuery(Long.class);
+        q.select(cb.count(q.from(ApartmentReport.class)));
+        javax.persistence.Query rq = session.createQuery(q);
+        return (long) rq.getSingleResult();
     }
 }

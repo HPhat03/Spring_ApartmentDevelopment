@@ -54,7 +54,7 @@
             </li>
 
             <li class="nav-item">
-                <a class="nav-link text-white"  href="<c:url value="/admin/cabinets/"/>">
+                <a class="nav-link text-white"  href="<c:url value="/admin/cabinets/?page=1"/>">
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="material-icons opacity-10">view_in_ar</i>
                     </div>
@@ -70,7 +70,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-white" href="<c:url value="/admin/reports/"/>">
+                <a class="nav-link text-white" href="<c:url value="/admin/reports/?page=1"/>">
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="material-icons opacity-10">receipt_long</i>
                     </div>
