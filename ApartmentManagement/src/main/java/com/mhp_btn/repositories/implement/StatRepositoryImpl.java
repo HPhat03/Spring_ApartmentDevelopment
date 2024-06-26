@@ -57,9 +57,32 @@ public class StatRepositoryImpl implements StatRepository {
         return query.getResultList();
     }
 
-    @Override
-    public List<Object[]> statRevenue(int year, String filter) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+     @Override
+    public List<Object[]> statsRevenueByPeriod(int year, String period) {
+        Session session = this.session.getObject().getCurrentSession();
+        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+        CriteriaQuery<Object[]> criteriaQuery = criteriaBuilder.createQuery(Object[].class);
+
+        Root<ApartmentReceipt> apartmentReceiptRoot = criteriaQuery.from(ApartmentReceipt.class);
+
+        // Lấy thuộc tính month và year của ApartmentReceipt
+        Expression<Integer> monthExpression = apartmentReceiptRoot.get("month");
+        Expression<String> yearExpression = apartmentReceiptRoot.get("year");
+
+        criteriaQuery.multiselect(
+                monthExpression,
+                criteriaBuilder.sum(apartmentReceiptRoot.get("total"))
+        );
+        
+
+        Predicate yearPredicate = criteriaBuilder.equal(yearExpression, String.valueOf(year));
+        criteriaQuery.where(yearPredicate);
+
+        criteriaQuery.groupBy(monthExpression);
+        criteriaQuery.orderBy(criteriaBuilder.asc(monthExpression));
+        Query query = session.createQuery(criteriaQuery);
+       
+        return query.getResultList();
     }
 
 

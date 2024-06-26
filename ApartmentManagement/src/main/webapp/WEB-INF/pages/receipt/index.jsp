@@ -23,7 +23,7 @@
                 <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
                     <h6 class="text-white text-capitalize ps-3">Quản lí HÓA ĐƠN</h6>
                 </div>
-                <a class="btn btn-success px-3 mt-3" href="<c:url value='/receipts/add' />">
+                <a class="btn btn-success px-3 mt-3" href="<c:url value='/admin/receipts/add' />">
                     <i class="bi bi-plus"></i> Tạo hóa đơn mới
                 </a>
 
@@ -52,10 +52,10 @@
 
 
                             <td>
-                                <a class="btn btn-sm btn-success" href="<c:url value='/receipts/${re.id}' />">
+                                <a class="btn btn-sm btn-success" href="<c:url value='/admin/receipts/${re.id}' />">
                                     <i class="bi bi-pencil"></i> Chi tiết
                                 </a>
-                                <c:url value="/receipts/${re.id}" var="urlDelete" />
+                                <c:url value="/admin/receipts/${re.id}" var="urlDelete" />
 
                                 <button class="btn btn-sm btn-danger removeRoom" data-id="${re.id}" onclick="deleteReceipt('${urlDelete}', ${re.id})">
                                     <i class="bi bi-trash"></i> Xóa

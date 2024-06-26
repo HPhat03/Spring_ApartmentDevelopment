@@ -45,7 +45,7 @@ public class ReportPictureRepositoryImpl implements ReportPictureRepository{
         CriteriaQuery<ApartmentReportPicture> cq = cb.createQuery(ApartmentReportPicture.class);
         Root<ApartmentReportPicture> root = cq.from(ApartmentReportPicture.class);
 
-        Predicate reportIdPredicate = cb.equal(root.get("reportId").get("id"), reportId);
+        Predicate reportIdPredicate = cb.equal(root.get("reportId").get("reportId").get("id"), reportId);
         cq.where(reportIdPredicate);
         return s.createQuery(cq).getResultList();
     }

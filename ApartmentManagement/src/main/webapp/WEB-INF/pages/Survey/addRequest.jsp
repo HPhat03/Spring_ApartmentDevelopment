@@ -60,8 +60,8 @@
                 </div>
             </div>
         </div>
-        <c:url value="/survey_request/add/" var="urlAdd"/>
-        <c:url value="/survey_request/" var="urlIndex"/>
+        <c:url value="/admin/survey_request/add/" var="urlAdd"/>
+        <c:url value="/admin/survey_request/" var="urlIndex"/>
 
         <button type="button" class="btn btn-primary mt-4" onclick="createSurvey('${urlAdd}', '${urlIndex}')">Tạo phiếu khảo sát</button>
     </form>

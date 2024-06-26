@@ -17,7 +17,7 @@
                 <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
                     <h6 class="text-white text-capitalize ps-3">DANH SÁCH HỢP ĐỒNG THUÊ NHÀ</h6>
                 </div>
-                <a class="btn btn-success px-3 mt-3" href="<c:url value='/constracts/add' />">
+                <a class="btn btn-success px-3 mt-3" href="<c:url value='/admin/constracts/add' />">
                     <i class="bi bi-plus"></i> Tạo hợp đồng
                 </a>
             </div>
@@ -60,13 +60,13 @@
                             </td>
 
                             <td>
-                                <a class="btn btn-sm btn-success" href="<c:url value='/constracts/${con.id}' />">
+                                <a class="btn btn-sm btn-success" href="<c:url value='/admin/constracts/${con.id}' />">
                                     <i class="bi bi-pencil"></i>Chi tiết
                                 </a>
-                                <a class="btn btn-sm btn-primary" href="<c:url value='/constracts/edit/${con.id}' />">
+                                <a class="btn btn-sm btn-primary" href="<c:url value='/admin/constracts/edit/${con.id}' />">
                                     <i class="bi bi-pencil"></i> Sửa
                                 </a>
-                                <c:url value="/constracts/${con.id}/" var="urlDelete" />
+                                <c:url value="/admin/constracts/${con.id}/" var="urlDelete" />
 
                                 <button class="btn btn-sm btn-danger delete-btn"  data-id="${conid}" onclick="deleteConstract('${urlDelete}', ${con.id})">
                                     <i class="bi bi-trash"></i> Xóa

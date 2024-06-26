@@ -23,7 +23,7 @@
                 <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
                     <h6 class="text-white text-capitalize ps-3">Quản lí tủ đồ thông minh</h6>
                 </div>
-                <a class="btn btn-success px-3 mt-3" href="<c:url value='/cabinets/add' />">
+                <a class="btn btn-success px-3 mt-3" href="<c:url value='/admin/cabinets/add' />">
                     <i class="bi bi-plus"></i> Tạo đơn mới
                 </a>
                 <form>
@@ -60,12 +60,12 @@
                             <td>
                                 <c:choose>
                                     <c:when test="${cab.status == 'PENDING'}">
-                                        <button class="btn-success border-radius-2xl shadow">
-                                            Đang vận chuyển
+                                        <button class="btn-warning border-radius-2xl shadow">
+                                            Đang chờ nhận
                                         </button>
                                     </c:when>
                                     <c:otherwise>
-                                        <button class="btn-outline-danger border-radius-2xl shadow-blur">
+                                        <button class="btn-outline-success border-radius-2xl shadow-blur">
                                             Đã nhận
                                         </button>
                                     </c:otherwise>
@@ -78,10 +78,10 @@
                                 <fmt:formatDate value="${cab.updatedDate}" pattern="dd/MM/yyyy" />
                             </td>
                             <td>
-                                <a class="btn btn-sm btn-primary" href="<c:url value='/cabinets/${cab.id}' />">
+                                <a class="btn btn-sm btn-primary" href="<c:url value='/admin/cabinets/${cab.id}' />">
                                     <i class="bi bi-pencil"></i> Sửa
                                 </a>
-                                <c:url value="/cabinets/${cab.id}" var="urlDelete" />
+                                <c:url value="/admin/cabinets/${cab.id}" var="urlDelete" />
 
                                 <button class="btn btn-sm btn-danger removeRoom" data-id="${cab.id}" onclick="deleteCabinet('${urlDelete}', ${cab.id})">
                                     <i class="bi bi-trash"></i> Xóa

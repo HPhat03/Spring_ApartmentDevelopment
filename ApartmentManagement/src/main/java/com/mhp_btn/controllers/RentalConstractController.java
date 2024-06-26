@@ -3,6 +3,7 @@ package com.mhp_btn.controllers;
 import com.mhp_btn.pojo.*;
 import com.mhp_btn.services.OtherMemberService;
 import com.mhp_btn.services.RentalConstractService;
+import com.mhp_btn.services.RoomService;
 import com.mhp_btn.services.ServiceConstractService;
 import com.mhp_btn.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ import java.util.List;
 
 
 @Controller
-@RequestMapping("/constracts")
+@RequestMapping("/admin/constracts")
 @PropertySource("classpath:configs.properties")
 public class RentalConstractController {
     @Autowired
@@ -30,10 +31,14 @@ public class RentalConstractController {
     private OtherMemberService otherService;
     @Autowired
     private Environment env;
+    @Autowired
+    private RoomService rs;
 
     @GetMapping("/")
     public String index(Model model, @RequestParam HashMap<String, String> params) {
-
+        
+        if (params.get("page") == null)
+            params.put("page", "1");
         List<ApartmentRentalConstract> constracts = this.rcs.getAllRentalConstract(params);
         for (ApartmentRentalConstract con : constracts) {
             ApartmentResident resident = con.getResidentId();
@@ -47,6 +52,7 @@ public class RentalConstractController {
         int pageSize = Integer.parseInt(env.getProperty("contracts.pagesize"));
         int totalPages = (int) Math.ceil((double) totalConstracts / pageSize);
         int currentPage = params.get("page") != null ? Integer.parseInt(params.get("page")) : 1;
+        
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("currentPage", currentPage);
         return "rentalConstract";
@@ -55,6 +61,7 @@ public class RentalConstractController {
     @GetMapping("/add")
     public String addConstract(Model model) {
         model.addAttribute("constract", new ApartmentRentalConstract());
+        model.addAttribute("rooms", this.rs.getRoomsBlank());
         return "addConstract";
     }
     @GetMapping("/{id}")

@@ -3,7 +3,6 @@ package com.mhp_btn.repositories.implement;
 
 import com.mhp_btn.pojo.ApartmentPayment;
 import com.mhp_btn.pojo.ApartmentReceipt;
-import com.mhp_btn.pojo.ApartmentRelativeRegistry;
 
 // import com.mhp_btn.pojo.*;
 //import com.mhp_btn.pojo.ApartmentPayment_;
@@ -13,8 +12,6 @@ import java.util.*;
 
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.env.Environment;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,11 +25,9 @@ import javax.persistence.criteria.Subquery;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 
-import org.springframework.security.core.context.SecurityContextHolder;
-
 @Transactional
 @Repository
-@PropertySource("classpath:config.properties")
+@PropertySource("classpath:configs.properties")
 public class ReceiptRepositoryImpl implements ReceiptRepository {
     @Autowired
     private LocalSessionFactoryBean factoryBean;
@@ -110,12 +105,6 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
     @Override
     public List<ApartmentReceipt> getAllReceipt(HashMap<String, String> params) {
         Session s = this.factoryBean.getObject().getCurrentSession();
-        
-
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Query uq = s.createQuery("FROM ApartmentUser U WHERE U.username=:un");
-        uq.setParameter("un", username);
-        ApartmentUser user = (ApartmentUser) uq.getSingleResult();
 
         CriteriaBuilder cb = s.getCriteriaBuilder();
         CriteriaQuery<ApartmentReceipt> q = cb.createQuery(ApartmentReceipt.class);
@@ -149,12 +138,7 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
         String apartment = params.get("apartment");
         if(apartment!=null && !apartment.isEmpty()){
             predicates.add(cb.equal(r.get("apartmentId"), Integer.parseInt(apartment)));
-
-        if (user.getRole().equals(ApartmentUser.RESIDENT)) {
-            Join<ApartmentReceipt, ApartmentRentalConstract> rc = r.join("apartmentId"); // Join với apartmentId của ApartmentReceipt
-            predicates.add(cb.equal(rc.get("residentId"), user.getId()));
         }
-
         q.where(predicates.toArray(new Predicate[0]));
         q.orderBy(cb.desc(r.get("id")));
 
@@ -163,7 +147,7 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
         if(page!=null && !page.isEmpty())
         {
             
-           int pageSize = Integer.parseInt(env.getProperty("receipt.clientPageSize").toString());
+           int pageSize = Integer.parseInt(env.getProperty("receipt.clientPageSize"));
             int start = (Integer.parseInt(page) - 1) * pageSize;
             rs.setFirstResult(start);
             rs.setMaxResults(pageSize);
@@ -172,5 +156,5 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
 
         return receipts;
     }
-
+        
 }

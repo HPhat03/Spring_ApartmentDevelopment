@@ -41,8 +41,12 @@
         <put-attribute name="title" value="Thống kê" />
         <put-attribute name="content" value="/WEB-INF/pages/stats/index.jsp" />
     </definition>
+    <definition name="survey_stats" extends="baseLayout">
+        <put-attribute name="title" value="Thống kê" />
+        <put-attribute name="content" value="/WEB-INF/pages/stats/survey_stats.jsp" />
+    </definition>
 
-    <definition name="login" template="/WEB-INF/pages/auth/login.jsp">
+    <definition name="login" template="/WEB-INF/pages/user/login.jsp">
     </definition>
 
 <!--    người dùng-->

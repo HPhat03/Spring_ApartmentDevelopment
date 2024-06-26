@@ -9,10 +9,6 @@ import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import java.util.List;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
@@ -20,7 +16,7 @@ import java.util.Objects;
 
 @Transactional
 @Repository
-@PropertySource("classpath:config.properties")
+@PropertySource("classpath:configs.properties")
 public class ReportRepositoryImpl implements ReportRepository {
     @Autowired
     private LocalSessionFactoryBean factoryBean;
@@ -42,24 +38,15 @@ public class ReportRepositoryImpl implements ReportRepository {
             query.setMaxResults(pageSize);
         }
         return query.getResultList();
+    }
+    
+    @Override
     public List<ApartmentReport> getAllReport() {
         Session s = Objects.requireNonNull(this.factoryBean.getObject()).getCurrentSession();
-        javax.persistence.Query q = s.createNamedQuery("ApartmentReport.findAll");
+        javax.persistence.Query q = s.createQuery("SELECT m FROM ApartmentReport m ORDER BY m.id DESC");
         return q.getResultList();
     }
 
-    // @Override
-    // public List<ApartmentReport> getAllReportByApartmentId(int id) {
-    //     Session session = factoryBean.getObject().getCurrentSession();
-    //     CriteriaBuilder cb = session.getCriteriaBuilder();
-    //     CriteriaQuery<ApartmentReport> cq = cb.createQuery(ApartmentReport.class);
-    //     Root<ApartmentReport> root = cq.from(ApartmentReport.class);
-    //     Predicate predicate = cb.equal(root.get("apartmentId").get("id"), id);
-    //     cq.select(root).where(predicate);
-
-    //     Query<ApartmentReport> query = session.createQuery(cq);
-    //     return query.getResultList();
-    // }
 
     @Override
     public void deleteReportById(int id) {

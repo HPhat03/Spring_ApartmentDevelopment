@@ -12,14 +12,14 @@
         <i class="fas fa-times p-3 cursor-pointer text-white opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
         <a class="navbar-brand m-0">
             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQqs8KJMo6kdez1J6yKhGemIfPq5dS7G3TuBg&s" class="navbar-brand-img h-100" alt="main_logo">
-            <span class="ms-1 font-weight-bold text-white">Quản lý chung cư</span>
+            <span class="ms-1 font-weight-bold text-white">Xin chào ADMIN ${pageContext.request.userPrincipal.name.toUpperCase()}</span>
         </a>
     </div>
     <hr class="horizontal light mt-0 mb-2">
     <div class="collapse navbar-collapse w-auto" id="sidenav-collapse-main">
         <ul class="navbar-nav">
             <li class="nav-item">
-                <a class="nav-link text-white active bg-gradient-primary" href="<c:url value="/"/>">
+                <a class="nav-link text-white active bg-gradient-primary" href="<c:url value="/admin/"/>">
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="material-icons opacity-10">dashboard</i>
                     </div>
@@ -27,7 +27,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-white" href="<c:url value="/services/?page=1"/>">
+                <a class="nav-link text-white" href="<c:url value="/admin/services/?page=1"/>">
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="material-icons opacity-10">table_view</i>
                     </div>
@@ -35,7 +35,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-white" href="<c:url value="/rooms/?page=1"/>">
+                <a class="nav-link text-white" href="<c:url value="/admin/rooms/?page=1"/>">
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="material-icons opacity-10">receipt_long</i>
                     </div>
@@ -45,7 +45,7 @@
 
 
             <li class="nav-item">
-                <a class="nav-link text-white" href="<c:url value="/constracts/"/>">
+                <a class="nav-link text-white" href="<c:url value="/admin/constracts/"/>">
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="material-icons opacity-10">format_textdirection_r_to_l</i>
                     </div>
@@ -54,7 +54,7 @@
             </li>
 
             <li class="nav-item">
-                <a class="nav-link text-white"  href="<c:url value="/cabinets/"/>">
+                <a class="nav-link text-white"  href="<c:url value="/admin/cabinets/"/>">
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="material-icons opacity-10">view_in_ar</i>
                     </div>
@@ -62,7 +62,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-white" href="<c:url value="/receipts/?page=1"/>">
+                <a class="nav-link text-white" href="<c:url value="/admin/receipts/?page=1"/>">
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="material-icons opacity-10">receipt_long</i>
                     </div>
@@ -70,7 +70,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-white" href="<c:url value="/reports/"/>">
+                <a class="nav-link text-white" href="<c:url value="/admin/reports/"/>">
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="material-icons opacity-10">receipt_long</i>
                     </div>
@@ -78,7 +78,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-white" href="<c:url value="/users/?page=1"/>">
+                <a class="nav-link text-white" href="<c:url value="/admin/users/?page=1"/>">
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="material-icons opacity-10">person</i>
                     </div>
@@ -86,7 +86,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-white" href="<c:url value="/survey_request/?page=1"/>">
+                <a class="nav-link text-white" href="<c:url value="/admin/survey_request/?page=1"/>">
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="material-icons opacity-10">receipt_long</i>
                     </div>
@@ -94,7 +94,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-white" href="<c:url value="/stats/"/>">
+                <a class="nav-link text-white" href="<c:url value="/admin/stats/"/>">
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                         <i class="material-icons opacity-10">person</i>
                     </div>
@@ -107,16 +107,11 @@
     <div class="sidenav-footer position-absolute w-100 bottom-0">
     <c:choose>
         <c:when test="${pageContext.request.userPrincipal.name == null}">
-            <div class="mx-3">
+            <div class="mx-3" style="margin-top: 10px">
                 <a  class="btn bg-gradient-primary w-100" type="button" href="<c:url value="/login"/>">Đăng nhập</a>
             </div>
         </c:when>
         <c:when test="${pageContext.request.userPrincipal.name != null}">
-
-            <li class="nav-item">
-
-                <a class="nav-link text-info" href="<c:url value="/" />">Chào ${pageContext.request.userPrincipal.name}!</a>
-            </li>
             <div class="mx-3">
                 <a  class="btn bg-gradient-primary w-100" type="button" href="<c:url value="/logout"/>">Đăng xuất</a>
             </div>

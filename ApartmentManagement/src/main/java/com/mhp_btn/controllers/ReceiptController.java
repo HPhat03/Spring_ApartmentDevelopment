@@ -19,7 +19,7 @@ import java.util.HashMap;
 
 
 @Controller
-@RequestMapping("/receipts")
+@RequestMapping("/admin/receipts")
 @PropertySource("classpath:configs.properties")
 public class ReceiptController {
     @Autowired
@@ -38,6 +38,8 @@ public class ReceiptController {
         long total = this.rs.countReceipt();
         int totalPages = (int) Math.ceil((double) total / pageSize);
         int currentPage = params.get("page") != null ? Integer.parseInt(params.get("page")) : 1;
+        if (params.get("page") == null)
+            params.put("page", "1");
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("currentPage", currentPage);
 

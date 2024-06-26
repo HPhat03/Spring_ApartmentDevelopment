@@ -26,7 +26,7 @@
 
             </div>
             <div class="d-flex align-items-center">
-                <a class="btn btn-success mt-4 mx-3" href="<c:url value='/survey_request/add' />">
+                <a class="btn btn-success mt-4 mx-3" href="<c:url value='/admin/survey_request/add' />">
                     <i class="bi bi-plus"></i> Tạo phiếu khảo sát mới
                 </a>
             </div>
@@ -72,13 +72,13 @@
                                     </c:choose>
                                 </td>
                                 <td>
-                                    <a class="btn btn-sm btn-secondary" href="<c:url value='/survey_request/${r.id}' />">
+                                    <a class="btn btn-sm btn-secondary" href="<c:url value='/admin/survey_request/${r.id}' />">
                                         <i class="bi bi-pencil"></i> Xem chi tiết
                                     </a>
                                     <a class="btn btn-sm btn-primary" href="<c:url value='' />">
                                         <i class="bi bi-pencil"></i> Sửa
                                     </a>
-                                    <c:url value="/survey_request/${r.id}" var="urlDelete" />
+                                    <c:url value="/admin/survey_request/${r.id}" var="urlDelete" />
                                     <button class="btn btn-sm btn-danger removeRoom" data-id="${r.id}" onclick="deleteSurvey('${urlDelete}', ${r.id})">
                                         <i class="bi bi-trash"></i> Xóa
                                     </button>

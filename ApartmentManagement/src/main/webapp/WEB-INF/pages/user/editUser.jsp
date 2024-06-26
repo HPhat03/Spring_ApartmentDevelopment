@@ -5,6 +5,7 @@
   Time: 2:13 AM
   To change this template use File | Settings | File Templates.
 --%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
     <style>
@@ -105,4 +106,4 @@
         <button type="submit" class="btn btn-dribbble">Lưu thay đổi</button>
     </form>
 </div>
-<script src="<c:url value="/js/user.js" /> "></script>
+        <script src="<c:url value="/js/user.js" /> "></script>

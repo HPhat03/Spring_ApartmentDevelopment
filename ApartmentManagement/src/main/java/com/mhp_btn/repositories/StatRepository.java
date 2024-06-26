@@ -12,7 +12,7 @@ import java.util.List;
  */
 public interface StatRepository {
     List<Object[]> statSurveybyId(int id);
-    List<Object[]> statRevenue(int year, String filter);
+    List<Object[]> statsRevenueByPeriod(int year, String period) ;
 
 
 }

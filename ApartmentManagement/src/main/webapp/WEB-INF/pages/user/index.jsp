@@ -17,11 +17,11 @@
             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 ">
                 <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
                     <h6 class="text-white text-capitalize text-center ps-3">Quản lí người dùng</h6>
-                </div>
-            </div>
+                </div> 
+           </div>
 
             <div class="d-flex align-items-center">
-                <a class="btn btn-success mt-4 mx-3" href="<c:url value='/users/add' />">
+                <a class="btn btn-success mt-4 mx-3" href="<c:url value='/admin/users/add' />">
                     <i class="bi bi-plus"></i> Thêm người dùng mới
                 </a>
                 <div class="dropdown mt-3">
@@ -104,13 +104,13 @@
                                     </c:choose>
                                 </td>
                                 <td>
-                                    <a class="btn btn-sm btn-outline-success" href="<c:url value='/users/${user.id}' />">
+                                    <a class="btn btn-sm btn-outline-success" href="<c:url value='/admin/users/${user.id}' />">
                                         <i class="bi bi-pencil"></i>Hồ sơ
                                     </a>
-                                    <a class="btn btn-sm btn-primary" href="<c:url value='/users/edit/${user.id}' />">
+                                    <a class="btn btn-sm btn-primary" href="<c:url value='/admin/users/edit/${user.id}' />">
                                         <i class="bi bi-pencil"></i> Sửa
                                     </a>
-                                    <c:url value="/users/${user.id}/" var="urlDelete" />
+                                    <c:url value="/admin/users/${user.id}/" var="urlDelete" />
 
                                     <button class="btn btn-sm btn-danger removeRoom" data-id="${user.id}" onclick="deleteUser('${urlDelete}', ${user.id})">
                                         <i class="bi bi-trash"></i> Xóa

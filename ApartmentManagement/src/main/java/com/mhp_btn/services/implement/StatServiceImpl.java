@@ -24,11 +24,10 @@ public class StatServiceImpl implements StatService{
         return repo.statSurveybyId(id);
     }
 
-
-
     @Override
-    public List<Object[]> statRevenue(int year, String filter) {
-        return this.repo.statRevenue(year,filter);
+    public List<Object[]> statsRevenueByPeriod(int year, String period) {
+        return this.repo.statsRevenueByPeriod(year, period);
     }
+
 
 }

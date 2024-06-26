@@ -86,7 +86,6 @@ function createSurvey(url, urlIndex) {
 
     // Dữ liệu gửi đi
     var data = {
-        adminId: 1,
         startDate: formattedStartDate,
         endDate: formattedEndDate,
         questions: questions

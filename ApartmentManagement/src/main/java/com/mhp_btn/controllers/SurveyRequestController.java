@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/survey_request")
+@RequestMapping("/admin/survey_request")
 @PropertySource("classpath:configs.properties")
 public class SurveyRequestController {
     @Autowired

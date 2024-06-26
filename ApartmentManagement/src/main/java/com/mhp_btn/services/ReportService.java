@@ -5,9 +5,9 @@ import com.mhp_btn.pojo.ApartmentReport;
 import java.util.List;
 
 public interface ReportService {
-    // List<ApartmentReport> getAllReportByApartmentId(int id, int page) ;
+     List<ApartmentReport> getAllReportByApartmentId(int id, int page) ;
     public List<ApartmentReport> getAllReport() ;
-    List<ApartmentReport> getAllReportByApartmentId(int id) ;
+//    List<ApartmentReport> getAllReportByApartmentId(int id) ;
 
     void deleteReportById(int id) ;
 

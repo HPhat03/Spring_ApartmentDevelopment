@@ -16,7 +16,7 @@ import com.mhp_btn.services.ResidentService;
 import com.mhp_btn.services.UserService;
 import com.mhp_btn.utils.ErrorHandle;
 import com.mhp_btn.utils.StringUtil;
-//import com.mhp_btn.utils.TwilioUtil;
+import com.mhp_btn.utils.TwilioUtil;
 import java.io.IOException;
 import java.security.Principal;
 import java.text.ParseException;
@@ -51,13 +51,7 @@ public class ApiUserController {
     @Autowired
     private JwtService jwtService;
 
-    //    @GetMapping(path = "/user/", produces = MediaType.APPLICATION_JSON_VALUE)
-//    public ResponseEntity<MappingJacksonValue> list(){
-//        List<ApartmentUser> users = this.us.getUsers();
-//        return new ResponseEntity<>(UserSerializer.UserList(users),HttpStatus.OK);
-//
-//    }
-    @DeleteMapping("/users/{id}/")
+    @DeleteMapping("/admin/users/{id}/")
     public ResponseEntity<String> deleteUserById(@PathVariable int id) {
         ApartmentUser u = this.us.getUserByID(id);
         if (u == null) {
@@ -68,7 +62,7 @@ public class ApiUserController {
         return new ResponseEntity<>("Đã xóa phòng có ID " + id, HttpStatus.NO_CONTENT);
     }
 
-    @PostMapping(path = "/users/add/", consumes = {
+    @PostMapping(path = "/admin/users/add/", consumes = {
             MediaType.APPLICATION_JSON_VALUE,
             MediaType.MULTIPART_FORM_DATA_VALUE
     }, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -86,6 +80,7 @@ public class ApiUserController {
         try {
             us.save(u, true);
             if (u.getRole().equals(ApartmentUser.ADMIN)) {
+                
                 ApartmentAdmin admin = new ApartmentAdmin(u.getId());
                 admin.setApartmentUser(u);
                 as.save(admin);
@@ -95,6 +90,7 @@ public class ApiUserController {
                 resident.setApartmentUser(u);
                 Date actualJoin = data.get("joineddate") == null ? new Date() : this.dateFormatter.parse(data.get("joineddate"));
                 resident.setJoinedDate(actualJoin);
+                resident.setFirstLogin((short) 1);
                 rs.save(resident);
                 u.setApartmentResident(resident);
             }
@@ -104,10 +100,10 @@ public class ApiUserController {
             ErrorHandle error = new ErrorHandle("Tạo không thành công", HttpStatus.BAD_REQUEST, e.toString());
             return new ResponseEntity<>(error, error.getStatus());
         }
-        //ĐÃ TEST THÀNH CÔNG -> KHI NÀO DEMO CHO THẦY RỒI MỞ.
-//        TwilioUtil.SendSMS("+84365051699", String.format("\n[PN APARTMENT THÔNG BÁO]\nTài khoản của quý khách %s đã được tạo. Giờ đây quý khách có thể đăng nhập "
-//                + "và sử dụng dịch vụ của chúng tôi.\nQuý khách vui lòng không tiết lộ thông tin đăng nhập của mình cho bất kì ai.\n"
-//                + "Quý khách vui lòng đăng nhập lần đầu vào hệ thống theo username: %s.", u.getName(), u.getUsername()));
+        //ĐÃ TEST THÀNH CÔNG
+        TwilioUtil.SendSMS("+84365051699", String.format("\n[PN APARTMENT THÔNG BÁO]\nTài khoản của quý khách %s đã được tạo. Giờ đây quý khách có thể đăng nhập "
+                + "và sử dụng dịch vụ của chúng tôi.\nQuý khách vui lòng không tiết lộ thông tin đăng nhập của mình cho bất kì ai.\n"
+                + "Quý khách vui lòng đăng nhập lần đầu vào hệ thống theo username: %s và password: %s.", u.getName(), u.getUsername(), ApartmentUser.RESIDENT_DEFAULT_PASSWORD ));
         return new ResponseEntity<>(UserSerializer.UserDetail(u), HttpStatus.CREATED);
 
     }
@@ -137,31 +133,30 @@ public class ApiUserController {
         return new ResponseEntity<>(UserSerializer.UserDetail(u), HttpStatus.OK);
     }
     
-    // @PatchMapping(path = "/user/{id}", consumes = {
-    //         MediaType.APPLICATION_JSON_VALUE
-    // },
-    //         produces = MediaType.APPLICATION_JSON_VALUE)
-    // public ResponseEntity<Object> updateUser(@PathVariable int id, @RequestBody Map<String, String> data) {
-    //     ApartmentUser u = this.us.getUserByID(id);
-    //     if (u == null) {
-    //         ErrorHandle error = new ErrorHandle("Không tìm thấy người dùng", HttpStatus.NOT_FOUND, "USER IS NULL");
-    //         return new ResponseEntity<>(error, error.getStatus());
-    //     }
-    //     u = us.ChangeOrInitialize(u, data, false);
-    //     if (u.getFirstName() == null) {
-    //         ErrorHandle error = new ErrorHandle("Không thể upload hình ảnh", HttpStatus.BAD_REQUEST, "ERROR UPLOADING TO CLOUDINARY");
-    //         return new ResponseEntity<>(error, error.getStatus());
-    //     }
+    @PatchMapping(path = "/admin/user/{id}/", consumes = {
+        MediaType.APPLICATION_JSON_VALUE
+    },
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> updateOnAdmin(@PathVariable int id, @RequestBody Map<String, String> data) {
+        ApartmentUser u = this.us.getUserByID(id);
+        if (u == null) {
+            ErrorHandle error = new ErrorHandle("Không tìm thấy người dùng", HttpStatus.NOT_FOUND, "USER IS NULL");
+            return new ResponseEntity<>(error, error.getStatus());
+        }
+        u = us.ChangeOrInitialize(u, data, false);
+        if (u.getFirstName() == null) {
+            ErrorHandle error = new ErrorHandle("Không thể upload hình ảnh", HttpStatus.BAD_REQUEST, "ERROR UPLOADING TO CLOUDINARY");
+            return new ResponseEntity<>(error, error.getStatus());
+        }
 
-    //     try {
-    //         us.save(u, false);
-    //     } catch (Exception e) {
-    //         ErrorHandle error = new ErrorHandle("Tạo không thành công", HttpStatus.BAD_REQUEST, e.toString());
-    //         return new ResponseEntity<>(error, error.getStatus());
-    //     }
-    //     return new ResponseEntity<>(UserSerializer.UserDetail(u), HttpStatus.OK);
-
-    // }
+        try {
+            us.save(u, false);
+        } catch (Exception e) {
+            ErrorHandle error = new ErrorHandle("Tạo không thành công", HttpStatus.BAD_REQUEST, e.toString());
+            return new ResponseEntity<>(error, error.getStatus());
+        }
+        return new ResponseEntity<>(UserSerializer.UserDetail(u), HttpStatus.OK);
+    }
 
     @PostMapping(path = "/api/user/{id}/add_avatar/", consumes = {
             MediaType.APPLICATION_JSON_VALUE,

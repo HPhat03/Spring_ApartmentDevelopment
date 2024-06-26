@@ -1,10 +1,10 @@
 package com.mhp_btn.controllers;
 
 import com.mhp_btn.pojo.ApartmentRentalConstract;
-import com.mhp_btn.pojo.ApartmentRoom;
 import com.mhp_btn.pojo.ApartmentSmartCabinet;
 import com.mhp_btn.services.RentalConstractService;
 import com.mhp_btn.services.SmartCabinetService;
+import com.mhp_btn.utils.TwilioUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,7 +16,7 @@ import javax.validation.Valid;
 import java.util.Date;
 import java.util.HashMap;
 @Controller
-@RequestMapping("/cabinets")
+@RequestMapping("/admin/cabinets")
 public class CabinetController {
 
     @Autowired
@@ -44,27 +44,27 @@ public class CabinetController {
     public String addView(Model model, @RequestParam HashMap<String, String> params) {
         model.addAttribute("cabinet", new ApartmentSmartCabinet());
         model.addAttribute("contracts", this.rcs.getAllRentalConstract(params));
+        
         return "addCabinet";
     }
 
     @PostMapping(path = "/add")
     public String addCabinet(@Valid @ModelAttribute("cabinet") ApartmentSmartCabinet cabinet, BindingResult result) {
-
-        try {
+        System.out.println(cabinet.getDecription() + " " + cabinet.getId());
+        
             if (cabinet.getId() == null) {
                 cabinet.setUpdatedDate(new Date());
                 cabinet.setCreatedDate(new Date());
-                this.scS.addOrUpdate(cabinet);
+                this.scS.addCabinet(cabinet);
             } else {
-
                 cabinet.setUpdatedDate(new Date());
                 this.scS.updateCabinet(cabinet);
             }
-            return "redirect:/cabinets/";
-        } catch (Exception ex) {
-            System.err.println("Lỗi khi thêm/cập nhật cabinet: " + ex.getMessage());
-        }
-        return "addCabinet";
+            System.out.println(cabinet.getApartmentId());
+            TwilioUtil.SendSMS("+84365051699", String.format("\n[PN APARTMENT THÔNG BÁO]\nQuý khách phòng %s có một đơn hàng vừa được cập nhật tại tủ điện tử.\nVào ngày %s.\nThông tin chi tiết xem tại: www.pnapartment.com", 
+                    rcs.getConstractById(cabinet.getApartmentId().getId()).getRoomId().getRoomNumber() , cabinet.getUpdatedDate().toString()));
+            return "redirect:/admin/cabinets/";
+        
     }
 
 //    @PostMapping("/{id}")

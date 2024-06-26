@@ -62,10 +62,15 @@
         <select id="apartmentId" name="apartmentId" required>
             <option value="" label="-- Chọn phòng --"></option>
             <c:forEach items="${constracts}" var="con">
-                <option value="${con.id}">${con.roomId.roomNumber}</option>
+                <option value="${con.id}">[${con.id}] ${con.roomId.roomNumber} - ${con.residentId.apartmentUser.name}</option>
             </c:forEach>
         </select>
+        <label for="electric_usage">Tháng:</label>
+        <input type="number" id="month" name="month" min="1" max="12" required>
 
+        <label for="electric_usage">Năm:</label>
+        <input type="number" id="year" name="year" min="0" max="2024" required>
+        
         <label for="electric_usage">Tiêu thụ điện (kWh):</label>
         <input type="number" id="electric_usage" name="electric_usage" required>
 
@@ -82,11 +87,11 @@
 
         const formData = new FormData(event.target);
         const data = {
-            month: new Date().getMonth() + 1, // Tháng hiện tại
-            year: new Date().getFullYear().toString(), // Năm hiện tại
-            electric_usage: Number(formData.get('electric_usage')), // Chuyển đổi thành số
-            water_usage: Number(formData.get('water_usage')), // Chuyển đổi thành số
-            apartmentId: Number(formData.get('apartmentId')) // Chuyển đổi thành số
+           month: Number(formData.get('month')),
+           year:Number(formData.get('year')),
+           electric_usage: Number(formData.get('electric_usage')),
+           water_usage: Number(formData.get('water_usage')),
+           apartmentId: Number(formData.get('apartmentId'))
         };
 
         fetch('/ApartmentManagement/admin/receipts/add', {

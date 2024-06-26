@@ -46,6 +46,8 @@ public class RentalConstractServiceImpl implements RentalConstractService {
     @Override
     public boolean checkRenter(int id, String username) {
         return this.rentalConstractRepo.checkRenter(id, username);
+    }
+    @Override
     public long countConstracts() {
         return this.rentalConstractRepo.countConstracts();
     }

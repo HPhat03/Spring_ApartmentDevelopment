@@ -5,8 +5,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const firstname = document.getElementById('firstname').value;
         const lastname = document.getElementById('lastname').value;
-        // const birthdate = document.getElementById('birthdate').value;
-        const birthdate = "23/11/2003"
+        var birthdate = document.getElementById('birthdate').value;
+//        const birthdate = "23/11/2003"
         const gender = document.querySelector('input[name="gender"]:checked').value;
         const email = document.getElementById('email').value;
         const phone = document.getElementById('phone').value;
@@ -14,21 +14,35 @@ document.addEventListener('DOMContentLoaded', function () {
         const role = document.getElementById('role').value;
         const username = document.getElementById('username').value;
         const password = document.getElementById('password').value;
+        const confirm = document.getElementById('confirmPassword').value;
+        
+        const array = birthdate.split("-");
+        birthdate = `${array[2]}/${array[1]}/${array[0]}`;
 
-        console.log(' Birthdate:', birthdate);
         // In dữ liệu form ra console
         console.log({
-            firstname,
-            lastname,
-            birthdate,
-            gender,
-            email,
-            phone,
             avatar,
             role,
             username,
             password,
         });
+        if((role==="ADMIN")&&(username === "" || password=== "" || confirm === ""))
+        {
+            alert("Đối với tạo mới admin: cần điền đủ username và password");
+            return;
+        }
+        
+        if((role==="ADMIN")&&(password !== confirm))
+        {
+            alert("Mật khẩu không trùng khớp, vui lòng thử lại");
+            return;
+        }
+        
+        if(avatar === undefined)
+        {
+            alert("Thiếu hình ảnh, vui lòng thử lại");
+            return;  
+        }
 
         const formData = new FormData();
         formData.append('firstname', firstname);
@@ -37,14 +51,18 @@ document.addEventListener('DOMContentLoaded', function () {
         formData.append('gender', gender);
         formData.append('email', email);
         formData.append('phone', phone);
-        formData.append('file', avatar);
-        formData.append('role', role);
-        formData.append('username', username);
-        formData.append('password', password);
-
+        formData.append('file', avatar === undefined ? null : avatar);
+        
+        if(role !== 'RESIDENT'){
+            formData.append('role', role);
+            formData.append('username', username);
+            formData.append('password', password);
+        }
+        
         fetch("http://localhost:8080/ApartmentManagement/admin/users/add/", {
             method: 'POST',
             body: formData
+            
         })
             .then(response => {
                 if (!response.ok) {
@@ -89,7 +107,8 @@ function deleteUser(url, userId) {
 
 // cap nhat user
 
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function (e) {
+    
     var form = document.getElementById('editProfileForm');
 
     form.addEventListener('submit', function (event) {
@@ -139,7 +158,7 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log("DATA", data);
         // Gửi yêu cầu PATCH lên server nếu có dữ liệu để gửi
         if (Object.keys(data).length > 0) {
-            fetch(`/ApartmentManagement/admin/user/${userId}`, {
+            fetch(`/ApartmentManagement/admin/user/${userId}/`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json'

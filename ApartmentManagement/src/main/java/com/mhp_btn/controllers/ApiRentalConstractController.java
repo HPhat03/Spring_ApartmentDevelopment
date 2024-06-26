@@ -43,7 +43,7 @@ import org.springframework.http.MediaType;
 
 
 @RestController
-@RequestMapping("/api")
+//@RequestMapping("/api")
 public class ApiRentalConstractController {
 
     @Autowired
@@ -67,7 +67,7 @@ public class ApiRentalConstractController {
     @Autowired
     private ReportService reportService;
     
-    @GetMapping(path = "/my_constract/", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/api/my_constract/", produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin
     public ResponseEntity<Object> myConstract(Principal p)
     {
@@ -76,13 +76,13 @@ public class ApiRentalConstractController {
         List<ApartmentRentalConstract> constract = this.constractService.getAllRentalConstract(filter);
         return new ResponseEntity<>(RentalConstractSerializer.RentalConstractAuthList(constract), HttpStatus.OK);
     }
-    @GetMapping(path = "/constract/", produces = "application/json")
-    public ResponseEntity<Object> list(@RequestParam HashMap<String,String> params) {
-        List<ApartmentRentalConstract> constract = this.constractService.getAllRentalConstract(params);
-        return new ResponseEntity<>(RentalConstractSerializer.RentalConstractList(constract), HttpStatus.OK);
-    }
+//    @GetMapping(path = "/constract/", produces = "application/json")
+//    public ResponseEntity<Object> list(@RequestParam HashMap<String,String> params) {
+//        List<ApartmentRentalConstract> constract = this.constractService.getAllRentalConstract(params);
+//        return new ResponseEntity<>(RentalConstractSerializer.RentalConstractList(constract), HttpStatus.OK);
+//    }
     
-    @GetMapping(path = "/constract/{id}/", produces = "application/json")
+    @GetMapping(path = "/api/constract/{id}/", produces = "application/json")
     @CrossOrigin
     public ResponseEntity<Object> retrieve(@PathVariable int id, Principal p){
         if(!this.constractService.checkRenter(id, p.getName()))
@@ -92,7 +92,7 @@ public class ApiRentalConstractController {
         return ResponseEntity.ok(RentalConstractSerializer.RentalConstractDetail(constract));
     }
 
-    @DeleteMapping("/constracts/{id}/")
+    @DeleteMapping("/admin/constracts/{id}/")
     public ResponseEntity<String> deleteConstractById(@PathVariable int id) {
 
         // Lấy hợp đồng bởi ID
@@ -112,15 +112,15 @@ public class ApiRentalConstractController {
             }
 
             // Xóa các other members theo apartment ID
-            List<ApartmentOtherMember> members = otherMemberService.getOtherMembersByApartmentId(apartmentId);
-            if (members.size() > 0) {
-                otherMemberService.deleteMembersByApartmentId(apartmentId);
-            }
+           List<ApartmentOtherMember> members = otherMemberService.getOtherMembersByApartmentId(apartmentId);
+           if (members.size() > 0) {
+              otherMemberService.deleteMembersByApartmentId(apartmentId);
+           }
 
             // Xóa các hợp đồng service theo apartment ID
-            List<ApartmentService> servicesCon = scs.getServicesByApartmentId(apartmentId);
-            if (servicesCon.size() > 0) {
-                scs.deleteServiceConstractByApartmentId(apartmentId);
+           List<ApartmentService> servicesCon = serviceConstractService.getServicesByApartmentId(apartmentId);
+           if (servicesCon.size() > 0) {
+                serviceConstractService.deleteServiceConstractByApartmentId(apartmentId);
             }
 
             constractService.deleteRentalConstractById(id);
@@ -130,7 +130,7 @@ public class ApiRentalConstractController {
             return new ResponseEntity<>("Lỗi khi xóa hợp đồng: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @GetMapping(path = "/constract/{id}/receipts/", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/api/constract/{id}/receipts/", produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin
     public ResponseEntity<Object> getReceiptOfConstract(@PathVariable int id, @RequestParam HashMap<String, String> params, Principal p) {
         params.put("apartment", String.format("%d", id));
@@ -140,7 +140,7 @@ public class ApiRentalConstractController {
         return new ResponseEntity<>(ReceiptSerializer.ReceiptList(receipts), HttpStatus.OK);
     }
     
-    @GetMapping(path = "/constract/{id}/relative_registry/", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/api/constract/{id}/relative_registry/", produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin
     public ResponseEntity<?> getRelativeRegistryOfConstract(@PathVariable int id, @RequestParam HashMap<String, String> params, Principal p){
         if(!this.constractService.checkRenter(id, p.getName()))
@@ -148,7 +148,7 @@ public class ApiRentalConstractController {
         return ResponseEntity.ok(this.RRService.getRRByApartmentId(id, params));
     }
     
-    @GetMapping(path = "/constract/{id}/smart_cabinets/", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/api/constract/{id}/smart_cabinets/", produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin
     public ResponseEntity<?> getCabinetOfConstract(@PathVariable int id, Principal p){
         if(!this.constractService.checkRenter(id, p.getName()))
@@ -156,7 +156,7 @@ public class ApiRentalConstractController {
         return ResponseEntity.ok(this.SCService.getAllSmartCabinetByApartmentId(id));
     }
     
-    @GetMapping(path = "/constract/{id}/reports/", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/api/constract/{id}/reports/", produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin
     public ResponseEntity<?> getReportsOfConstract(@PathVariable int id, @PathParam(value = "page") int page, Principal p){
         if(!this.constractService.checkRenter(id, p.getName()))
@@ -164,7 +164,7 @@ public class ApiRentalConstractController {
         return ResponseEntity.ok(ReportSerializer.ReportList(this.reportService.getAllReportByApartmentId(id, page)));
     }
     
-    @PostMapping(path = "/constract/", consumes = "application/json",produces = "application/json")
+    @PostMapping(path = "/admin/constract/", consumes = "application/json",produces = "application/json")
     public ResponseEntity<Object> addConstract(@RequestBody Map<String, Object> params) {
         try {
             // Lấy dữ liệu từ params
@@ -249,7 +249,7 @@ public class ApiRentalConstractController {
         }
     }
 
-    @PatchMapping(value = "/constract/edit/{id}/", produces = "application/json")
+    @PatchMapping(value = "/admin/constract/edit/{id}/", produces = "application/json")
     public ResponseEntity<Object> updateConstractById(@PathVariable int id, @RequestBody Map<String, Object> updates) {
         // Lấy thông tin hợp đồng
         ApartmentRentalConstract constract = constractService.getConstractById(id);
@@ -275,12 +275,12 @@ public class ApiRentalConstractController {
                         break;
                     case "services":
                         List<Integer> services_id = (List<Integer>) value;
-                        List<ApartmentService> existingServices = scs.getServicesByApartmentId(constract.getId());
+                        List<ApartmentService> existingServices = serviceConstractService.getServicesByApartmentId(constract.getId());
 
                         // Xóa các dịch vụ không còn trong danh sách mới
                         existingServices.forEach(s -> {
                             if (!services_id.contains(s.getId())) {
-                                scs.deleteServiceConstractById(s.getId());
+                                serviceConstractService.deleteServiceConstractById(s.getId());
                             }
                         });
 
@@ -292,7 +292,7 @@ public class ApiRentalConstractController {
                                 ApartmentServiceConstract serviceConstract = new ApartmentServiceConstract();
                                 serviceConstract.setServiceId(service);
                                 serviceConstract.setApartmentId(constract);
-                                scs.addServiceConstract(serviceConstract);
+                                serviceConstractService.addServiceConstract(serviceConstract);
                             }
                         });
                         break;

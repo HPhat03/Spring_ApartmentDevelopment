@@ -19,7 +19,9 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import javax.servlet.jsp.PageContext;
 import javax.ws.rs.PathParam;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @RestController
 //@RequestMapping("/api")
@@ -34,12 +36,13 @@ public class ApiSurveyRequestController {
     //Lay tat ca khao sat
     @GetMapping(path = "/api/survey_request", produces = "application/json")
     @CrossOrigin
-    public ResponseEntity<List<ApartmentSurveyRequest>> getAllSurveyRequest(@PathParam("page") int page) {
-        List<ApartmentSurveyRequest> surveyRequests = requestService.getAllSurveyRequest(page);
+    public ResponseEntity<List<ApartmentSurveyRequest>> getAllSurveyRequest(@RequestParam Map<String, String>  params) {
+        
+        List<ApartmentSurveyRequest> surveyRequests = requestService.getAllSurveyRequest(params);
         return new ResponseEntity<>(surveyRequests, HttpStatus.OK);
     }
 
-    @DeleteMapping(path = "/survey_request/{surveyId}")
+    @DeleteMapping(path = "/admin/survey_request/{surveyId}")
     public ResponseEntity<?> deleteSurveyRequestById(@PathVariable("surveyId") int surveyId) {
         ApartmentSurveyRequest request = requestService.getSurveyRequestById(surveyId);
         if (request == null) {
@@ -59,11 +62,10 @@ public class ApiSurveyRequestController {
     }
 
 
-    @PostMapping(path = "/survey_request/add/", consumes = "application/json", produces = "application/json")
+    @PostMapping(path = "/admin/survey_request/add/", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> addSurveyRequest(@RequestBody Map<String, Object> params) throws ParseException {
         try {
             // Lấy thông tin từ request body
-            int adminId = (int) params.get("adminId");
             String startDateStr = (String) params.get("startDate");
             String endDateStr = (String) params.get("endDate");
             
@@ -71,9 +73,9 @@ public class ApiSurveyRequestController {
                 return new ResponseEntity<>("One or more parameters are missing or null", HttpStatus.BAD_REQUEST);
             }
             
-            ApartmentUser user = userService.getUserByID(adminId);
+            ApartmentUser user = userService.getUsersByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
             if (user == null || !user.getRole().equals(ApartmentUser.ADMIN)) {
-                return new ResponseEntity<>("Can not find admin with Id: " + adminId, HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>("invalid Admin", HttpStatus.NOT_FOUND);
             }
             Date startDate = startDateStr!=null ? StringUtil.dateFormater().parse(startDateStr) : new Date();
             Date endDate = StringUtil.dateFormater().parse(endDateStr);
@@ -101,7 +103,6 @@ public class ApiSurveyRequestController {
                 temp.setQuestion(x.get("question"));
                 temp.setRequestId(surveyRequest);
                 ApartmentDetailRequest.ScoreBand band = ApartmentDetailRequest.ScoreBand.get(x.get("band"));
-                System.out.println("band = " + band);
                 temp.setScoreBand(band != null ? band.toString() : ApartmentDetailRequest.ScoreBand.BAND_5.toString());
                 detailRequestService.addDetailRequest(temp);
             });

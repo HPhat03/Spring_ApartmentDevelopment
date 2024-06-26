@@ -30,7 +30,7 @@ import javax.validation.Valid;
  * @author Admin
  */
 @Controller
-@RequestMapping("/services")
+@RequestMapping("/admin/services")
 @PropertySource("classpath:configs.properties")
 @ControllerAdvice
 public class ServicesController {

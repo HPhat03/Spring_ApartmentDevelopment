@@ -71,7 +71,7 @@
         <div class="card-body">
             <h6 class="mb-4"><strong>Thông tin hợp đồng phòng:</strong> ${constract.roomId.roomNumber}</h6>
             <h6 class="mb-4"><strong>Tên khách hàng:</strong> ${constract.customerName}</h6>
-            <form method="post" >
+            <form>
                 <div class="form-group mb-4">
                     <label for="contractPrice"><strong>Giá hợp đồng:</strong></label>
                     <input type="number" id="contractPrice" name="final_price" class="form-control" value="${constract.finalPrice}" required>
@@ -133,5 +133,6 @@
         </div>
     </div>
 </div>
+
 </body>
 

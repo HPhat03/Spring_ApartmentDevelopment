@@ -182,7 +182,7 @@
         jsonData.other_members = otherMembers;
         console.log('JSON DATA:', jsonData);
 
-        fetch('/ApartmentManagement/admin/constracts/add', {
+        fetch('/ApartmentManagement/admin/constract/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

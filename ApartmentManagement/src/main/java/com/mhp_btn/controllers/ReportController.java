@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 
 @Controller
-@RequestMapping("/reports")
+@RequestMapping("/admin/reports")
 public class ReportController {
     @Autowired
     private ReportService reportService;
@@ -32,6 +32,7 @@ public class ReportController {
     public String detailReport(Model model,@PathVariable int id) {
         model.addAttribute("report", this.reportService.getReportById(id));
         model.addAttribute("details", this.detailReportService.getDetailReportByReportId(id));
+        System.out.println(this.reportPictureService.getPicturesByReportId(id));
         model.addAttribute("pictures", this.reportPictureService.getPicturesByReportId(id));
         return "detailReport";
     }

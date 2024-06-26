@@ -9,7 +9,7 @@
     <%@ page contentType="text/html;charset=UTF-8" language="java" %>
     <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
     <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-    <c:url value="/users/add/" var="url"/>
+    <c:url value="/admin/users/add/" var="url"/>
     <style>
         body {
             background-color: #f8f9fa;
@@ -51,11 +51,11 @@
             <div class="row mb-3">
                 <div class="col">
                     <label for="firstname" class="form-label">Họ của người dùng</label>
-                    <input type="text" class="form-control" id="firstname" name="firstname" required>
+                    <input type="text" class="form-control" id="lastname" name="lastname" required>
                 </div>
                 <div class="col">
                     <label for="lastname" class="form-label">Tên người dùng</label>
-                    <input type="text" class="form-control" id="lastname" name="lastname" required>
+                    <input type="text" class="form-control" id="firstname" name="firstname" required>
                 </div>
             </div>
             <div class="mb-3">
@@ -83,29 +83,30 @@
                 <label for="phone" class="form-label">Số điện thoại</label>
                 <input type="text" class="form-control" id="phone" name="phone" required>
             </div>
+            
+            <div class="mb-3">
+                <label for="role" class="form-label">Vai trò</label>
+                <select class="form-select" id="role" name="role" required >
+                    <option value="RESIDENT">Resident</option>
+                    <option value="ADMIN">Admin</option>
+                </select>
+            </div>
             <div class="mb-3">
                 <label for="file" class="form-label">Ảnh đại diện</label>
                 <input type="file" class="form-control" id="file" name="avatar">
 
             </div>
             <div class="mb-3">
-                <label for="role" class="form-label">Vai trò</label>
-                <select class="form-select" id="role" name="role" required>
-                    <option value="RESIDENT">Resident</option>
-                    <option value="ADMIN">Admin</option>
-                </select>
+                <label for="username" class="form-label">Username (bắt buộc đối với đăng kí admin)</label>
+                <input type="text" class="form-control" id="username" name="username">
             </div>
             <div class="mb-3">
-                <label for="username" class="form-label">Username*</label>
-                <input type="text" class="form-control" id="username" name="username" required>
+                <label for="password" class="form-label">Mật khẩu (bắt buộc đối với đăng kí admin</label>
+                <input type="password" class="form-control" id="password" name="password">
             </div>
             <div class="mb-3">
-                <label for="password" class="form-label">Mật khẩu*</label>
-                <input type="password" class="form-control" id="password" name="password" required>
-            </div>
-            <div class="mb-3">
-                <label for="confirmPassword" class="form-label">Xác nhận mật khẩu*</label>
-                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                <label for="confirmPassword" class="form-label">Xác nhận mật khẩu (bắt buộc đối với đăng kí admin)</label>
+                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword">
             </div>
 
             <button type="submit" class="btn btn-primary w-100">Thêm người dùng mới</button>

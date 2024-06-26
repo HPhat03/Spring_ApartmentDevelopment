@@ -91,7 +91,7 @@ public class SmartCabinetRepositoryImpl implements SmartCabinetRepository {
 
     @Override
     public void addCabinet(ApartmentSmartCabinet cabinet) {
-        Session session = factoryBean.getObject().getCurrentSession();
+        Session session = this.factoryBean.getObject().getCurrentSession();
         session.save(cabinet);
     }
 

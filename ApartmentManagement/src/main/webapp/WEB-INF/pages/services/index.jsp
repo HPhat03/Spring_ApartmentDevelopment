@@ -19,7 +19,7 @@
 
             </div>
             <div class="d-flex align-items-center">
-                <a class="btn btn-success mt-4 mx-3" href="<c:url value='/services/add' />">
+                <a class="btn btn-success mt-4 mx-3" href="<c:url value='/admin/services/add' />">
                     <i class="bi bi-plus"></i> Thêm dịch vụ
                 </a>
                 <form action="<c:url value=''/>" class="d-flex  align-items-center mt-3">
@@ -57,10 +57,10 @@
                                     </c:choose>
                                 </td>
                                 <td>
-                                    <a class="btn btn-sm btn-primary" href="<c:url value='/services/edit/${service.id}' />">
+                                    <a class="btn btn-sm btn-primary" href="<c:url value='/admin/services/edit/${service.id}' />">
                                         <i class="bi bi-pencil"></i> Sửa
                                     </a>
-                                    <c:url value="/services/${service.id}" var="urlDelete" />
+                                    <c:url value="/admin/services/${service.id}" var="urlDelete" />
 
                                     <button class="btn btn-sm btn-danger removeRoom" data-id="${service.id}" onclick="deleteRoom('${urlDelete}', ${service.id})">
                                         <i class="bi bi-trash"></i> Xóa

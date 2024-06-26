@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/rooms")
+@RequestMapping("/admin/rooms")
 @ControllerAdvice
 @PropertySource("classpath:configs.properties")
 public class RoomController {
@@ -73,10 +73,10 @@ public class RoomController {
     public String addRoom(@ModelAttribute("room") ApartmentRoom room) {
         System.out.println("Room: " + room);
         room.setCreatedDate(new Date());
-
+        room.setIsBlank((short) 1);
         this.rs.addOrUpdateRoom(room);
 
-        return "redirect:/rooms/";
+        return "redirect:/admin/rooms/";
 
     }
 

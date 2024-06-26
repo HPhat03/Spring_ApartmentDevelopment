@@ -60,7 +60,7 @@ public class ApiReceiptController {
     }
 
 
-    @PostMapping("/receipts/add")
+    @PostMapping("/admin/receipts/add")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> addReceipt(@RequestBody Map<String, String> params) {
         if (params.containsKey("month") && 

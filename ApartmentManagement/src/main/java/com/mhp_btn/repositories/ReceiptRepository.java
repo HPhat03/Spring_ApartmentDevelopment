@@ -24,7 +24,7 @@ public interface ReceiptRepository {
     void addReceipt(ApartmentReceipt receipt);
 
     void updateReceipt(ApartmentReceipt receipt);
-   List<ApartmentReceipt> getAll(Map<String, String> params) ;
+    List<ApartmentReceipt> getAll(Map<String, String> params) ;
     public long countReceipt() ;
 
 }

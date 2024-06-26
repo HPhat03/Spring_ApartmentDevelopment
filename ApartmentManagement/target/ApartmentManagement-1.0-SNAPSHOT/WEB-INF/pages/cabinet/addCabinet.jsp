@@ -70,7 +70,7 @@
                     <h6 class="text-white text-capitalize ps-3">${cabinet.id != null ? 'Chỉnh sửa' : 'Thêm mới'} đơn hàng</h6>
                 </div>
             </div>
-            <c:url value="/cabinets/add" var="ac" />
+            <c:url value="/admin/cabinets/add" var="ac" />
             <form:form action="${ac}" method="post" modelAttribute="cabinet">
                 <form:hidden path="id"/>
 <%--                <p>${contract}</p>--%>
@@ -86,7 +86,7 @@
                                 <form:select path="apartmentId.id" id="apartmentId" class="form-control">
                                     <option value="" label="-- Chọn phòng --"></option>
                                     <c:forEach items="${contracts}" var="con">
-                                        <option value="${con.id}" ${contract.id == con.id ? 'selected' : ''}>${con.roomId.roomNumber}</option>
+                                        <option value="${con.id}" ${contract.id == con.id ? 'selected' : ''}>${con.roomId.roomNumber} - ${con.residentId.apartmentUser.name}</option>
                                     </c:forEach>
                                 </form:select>
                             </c:otherwise>
@@ -102,7 +102,7 @@
 <%--                    <p> ${cabinet.status}</p>--%>
                     <div class="form-check mb-3">
                         <form:radiobutton path="status" id="isPending" value="PENDING" />
-                        <label class="form-check-label" for="isPending">Đang vận chuyển</label>
+                        <label class="form-check-label" for="isPending">Đang chờ nhận</label>
                     </div>
 
                     <div class="form-check mb-3">

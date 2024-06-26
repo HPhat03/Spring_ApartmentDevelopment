@@ -29,7 +29,7 @@
                 </form>
 
 
-                <a class="btn btn-success" href="<c:url value='/rooms/add' />">
+                <a class="btn btn-success" href="<c:url value='/admin/rooms/add' />">
                     <i class="bi bi-plus"></i> Thêm phòng
                 </a>
 
@@ -73,7 +73,7 @@
                             <td>${room.floor.name}</td>
                             <td>
                                 <c:choose>
-                                <c:when test="${room.isBlank == 0}">
+                                <c:when test="${room.isBlank == 1}">
                                     <a class="btn btn-sm border-radius-2xl btn-success"
                                        href="<c:url value='' />">
                                         <i class="bi bi-person-plus"></i> Phòng trống
@@ -86,10 +86,10 @@
                                     </c:choose>
                             </td>
                             <td>
-                                <a class="btn btn-sm btn-primary" href="<c:url value='/rooms/edit/${room.id}' />">
+                                <a class="btn btn-sm btn-primary" href="<c:url value='/admin/rooms/edit/${room.id}' />">
                                     <i class="bi bi-pencil"></i> Sửa
                                 </a>
-                                <c:url value="/rooms/${room.id}" var="urlDelete" />
+                                <c:url value="/admin/rooms/${room.id}" var="urlDelete" />
 
                                 <button class="btn btn-sm btn-danger removeRoom" data-id="${room.id}" onclick="deleteRoom('${urlDelete}', ${room.id})">
                                     <i class="bi bi-trash"></i> Xóa

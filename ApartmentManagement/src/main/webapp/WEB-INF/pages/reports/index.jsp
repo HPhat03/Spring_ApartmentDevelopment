@@ -53,7 +53,7 @@
                             <td>
 
                                     <a class="btn btn-sm border-radius-2xl btn-success"
-                                       href="<c:url value='/reports/${r.id}' />">
+                                       href="<c:url value='/admin/reports/${r.id}' />">
                                         <i class="bi bi-person-plus"></i> Xem chi tiết
                                     </a>
                             </td>

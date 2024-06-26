@@ -203,7 +203,7 @@
                         <td>${res.apartmentId.roomId.roomNumber}</td>
                         <td>${res.submitDate}</td>
                         <td>${res.name}</td>
-                        <c:url value="/survey_request/${requests.id}/response/${res.id}" var="urlRes"/>
+                        <c:url value="/admin/survey_request/${requests.id}/response/${res.id}" var="urlRes"/>
                         <td><button class="response-button response-button-success"><a href="${urlRes}">xem đánh giá</a></button></td>
                     </tr>
                 </c:forEach>

@@ -9,7 +9,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<c:url value="/rooms/add" var="action"/>
+<c:url value="/admin/rooms/add" var="action"/>
 
 <div class="container mt-4">
     <h1 class="h3"><c:choose>

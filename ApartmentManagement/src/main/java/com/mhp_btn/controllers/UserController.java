@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/users")
+@RequestMapping("/admin/users")
 @ControllerAdvice
 @PropertySource("classpath:configs.properties")
 public class UserController {
