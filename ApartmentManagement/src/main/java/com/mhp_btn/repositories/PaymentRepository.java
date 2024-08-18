@@ -14,4 +14,5 @@ import com.mhp_btn.pojo.ApartmentPayment;
 public interface PaymentRepository {
     void addOrUpdate(ApartmentPayment p);
     void addPictureMoMo(ApartmentPaidPicture p);
+    ApartmentPayment getPaymentByReceiptID(int id);
 }

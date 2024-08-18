@@ -39,6 +39,7 @@
                         <th scope="col">Cư dân</th>
                         <th scope="col">Ngày tạo</th>
                         <th scope="col">Thành tiền</th>
+                        <th scope="col">Trạng thái</th>
                         <th scope="col">Hành động</th>
                     </tr>
                     </thead>
@@ -52,7 +53,20 @@
 
                             <td>${String.format("%,d", re.total)} VNĐ</td>
 
-
+                            <td>
+                                <c:choose>
+                                    <c:when test="${re.paid == 1}">
+                                        <div class="text-success ">
+                                            Đã thanh toán
+                                        </div>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <div class="text-danger">
+                                           Chưa thanh toán
+                                        </div>
+                                    </c:otherwise>
+                                </c:choose>
+                            </td>
                             <td>
                                 <a class="btn btn-sm btn-success" href="<c:url value='/admin/receipts/${re.id}' />">
                                     <i class="bi bi-pencil"></i> Chi tiết

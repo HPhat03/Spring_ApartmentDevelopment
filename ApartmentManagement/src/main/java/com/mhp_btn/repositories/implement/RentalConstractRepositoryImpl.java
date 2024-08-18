@@ -42,7 +42,6 @@ public class RentalConstractRepositoryImpl implements RentalConstractRepository 
 
         String room_id = params.get("room");
         if(room_id!=null){
-            System.out.println("HIIIII" + " " + room_id);
             Root room = cq.from(ApartmentRoom.class);
             preds.add(cb.like(room.get("roomNumber"), String.format("%%%s%%", room_id)));
             preds.add(cb.equal(r.get("roomId"), room.get("id")));
@@ -54,6 +53,7 @@ public class RentalConstractRepositoryImpl implements RentalConstractRepository 
             preds.add(cb.equal(r.get("residentId"), rr.get("userId")));
             preds.add(cb.equal(rr.get("userId"), ru.get("id")));
             preds.add(cb.or(cb.like(ru.get("firstName"), String.format("%%%s%%", resident)), cb.like(ru.get("lastName"), String.format("%%%s%%", resident)), cb.equal(ru.get("username"), resident) ));
+            preds.add(cb.equal(r.get("isActive"), 1));
         }
         
         cq.where(preds.toArray(Predicate[]::new));

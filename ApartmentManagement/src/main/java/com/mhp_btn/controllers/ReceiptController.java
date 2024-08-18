@@ -1,8 +1,10 @@
 package com.mhp_btn.controllers;
 
 import com.mhp_btn.pojo.ApartmentDetailReceipt;
+import com.mhp_btn.pojo.ApartmentPayment;
 import com.mhp_btn.pojo.ApartmentReceipt;
 import com.mhp_btn.services.DetailReceiptService;
+import com.mhp_btn.services.PaymentService;
 import com.mhp_btn.services.ReceiptService;
 import com.mhp_btn.services.RentalConstractService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,8 @@ public class ReceiptController {
     private RentalConstractService rCS;
     @Autowired
     private Environment env;
+    @Autowired
+    private PaymentService ps;
 
     @GetMapping("/")
     public String index(Model model, @RequestParam HashMap<String, String> params) {
@@ -48,9 +52,10 @@ public class ReceiptController {
     }
     @GetMapping("/{id}")
     public String detail(Model model, @PathVariable int id) {
-        model.addAttribute("receipt", this.rs.getReceiptById(id));
+        ApartmentReceipt rcp = this.rs.getReceiptById(id);
+        model.addAttribute("receipt", rcp);
         model.addAttribute("detail_receipt", this.detailRs.getDetailReceiptsByReceiptId(id));
-
+        model.addAttribute("payment", rcp.getApartmentPaymentSet());
         return "detailReceipt";
     }
     @GetMapping("/add")

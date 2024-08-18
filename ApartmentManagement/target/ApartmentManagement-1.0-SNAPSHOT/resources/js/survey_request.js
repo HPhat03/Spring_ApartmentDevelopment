@@ -53,35 +53,50 @@ function formatDateToDDMMYYYY(dateString) {
 function createSurvey(url, urlIndex) {
     var startDate = document.getElementById('startDate').value;
     var endDate = document.getElementById('endDate').value;
-    var formattedStartDate = formatDateToDDMMYYYY(startDate);
-    var formattedEndDate = formatDateToDDMMYYYY(endDate);
-
-    // Kiểm tra nếu ngày bắt đầu trước ngày hiện tại
-    var today = new Date().toISOString().split('T')[0]; // Lấy ngày hiện tại dưới dạng yyyy-mm-dd
-    if (startDate < today) {
-        alert('Ngày bắt đầu không được trước ngày hôm nay.');
-        return;
-    }
-    if(startDate > endDate){
-        alert('Ngày bắt đầu không được trước ngày kết thúc.');
-        return;
-    }
-
     var questions = [];
     var questionRows = document.getElementsByClassName('question-row');
+    var isValid = true;
 
-    // Duyệt qua từng dòng câu hỏi và lưu vào mảng questions
+    // Xóa thông báo lỗi trước đó
+    document.getElementById('startDateErr').textContent = '';
+    document.getElementById('endDateErr').textContent = '';
+    document.getElementById('questionErr').textContent = '';
+
+    // Kiểm tra ngày bắt đầu có được nhập hay không
+    if (!startDate) {
+        document.getElementById('startDateErr').textContent = 'Vui lòng chọn ngày bắt đầu.';
+        isValid = false;
+    }
+
+    // Kiểm tra ngày kết thúc có được nhập hay không
+    if (!endDate) {
+        document.getElementById('endDateErr').textContent = 'Vui lòng chọn ngày kết thúc.';
+        isValid = false;
+    }
+
+    // Kiểm tra các câu hỏi có được nhập hay không
     for (var i = 0; i < questionRows.length; i++) {
         var questionInput = questionRows[i].querySelector('input[name="questions[]"]');
-        var scoreBandSelect = questionRows[i].querySelector('select[name="scoreBands[]"]');
+        var questionValue = questionInput.value.trim(); // Loại bỏ khoảng trắng để xử lý trường hợp nhập không nhập nội dung
 
-        var question = questionInput.value;
-        var band = scoreBandSelect.value;
+        if (!questionValue) {
+            document.getElementById('questionErr').textContent = 'Vui lòng nhập nội dung câu hỏi.';
+            isValid = false;
+            break; // Dừng vòng lặp nếu có câu hỏi nào không được nhập
+        }
+
+        var scoreBandSelect = questionRows[i].querySelector('select[name="scoreBands[]"]');
+        var bandValue = scoreBandSelect.value;
 
         questions.push({
-            question: question,
-            band: band
+            question: questionValue,
+            band: bandValue
         });
+    }
+
+    if (!isValid) {
+        // Nếu có lỗi thì ngăn người dùng tiếp tục và hiển thị thông báo lỗi
+        return;
     }
 
     // Dữ liệu gửi đi

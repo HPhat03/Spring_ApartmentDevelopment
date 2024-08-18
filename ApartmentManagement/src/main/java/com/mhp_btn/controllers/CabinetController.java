@@ -75,9 +75,9 @@ public class CabinetController {
                 this.scS.updateCabinet(cabinet);
             }
             System.out.println(cabinet.getApartmentId());
-//            TwilioUtil.SendSMS("+84365051699", String.format("\n[PN APARTMENT THÔNG BÁO]\nQuý khách phòng %s có một đơn hàng vừa được cập nhật tại tủ điện tử.\nVào ngày %s.\nThông tin chi tiết xem tại: www.pnapartment.com",
-//                    rcs.getConstractById(cabinet.getApartmentId().getId()).getRoomId().getRoomNumber() , cabinet.getUpdatedDate().toString()));
-//
+            TwilioUtil.SendSMS("+84365051699", String.format("\n[PN APARTMENT THÔNG BÁO]\nQuý khách phòng %s có một đơn hàng vừa được cập nhật tại tủ điện tử.\nVào ngày %s.\nThông tin chi tiết xem tại: www.pnapartment.com",
+                    rcs.getConstractById(cabinet.getApartmentId().getId()).getRoomId().getRoomNumber() , cabinet.getUpdatedDate().toString()));
+
 
             return "redirect:/admin/cabinets/";
         }

@@ -47,12 +47,12 @@
                             <td>
                                 <c:choose>
                                     <c:when test="${con.isActive == 1}">
-                                        <Button class="btn-success border-radius-2xl shadow">
+                                        <Button class="btn-success border-radius-2xl shadow" onclick="changeStatus(${con.id},0)">
                                             Còn hiệu lực
                                         </Button>
                                     </c:when>
                                     <c:otherwise>
-                                        <Button class="btn-outline-danger border-radius-2xl shadow-blur">
+                                        <Button class="btn-outline-danger border-radius-2xl shadow-blur" onclick="changeStatus(${con.id},1)">
                                            Hết hạn
                                         </Button>
                                     </c:otherwise>
@@ -127,6 +127,28 @@
                 });
         }
     }
-
+    
+    function changeStatus(userId, newStatus) {
+        
+    fetch(`/ApartmentManagement/admin/constract/edit/` + userId +`/`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            isActive: newStatus
+        })
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            location.reload();
+        })
+        .catch(error => {
+            console.error('Lỗi', error);
+            alert('Đã xảy ra lỗi khi cập nhật trạng thái.');
+        });
+}
 
 </script>

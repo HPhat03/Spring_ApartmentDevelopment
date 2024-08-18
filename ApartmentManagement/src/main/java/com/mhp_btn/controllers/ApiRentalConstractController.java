@@ -249,11 +249,11 @@ public class ApiRentalConstractController {
         }
     }
 
-    @PatchMapping(value = "/admin/constract/edit/{id}/", produces = "application/json")
+    @PatchMapping(value = "/admin/constract/edit/{id}/", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> updateConstractById(@PathVariable int id, @RequestBody Map<String, Object> updates) {
         // Lấy thông tin hợp đồng
         ApartmentRentalConstract constract = constractService.getConstractById(id);
-
+        System.out.println(id);
         if (constract == null) {
             return new ResponseEntity<>("Không tìm thấy hợp đồng với ID " + id, HttpStatus.NOT_FOUND);
         }

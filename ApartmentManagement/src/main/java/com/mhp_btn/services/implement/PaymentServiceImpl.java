@@ -28,5 +28,10 @@ public class PaymentServiceImpl implements PaymentService{
     public void addPictureMoMo(ApartmentPaidPicture p) {
         this.repo.addPictureMoMo(p);
     }
+
+    @Override
+    public ApartmentPayment getPaymentByReceiptID(int id) {
+        return this.getPaymentByReceiptID(id);
+    }
     
 }

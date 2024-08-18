@@ -26,20 +26,28 @@
         .btn-danger {
             margin-top: 6px;
         }
+        .error-message {
+            color: red;
+            font-size: 16px;
+            /*margin-bottom: 15px;*/
+        }
     </style>
 
 <body>
 <div class="container">
     <h1 class="mb-4 text-center">Tạo phiếu khảo sát mới</h1>
     <form id="surveyForm">
+        <div id="startDateErr" class="error-message"></div>
         <div class="mb-3">
             <label for="startDate" class="form-label">Ngày bắt đầu:</label>
             <input type="date" class="form-control" id="startDate" name="startDate">
         </div>
+        <div id="endDateErr" class="error-message"></div>
         <div class="mb-3">
             <label for="endDate" class="form-label">Ngày kết thúc:</label>
             <input type="date" class="form-control" id="endDate" name="endDate">
         </div>
+        <div id="questionErr" class="error-message"></div>
         <div class="d-flex align-items-center mb-3">
             <label class="mb-0 me-2">Câu hỏi khảo sát</label>
             <button type="button" class="btn btn-success" onclick="addQuestion()">+</button>

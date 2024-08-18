@@ -193,7 +193,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
 // user.js
 
 function changeStatus(userId, newStatus) {
-    fetch(`/ApartmentManagement/admin/user/${userId}`, {
+    fetch(`/ApartmentManagement/admin/user/${userId}/`, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json'

@@ -125,13 +125,10 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
 
         String filter = params.get("filter");
         if (filter != null) {
-            Subquery<ApartmentPayment> sq = q.subquery(ApartmentPayment.class);
-            Root<ApartmentPayment> sr = sq.from(ApartmentPayment.class);
-            sq.select(sr).where(cb.equal(r.get("id"), sr.get("receipt")));
             if (filter.equals("PAID")) {
-                predicates.add(cb.exists(sq));
+                predicates.add(cb.equal(r.get("paid"), (short) 1));
             } else if (filter.equals("UNPAID")) {
-                predicates.add(cb.not(cb.exists(sq)));
+                predicates.add(cb.equal(r.get("paid"), (short) 0));
             }
         }
         

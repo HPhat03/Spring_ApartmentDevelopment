@@ -4,9 +4,17 @@
  */
 package com.mhp_btn.repositories.implement;
 
+import com.mhp_btn.pojo.ApartmentDetailRequest;
 import com.mhp_btn.pojo.ApartmentPaidPicture;
 import com.mhp_btn.pojo.ApartmentPayment;
+import com.mhp_btn.pojo.ApartmentReceipt;
 import com.mhp_btn.repositories.PaymentRepository;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
@@ -39,6 +47,24 @@ public class PaymentRepositoryImpl implements PaymentRepository{
             s.update(p);
         else
             s.save(p);
+    }
+
+    @Override
+    public ApartmentPayment getPaymentByReceiptID(int id) {
+        Session s = this.factory.getObject().getCurrentSession();
+        CriteriaBuilder criteriaBuilder = s.getCriteriaBuilder();
+        CriteriaQuery<ApartmentPayment> criteriaQuery = criteriaBuilder.createQuery(ApartmentPayment.class);
+        Root<ApartmentPayment> root = criteriaQuery.from(ApartmentPayment.class);
+        Root<ApartmentReceipt> rc = criteriaQuery.from(ApartmentReceipt.class);
+        
+        List<Predicate> preds = new ArrayList<>();
+        
+        Predicate condition = criteriaBuilder.equal(root.get("receipt"), id);
+//        preds.add(criteriaBuilder.equal(root.get("receipt"), rc.get("id")))
+        
+        criteriaQuery.select(root).where(condition);
+
+        return s.createQuery(criteriaQuery).getSingleResult();
     }
     
 }

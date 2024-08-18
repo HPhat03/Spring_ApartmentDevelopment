@@ -50,6 +50,9 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "ApartmentReceipt.findByTotal", query = "SELECT a FROM ApartmentReceipt a WHERE a.total = :total")})
 public class ApartmentReceipt implements Serializable {
 
+    @Column(name = "paid")
+    private Short paid;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "receiptId", fetch = FetchType.EAGER)
     @JsonIgnore
     private Set<ApartmentUsageNumber> apartmentUsageNumberSet;
@@ -96,10 +99,7 @@ public class ApartmentReceipt implements Serializable {
     private String name; 
     public ApartmentReceipt() {
     }
-    @JsonProperty("isPaid")
-    public boolean IsPaid() {
-        return !this.apartmentPaymentSet.isEmpty();
-    }
+    
     public ApartmentReceipt(Integer id) {
         this.id = id;
     }
@@ -213,6 +213,14 @@ public class ApartmentReceipt implements Serializable {
 
     public void setApartmentUsageNumberSet(Set<ApartmentUsageNumber> apartmentUsageNumberSet) {
         this.apartmentUsageNumberSet = apartmentUsageNumberSet;
+    }
+
+    public Short getPaid() {
+        return paid;
+    }
+
+    public void setPaid(Short paid) {
+        this.paid = paid;
     }
     
 }

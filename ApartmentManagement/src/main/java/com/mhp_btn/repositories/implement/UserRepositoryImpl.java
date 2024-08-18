@@ -168,7 +168,7 @@ public class UserRepositoryImpl implements UserRepository{
             user.setPassword(ApartmentUser.RESIDENT_DEFAULT_PASSWORD);
         }
         if ((!isInit && password!=null) || (isInit && role!=null && role.equals(ApartmentUser.ADMIN))){
-            user.setPassword(encoder.encode(password));
+            user.setPassword(password);
         }
         if (avatar != null && avatar!="" && file!= null && !file.isEmpty()){
             try {
@@ -177,14 +177,11 @@ public class UserRepositoryImpl implements UserRepository{
                 return new ApartmentUser();
             }
         }
-        if (!isInit) {
-            if (user.getIsActive() == 0) {
-                user.setIsActive((short) 1);
-            } else {
-                user.setIsActive((short) 0);
-            }
+        if (!isInit && data.get("isActive")!= null) {
+            user.setIsActive(Short.parseShort(data.get("isActive")));
         }
-
+        if(isInit)
+            user.setIsActive((short) 1);
         try {
                 if (file!=null && !file.isEmpty()) {
                     user.setAvatar(CloudinaryUtil.upload(file, cloudinary));

@@ -93,6 +93,9 @@ public class ApiUserController {
                 resident.setFirstLogin((short) 1);
                 rs.save(resident);
                 u.setApartmentResident(resident);
+                TwilioUtil.SendSMS("+84365051699", String.format("\n[PN APARTMENT THÔNG BÁO]\nTài khoản của quý khách %s đã được tạo. Giờ đây quý khách có thể đăng nhập "
+                + "và sử dụng dịch vụ của chúng tôi.\nQuý khách vui lòng không tiết lộ thông tin đăng nhập của mình cho bất kì ai.\n"
+                + "Quý khách vui lòng đăng nhập lần đầu vào hệ thống theo username: %s và password: %s.", u.getName(), u.getUsername(), ApartmentUser.RESIDENT_DEFAULT_PASSWORD ));
             }
             us.save(u, false);
 
@@ -101,9 +104,7 @@ public class ApiUserController {
             return new ResponseEntity<>(error, error.getStatus());
         }
         //ĐÃ TEST THÀNH CÔNG
-        TwilioUtil.SendSMS("+84365051699", String.format("\n[PN APARTMENT THÔNG BÁO]\nTài khoản của quý khách %s đã được tạo. Giờ đây quý khách có thể đăng nhập "
-                + "và sử dụng dịch vụ của chúng tôi.\nQuý khách vui lòng không tiết lộ thông tin đăng nhập của mình cho bất kì ai.\n"
-                + "Quý khách vui lòng đăng nhập lần đầu vào hệ thống theo username: %s và password: %s.", u.getName(), u.getUsername(), ApartmentUser.RESIDENT_DEFAULT_PASSWORD ));
+        
         return new ResponseEntity<>(UserSerializer.UserDetail(u), HttpStatus.CREATED);
 
     }
@@ -125,7 +126,10 @@ public class ApiUserController {
         }
 
         try {
-            us.save(u, false);
+            if(data.get("password") == null)
+                us.save(u, false);
+            else
+                us.save(u, true);
         } catch (Exception e) {
             ErrorHandle error = new ErrorHandle("Tạo không thành công", HttpStatus.BAD_REQUEST, e.toString());
             return new ResponseEntity<>(error, error.getStatus());
@@ -204,8 +208,6 @@ public class ApiUserController {
     @GetMapping(path = "/api/me/", produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin
     public ResponseEntity<MappingJacksonValue> getCurrentUser(Principal p) {
-        System.out.println(p.getName());
-//        System.out.println(jwtService.getUsernameFromToken(request.getHeader("Authorization")));
         ApartmentUser u = this.us.getUsersByUsername(p.getName());
         System.out.println(u.getBirthdate());
         return new ResponseEntity<>(UserSerializer.UserDetail(u), HttpStatus.OK);

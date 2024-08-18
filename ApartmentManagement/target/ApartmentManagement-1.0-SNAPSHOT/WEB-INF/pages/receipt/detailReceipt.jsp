@@ -101,6 +101,25 @@
     <div class="detail-section total">
         <h3>Tổng tiền hóa đơn: ${String.format("%,d", receipt.total)} VNĐ</h3>
     </div>
+    
+        <c:choose>
+            <c:when test="${empty payment}">
+                <h4 class="text-danger">CHƯA THANH TOÁN</h4>
+            </c:when>
+            <c:otherwise>
+                <div class="detail-section">
+                    <h4>Hình thức thanh toán</h4>
+                   <c:forEach var="p" items="${payment}">
+
+                                        <div>Thanh toán theo phương thức: ${p.paymentMethod}</div>
+                                        <div>Mã giao dịch: ${p.transactionId}</div>
+                                        <div>Ngày thanh toán: ${p.createdDate}</div>
+                    </c:forEach>
+                </div>
+            </c:otherwise>
+        </c:choose>
+    
+    
 </div>
 </body>
 

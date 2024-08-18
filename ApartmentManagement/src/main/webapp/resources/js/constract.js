@@ -83,12 +83,6 @@ function createConstract(url, urlIndex) {
         }
     });
 
-    // Kiểm tra nếu không có người thân nào được thêm
-    if (otherMembers.length === 0) {
-        document.getElementById('relativesError').innerText = 'Vui lòng thêm ít nhất một người thân';
-        isValid = false;
-    }
-
     // Nếu không hợp lệ, dừng việc gửi form
     if (!isValid) {
         return;

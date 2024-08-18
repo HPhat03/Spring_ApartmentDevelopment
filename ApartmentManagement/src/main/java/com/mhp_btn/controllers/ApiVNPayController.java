@@ -7,6 +7,7 @@ package com.mhp_btn.controllers;
 import com.mhp_btn.configs.VnPayConfig;
 import com.mhp_btn.pojo.ApartmentPaidPicture;
 import com.mhp_btn.pojo.ApartmentPayment;
+import com.mhp_btn.pojo.ApartmentReceipt;
 import com.mhp_btn.pojo.VNPayCashier;
 import com.mhp_btn.services.PaymentService;
 import com.mhp_btn.services.ReceiptService;
@@ -134,13 +135,17 @@ public class ApiVNPayController {
     public ResponseEntity<?> validate(@RequestBody Map<String,String> params){
         if(!params.containsKey("receiptId") || !params.containsKey("type") || !params.containsKey("transactionId") || (params.get("type").equals("MM_PIC") && !params.containsKey("MoMoPicture")))
             return new ResponseEntity<>("Thiếu thông tin", HttpStatus.OK);
+        ApartmentReceipt rcp = receiptService.getReceiptById(Integer.parseInt(params.get("receiptId")));
         ApartmentPayment pay = new ApartmentPayment();
         pay.setCreatedDate(new Date());
         pay.setPaymentMethod(params.get("type"));
         pay.setTransactionId(params.get("transactionId"));
-        pay.setReceipt(receiptService.getReceiptById(Integer.parseInt(params.get("receiptId"))));
+        pay.setReceipt(rcp);
         
         paymentService.SaveOrUpdate(pay);
+        
+        rcp.setPaid((short) 1);
+        receiptService.updateReceipt(rcp);
         
         if(pay.getPaymentMethod().equals("MM_PIC") )
         {
