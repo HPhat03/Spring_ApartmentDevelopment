@@ -4,7 +4,7 @@ import { useState } from 'react';
 import cookie from 'react-cookies'
 import { getAnswer } from './NLP';
 
-const API_KEY = "sk-proj-Us6RRa2U1rtpzvfzDsi2T3BlbkFJiVg35rQiUOhvFxeLLhtm"
+//API KEY
 
 const ChatBot = () => {
 
