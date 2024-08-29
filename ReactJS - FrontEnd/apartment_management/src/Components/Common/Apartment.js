@@ -10,6 +10,7 @@ const Apartment = () => {
     const { id } = useParams()
     const [data, setData] = useState(null);
     const user = useContext(MyUserContext);
+    const dispatchCr = useContext(CurrentApartmentDispatcherContext);
     const nav = useNavigate()
     const formatter = new Intl.NumberFormat('vn', {
         style: 'currency',
